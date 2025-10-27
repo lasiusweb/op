@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import type { Farmer, User } from '../types';
 import DashboardCard from '../components/DashboardCard';
-import { ChevronDownIcon, ChevronUpIcon, PencilIcon, UserCircleIcon, TrashIcon, ArrowUpIcon, ArrowDownIcon, ChevronUpDownIcon, SparklesIcon, LightBulbIcon } from '../components/Icons';
-import { mockFarmersData, mockLandParcels, mockUsers } from '../data/mockData';
+import { ChevronDownIcon, ChevronUpIcon, PencilIcon, UserCircleIcon, TrashIcon, ArrowUpIcon, ArrowDownIcon, ChevronUpDownIcon, SparklesIcon, LightBulbIcon, ArrowUpTrayIcon } from '../components/Icons';
+import { mockLandParcels, mockUsers } from '../data/mockData';
 import { getGeminiInsights } from '../services/geminiService';
 import { exportToCSV, exportToExcel } from '../services/exportService';
 import { exportElementAsPDF } from '../services/pdfService';
+import BulkImportModal from '../components/BulkImportModal';
 
 const DetailItem: React.FC<{ label: string; value: string | number | boolean }> = ({ label, value }) => (
     <div>
@@ -70,8 +71,20 @@ const DeleteConfirmationModal: React.FC<{
 };
 
 
-const Farmers: React.FC = () => {
-    const [farmers, setFarmers] = useState<Farmer[]>(mockFarmersData);
+interface FarmersProps {
+    onAddNewFarmer: () => void;
+    allFarmers: Farmer[];
+    setAllFarmers: React.Dispatch<React.SetStateAction<Farmer[]>>;
+}
+
+const farmerTemplateHeaders = [
+    "fullName", "fatherName", "mobile", "aadhaar", "village", "mandal", 
+    "district", "gender", "dob", "bankName", "bankAccountNumber", "ifscCode", 
+    "assignedAgentId"
+];
+
+
+const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, setAllFarmers }) => {
     const [expandedRow, setExpandedRow] = useState<string | null>(null);
     const [editingFarmerId, setEditingFarmerId] = useState<string | null>(null);
     const [editableFarmerData, setEditableFarmerData] = useState<Farmer | null>(null);
@@ -88,6 +101,8 @@ const Farmers: React.FC = () => {
     const [isLoadingSuggestions, setIsLoadingSuggestions] = useState<boolean>(false);
     
     const [selectedFarmerIds, setSelectedFarmerIds] = useState<string[]>([]);
+    const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+
 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
@@ -97,19 +112,19 @@ const Farmers: React.FC = () => {
 
     const landParcelCounts = useMemo(() => {
         const counts: { [farmerId: string]: number } = {};
-        mockFarmersData.forEach(farmer => {
+        allFarmers.forEach(farmer => {
             counts[farmer.id] = mockLandParcels.filter(lp => lp.farmerId === farmer.id).length;
         });
         return counts;
-    }, []);
+    }, [allFarmers]);
 
     const uniqueDistricts = useMemo(() => {
-        const districts = new Set(mockFarmersData.map(f => f.district));
+        const districts = new Set(allFarmers.map(f => f.district));
         return ['All', ...Array.from(districts).sort()];
-    }, []);
+    }, [allFarmers]);
 
     const sortedAndFilteredFarmers = useMemo(() => {
-        let filterableItems = [...farmers];
+        let filterableItems = [...allFarmers];
         
         // Apply filters
         if (filterDistrict !== 'All') {
@@ -136,33 +151,57 @@ const Farmers: React.FC = () => {
         }
         
         // Apply sorting
-        const sortableItems = [...filterableItems];
-        sortableItems.sort((a, b) => {
-            const key = sortConfig.key;
-            let valA: string | number;
-            let valB: string | number;
+        if (sortConfig.key) {
+            filterableItems.sort((a, b) => {
+                const key = sortConfig.key;
+                let valA: any;
+                let valB: any;
 
-            if (key === 'landParcelCount') {
-                valA = landParcelCounts[a.id] || 0;
-                valB = landParcelCounts[b.id] || 0;
-            } else if (key === 'location') {
-                valA = a.district;
-                valB = b.district;
-            } else if (key === 'assignedAgent') {
-                valA = userMap.get(a.assignedAgentId) || '';
-                valB = userMap.get(b.assignedAgentId) || '';
-            } else {
-                 valA = a[key as keyof Farmer];
-                 valB = b[key as keyof Farmer];
-            }
+                switch (key) {
+                    case 'landParcelCount':
+                        valA = landParcelCounts[a.id] || 0;
+                        valB = landParcelCounts[b.id] || 0;
+                        break;
+                    case 'location':
+                        valA = `${a.village}, ${a.district}`;
+                        valB = `${b.village}, ${b.district}`;
+                        break;
+                    case 'assignedAgent':
+                        valA = userMap.get(a.assignedAgentId);
+                        valB = userMap.get(b.assignedAgentId);
+                        break;
+                    default:
+                        valA = a[key as keyof Farmer];
+                        valB = b[key as keyof Farmer];
+                }
 
-            if (valA < valB) return sortConfig.direction === 'ascending' ? -1 : 1;
-            if (valA > valB) return sortConfig.direction === 'ascending' ? 1 : -1;
-            return 0;
-        });
+                const direction = sortConfig.direction === 'ascending' ? 1 : -1;
 
-        return sortableItems;
-    }, [farmers, filterDistrict, filterStatus, searchTerm, sortConfig, landParcelCounts, userMap]);
+                // Push null/undefined to the end, regardless of sort direction
+                if (valA == null && valB == null) return 0;
+                if (valA == null) return 1;
+                if (valB == null) return -1;
+
+                if (typeof valA === 'string' && typeof valB === 'string') {
+                    return valA.localeCompare(valB, undefined, { sensitivity: 'base' }) * direction;
+                }
+                if (typeof valA === 'number' && typeof valB === 'number') {
+                    return (valA - valB) * direction;
+                }
+                if (typeof valA === 'boolean' && typeof valB === 'boolean') {
+                    return (Number(valA) - Number(valB)) * direction;
+                }
+
+                // Fallback for other comparable types
+                if (valA < valB) return -1 * direction;
+                if (valA > valB) return 1 * direction;
+                
+                return 0;
+            });
+        }
+
+        return filterableItems;
+    }, [allFarmers, filterDistrict, filterStatus, searchTerm, sortConfig, landParcelCounts, userMap]);
     
     const requestSort = (key: SortableFarmerKeys) => {
         let direction: 'ascending' | 'descending' = 'ascending';
@@ -196,7 +235,7 @@ const Farmers: React.FC = () => {
     
     const handleBulkStatusChange = (status: 'Active' | 'Inactive') => {
         if (window.confirm(`Are you sure you want to set ${selectedFarmerIds.length} farmer(s) to '${status}'?`)) {
-            setFarmers(prev =>
+            setAllFarmers(prev =>
                 prev.map(f =>
                     selectedFarmerIds.includes(f.id)
                         ? { ...f, status, updatedAt: new Date().toISOString() }
@@ -212,7 +251,7 @@ const Farmers: React.FC = () => {
         if (!agentId) return;
         const agentName = userMap.get(agentId) || 'the selected agent';
         if (window.confirm(`Are you sure you want to reassign ${selectedFarmerIds.length} farmer(s) to ${agentName}?`)) {
-            setFarmers(prev =>
+            setAllFarmers(prev =>
                 prev.map(f =>
                     selectedFarmerIds.includes(f.id)
                         ? { ...f, assignedAgentId: agentId, updatedAt: new Date().toISOString() }
@@ -222,6 +261,38 @@ const Farmers: React.FC = () => {
             setSaveConfirmation(`${selectedFarmerIds.length} farmer(s) reassigned to ${agentName}.`);
             setSelectedFarmerIds([]);
         }
+    };
+
+    const handleImport = (newFarmersData: any[]) => {
+        const now = new Date().toISOString();
+        const processedFarmers: Farmer[] = newFarmersData.map((item, index) => {
+            return {
+                id: `FARM-IMP-${Date.now() + index}`,
+                fullName: item.fullName || 'Unnamed',
+                fatherName: item.fatherName || '',
+                mobile: item.mobile || '',
+                aadhaar: item.aadhaar || '',
+                village: item.village || '',
+                mandal: item.mandal || '',
+                district: item.district || '',
+                status: 'Active',
+                gender: item.gender || 'Male',
+                dob: item.dob || new Date().toISOString().split('T')[0],
+                bankName: item.bankName || '',
+                bankAccountNumber: item.bankAccountNumber || '',
+                ifscCode: item.ifscCode || '',
+                cropType: 'Oil Palm',
+                accountVerified: false,
+                photoUploaded: false,
+                remarks: 'Imported via bulk upload.',
+                assignedAgentId: item.assignedAgentId || '',
+                createdAt: now,
+                updatedAt: now,
+            };
+        });
+        setAllFarmers(prev => [...prev, ...processedFarmers]);
+        setSaveConfirmation(`${processedFarmers.length} new farmers imported successfully!`);
+        setIsImportModalOpen(false);
     };
 
     const SortableHeader: React.FC<{ label: string; sortKey: SortableFarmerKeys }> = ({ label, sortKey }) => (
@@ -305,7 +376,7 @@ const Farmers: React.FC = () => {
         if (!editableFarmerData) return;
         
         const updatedFarmer = { ...editableFarmerData, updatedAt: new Date().toISOString() };
-        setFarmers(prev => prev.map(f => f.id === updatedFarmer.id ? updatedFarmer : f));
+        setAllFarmers(prev => prev.map(f => f.id === updatedFarmer.id ? updatedFarmer : f));
 
         setEditingFarmerId(null);
         setEditableFarmerData(null);
@@ -348,7 +419,7 @@ const Farmers: React.FC = () => {
     
     const handleConfirmDelete = () => {
         if (!farmerToDelete) return;
-        setFarmers(prev => prev.filter(f => f.id !== farmerToDelete.id));
+        setAllFarmers(prev => prev.filter(f => f.id !== farmerToDelete.id));
         setSaveConfirmation(`Farmer ${farmerToDelete.fullName} deleted successfully.`);
         setFarmerToDelete(null);
     };
@@ -431,6 +502,14 @@ const Farmers: React.FC = () => {
 
 
   return (
+    <>
+    <BulkImportModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        onImport={handleImport}
+        templateHeaders={farmerTemplateHeaders}
+        entityName="Farmers"
+    />
     <DashboardCard title="Farmer Master Database" exportOptions={exportOptions} contentRef={contentRef}>
        {showConfirmation && (
             <div className={`fixed top-24 right-8 text-white py-2 px-4 rounded-lg shadow-lg z-50 transition-transform transform translate-x-0 ${saveConfirmation?.includes('deleted') ? 'bg-red-600' : 'bg-green-600'}`}
@@ -478,16 +557,15 @@ const Farmers: React.FC = () => {
                 </div>
             </div>
             <div className="flex items-center gap-4">
-                <button 
-                    onClick={handleGetSuggestions}
-                    disabled={isLoadingSuggestions}
-                    className="bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-md transition-colors flex items-center gap-2 disabled:bg-gray-500 disabled:cursor-not-allowed"
+                 <button 
+                    onClick={() => setIsImportModalOpen(true)}
+                    className="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-md transition-colors flex items-center gap-2"
                 >
-                    <SparklesIcon className="h-5 w-5" />
-                    {isLoadingSuggestions ? 'Analyzing...' : 'Get AI Suggestions'}
+                    <ArrowUpTrayIcon className="h-5 w-5" />
+                    Import Farmers
                 </button>
-                <button className="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-md transition-colors">
-                Add New Farmer
+                <button onClick={onAddNewFarmer} className="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-md transition-colors">
+                    Add New Farmer
                 </button>
             </div>
       </div>
@@ -750,6 +828,7 @@ const Farmers: React.FC = () => {
         </table>
       </div>
     </DashboardCard>
+    </>
   );
 };
 

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 // FIX: Added BuildingStorefrontIcon and BuildingOfficeIcon to imports.
 import { CubeIcon, PeopleIcon, UserGroupIcon, ClipboardListIcon, GlobeAltIcon, ChevronDownIcon, ChevronUpIcon, DocumentTextIcon, ClipboardDocumentCheckIcon, MagnifyingGlassIcon, BanknotesIcon, DocumentChartBarIcon, ReceiptPercentIcon, WrenchScrewdriverIcon, ArchiveBoxIcon, MapPinIcon, TruckIcon, BuildingStorefrontIcon, BuildingOfficeIcon, BeakerIcon, CreditCardIcon, ShieldCheckIcon, CloudIcon, BookOpenIcon, BriefcaseIcon, LinkIcon, SignalIcon, RectangleGroupIcon, UmbrellaIcon, FolderIcon } from '../Icons';
@@ -40,7 +41,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage }) => {
       { name: 'Inspection Log', page: 'inspections', icon: <MagnifyingGlassIcon className="h-5 w-5 mr-3"/> },
       { name: 'Procurement Batches', page: 'procurementBatches', icon: <CubeIcon className="h-5 w-5 mr-3"/> },
       { name: 'Financial Sanctions', page: 'financialSanctions', icon: <BanknotesIcon className="h-5 w-5 mr-3"/> },
-      { name: 'Cultivation Log', page: 'cultivationLog', icon: <DocumentChartBarIcon className="h-5 w-5 mr-3"/> },
+      { name: 'Plantation Log', page: 'plantationLog', icon: <DocumentChartBarIcon className="h-5 w-5 mr-3"/> },
       { name: 'Harvest Log', page: 'harvestLog', icon: <ReceiptPercentIcon className="h-5 w-5 mr-3"/> },
       { name: 'Irrigation Tracker', page: 'microIrrigationTracker', icon: <WrenchScrewdriverIcon className="h-5 w-5 mr-3"/> },
       { name: 'Oil Extraction', page: 'oilExtraction', icon: <BeakerIcon className="h-5 w-5 mr-3"/> },

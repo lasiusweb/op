@@ -18,7 +18,7 @@ import SubsidyApplications from './pages/SubsidyApplications';
 import DocumentVerification from './pages/DocumentVerification';
 import InspectionLog from './pages/InspectionLog';
 import FinancialSanctions from './pages/FinancialSanctions';
-import CultivationLog from './pages/CultivationLog';
+import PlantationLog from './pages/PlantationLog';
 import HarvestLog from './pages/HarvestLog';
 import MicroIrrigationTracker from './pages/MicroIrrigationTracker';
 import FieldAgentTasks from './pages/FieldAgentTasks';
@@ -42,20 +42,25 @@ import IotSensorData from './pages/IotSensorData';
 import FarmerPortal from './pages/FarmerPortal';
 import CropInsurance from './pages/CropInsurance';
 import DocumentManager from './pages/DocumentManager';
+import AddFarmer from './pages/AddFarmer';
 
 
-import type { User } from './types';
-import { mockUsers, mockTasks } from './data/mockData';
+import type { User, Farmer, LandParcel, NurseryInventoryItem } from './types';
+import { mockUsers, mockTasks, mockFarmersData, mockLandParcels, mockNurseryInventory } from './data/mockData';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [users, setUsers] = useState<User[]>(mockUsers);
+  const [farmers, setFarmers] = useState<Farmer[]>(mockFarmersData);
+  const [landParcels, setLandParcels] = useState<LandParcel[]>(mockLandParcels);
+  const [nurseryInventory, setNurseryInventory] = useState<NurseryInventoryItem[]>(mockNurseryInventory);
   const [currentUser, setCurrentUser] = useState<User>(users[1]); // Default to a non-admin
   const [viewingUserId, setViewingUserId] = useState<string | null>(null);
 
   const pageTitles: { [key: string]: string } = {
       dashboard: 'Executive Dashboard',
       farmers: 'Farmer Management',
+      addFarmer: 'Add New Farmer',
       users: 'User Management',
       generalTasks: 'General Task Management',
       fieldAgentTasks: 'Field Agent Task Board',
@@ -73,7 +78,7 @@ const App: React.FC = () => {
       inspections: 'Inspection Log',
       procurementBatches: 'Procurement Batch Management',
       financialSanctions: 'Financial Sanctions',
-      cultivationLog: 'Cultivation Log',
+      plantationLog: 'Plantation Log',
       harvestLog: 'Harvest Log',
       microIrrigationTracker: 'Micro-Irrigation Tracker',
       nurseryInventory: 'Nursery Inventory',
@@ -113,20 +118,28 @@ const App: React.FC = () => {
     setCurrentPage('users');
   };
 
+  const handleAddNewFarmer = (newFarmer: Farmer, newLandParcel: LandParcel) => {
+    setFarmers(prev => [newFarmer, ...prev]);
+    setLandParcels(prev => [newLandParcel, ...prev]);
+    setCurrentPage('farmers');
+  };
+
   const renderPage = () => {
     switch (currentPage) {
       case 'dashboard':
         return <Dashboard />;
       case 'farmers':
-        return <Farmers />;
+        return <Farmers onAddNewFarmer={() => setCurrentPage('addFarmer')} allFarmers={farmers} setAllFarmers={setFarmers} />;
+      case 'addFarmer':
+        return <AddFarmer onAddFarmer={handleAddNewFarmer} onCancel={() => setCurrentPage('farmers')} allFarmers={farmers} />;
       case 'users':
-          return <Users currentUser={currentUser} allUsers={users} onViewProfile={handleViewProfile} />;
+          return <Users currentUser={currentUser} allUsers={users} setAllUsers={setUsers} onViewProfile={handleViewProfile} />;
       case 'generalTasks':
           return <Tasks />;
       case 'fieldAgentTasks':
           return <FieldAgentTasks />;
       case 'nurseryInventory':
-          return <NurseryInventory />;
+          return <NurseryInventory allItems={nurseryInventory} setAllItems={setNurseryInventory} />;
       case 'procurementCenterInventory':
           return <ProcurementCenterInventory />;
       case 'factoryInventory':
@@ -157,8 +170,8 @@ const App: React.FC = () => {
             return <InspectionLog />;
         case 'financialSanctions':
             return <FinancialSanctions />;
-        case 'cultivationLog':
-            return <CultivationLog />;
+        case 'plantationLog':
+            return <PlantationLog />;
         case 'harvestLog':
             return <HarvestLog />;
         case 'microIrrigationTracker':
@@ -207,7 +220,7 @@ const App: React.FC = () => {
           }
           // Fallback if user not found
           setCurrentPage('users');
-          return <Users currentUser={currentUser} allUsers={users} onViewProfile={handleViewProfile} />;
+          return <Users currentUser={currentUser} allUsers={users} setAllUsers={setUsers} onViewProfile={handleViewProfile} />;
       }
       default:
         return <Dashboard />;
@@ -217,7 +230,7 @@ const App: React.FC = () => {
   return (
     <div className="flex h-screen bg-gray-900 text-gray-200 font-sans">
       <Sidebar currentPage={currentPage} setCurrentPage={setCurrentPage} />
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 grid grid-rows-[auto_1fr]">
         <Header 
             title={pageTitles[currentPage] || 'Dashboard'} 
             currentUser={currentUser}
@@ -225,7 +238,7 @@ const App: React.FC = () => {
             setCurrentUser={setCurrentUser}
             onViewProfile={() => handleViewProfile(currentUser.id)}
         />
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-800/50 p-4 sm:p-6 lg:p-8">
+        <main className="overflow-x-hidden overflow-y-auto bg-gray-800/50 p-4 sm:p-6 lg:p-8">
             {renderPage()}
         </main>
       </div>

@@ -1,74 +1,75 @@
-import type { Farmer, Task, User, LandParcel, Location, ProcurementBatch, Payment, QualityInspection, District, Mandal, Village, ProcurementCenter, Factory, SubsidyApplication, Document, Inspection, Office, HOSanction, CultivationLog, HarvestLog, MicroIrrigationInstallation, NurseryInventoryItem, FactoryInventoryItem, ProcurementCenterInventory } from '../types';
+
+import type { Farmer, Task, User, LandParcel, Location, ProcurementBatch, Payment, QualityInspection, District, Mandal, Village, ProcurementCenter, Factory, SubsidyApplication, Document, Inspection, Office, HOSanction, PlantationLog, HarvestLog, MicroIrrigationInstallation, NurseryInventoryItem, FactoryInventoryItem, ProcurementCenterInventory } from '../types';
 
 const now = new Date();
 const pastDate = (days: number) => new Date(now.getTime() - days * 24 * 60 * 60 * 1000).toISOString();
 const futureDate = (days: number) => new Date(now.getTime() + days * 24 * 60 * 60 * 1000).toISOString();
 
 export const mockUsers: User[] = [
-    { id: 'USR001', fullName: 'Anil Kumar', role: 'Field Agent', email: 'anil.k@example.com', mobile: '9123456780', region: 'Khammam', status: 'Active', reportingManagerId: 'USR002', profilePhotoUrl: 'https://i.pravatar.cc/150?u=USR001', createdAt: pastDate(30), updatedAt: pastDate(2) },
-    { id: 'USR002', fullName: 'Sunita Sharma', role: 'Mandal Coordinator', email: 'sunita.s@example.com', mobile: '9123456781', region: 'Khammam', status: 'Active', reportingManagerId: 'USR005', profilePhotoUrl: 'https://i.pravatar.cc/150?u=USR002', createdAt: pastDate(100), updatedAt: pastDate(10) },
-    { id: 'USR003', fullName: 'Vijay Singh', role: 'Reviewer', email: 'vijay.s@example.com', mobile: '9123456782', region: 'Nalgonda', status: 'Active', reportingManagerId: 'USR005', profilePhotoUrl: 'https://i.pravatar.cc/150?u=USR003', createdAt: pastDate(80), updatedAt: pastDate(5) },
+    { id: 'USR001', fullName: 'Anil Kumar', role: 'Field Agent', email: 'anil.k@example.com', mobile: '9123456780', region: 'Warangal', status: 'Active', reportingManagerId: 'USR002', profilePhotoUrl: 'https://i.pravatar.cc/150?u=USR001', createdAt: pastDate(30), updatedAt: pastDate(2) },
+    { id: 'USR002', fullName: 'Sunita Sharma', role: 'Mandal Coordinator', email: 'sunita.s@example.com', mobile: '9123456781', region: 'Warangal', status: 'Active', reportingManagerId: 'USR005', profilePhotoUrl: 'https://i.pravatar.cc/150?u=USR002', createdAt: pastDate(100), updatedAt: pastDate(10) },
+    { id: 'USR003', fullName: 'Vijay Singh', role: 'Reviewer', email: 'vijay.s@example.com', mobile: '9123456782', region: 'Mulugu', status: 'Active', reportingManagerId: 'USR005', profilePhotoUrl: 'https://i.pravatar.cc/150?u=USR003', createdAt: pastDate(80), updatedAt: pastDate(5) },
     { id: 'USR004', fullName: 'Priya Patel', role: 'Accountant', email: 'priya.p@example.com', mobile: '9123456783', region: 'Head Office', status: 'Inactive', reportingManagerId: 'USR005', profilePhotoUrl: 'https://i.pravatar.cc/150?u=USR004', createdAt: pastDate(120), updatedAt: pastDate(20) },
     { id: 'USR005', fullName: 'Rajesh Gupta', role: 'Admin', email: 'rajesh.g@example.com', mobile: '9123456784', region: 'Head Office', status: 'Active', profilePhotoUrl: 'https://i.pravatar.cc/150?u=USR005', createdAt: pastDate(200), updatedAt: pastDate(1) },
-    { id: 'USR006', fullName: 'Kavita Rao', role: 'Procurement Center Manager', email: 'kavita.r@example.com', mobile: '9123456785', region: 'Suryapet', status: 'Active', reportingManagerId: 'USR005', profilePhotoUrl: 'https://i.pravatar.cc/150?u=USR006', createdAt: pastDate(90), updatedAt: pastDate(8) },
-    { id: 'USR007', fullName: 'Manoj Reddy', role: 'Factory Manager', email: 'manoj.r@example.com', mobile: '9123456786', region: 'Bhadradri', status: 'Active', reportingManagerId: 'USR005', profilePhotoUrl: 'https://i.pravatar.cc/150?u=USR007', createdAt: pastDate(110), updatedAt: pastDate(12) },
+    { id: 'USR006', fullName: 'Kavita Rao', role: 'Procurement Center Manager', email: 'kavita.r@example.com', mobile: '9123456785', region: 'Hanmakonda', status: 'Active', reportingManagerId: 'USR005', profilePhotoUrl: 'https://i.pravatar.cc/150?u=USR006', createdAt: pastDate(90), updatedAt: pastDate(8) },
+    { id: 'USR007', fullName: 'Manoj Reddy', role: 'Factory Manager', email: 'manoj.r@example.com', mobile: '9123456786', region: 'Mulugu', status: 'Active', reportingManagerId: 'USR005', profilePhotoUrl: 'https://i.pravatar.cc/150?u=USR007', createdAt: pastDate(110), updatedAt: pastDate(12) },
 ];
 
 export const mockFarmersData: Farmer[] = [
-  { id: 'FARM001', fullName: 'R. Venkatesh', fatherName: 'R. Rao', mobile: '9876543210', aadhaar: '**** **** 1234', village: 'Kothagudem', mandal: 'Khammam', district: 'Khammam', status: 'Active', gender: 'Male', dob: '1975-05-20', bankName: 'State Bank of India', bankAccountNumber: '**** **** 2034', ifscCode: 'SBIN0001234', cropType: 'Oil Palm', accountVerified: true, photoUploaded: true, remarks: 'Consistently high yield producer.', photoUrl: 'https://i.pravatar.cc/150?u=FARM001', assignedAgentId: 'USR001', createdAt: pastDate(50), updatedAt: pastDate(3) },
-  { id: 'FARM002', fullName: 'S. Kumar', fatherName: 'S. Reddy', mobile: '9876543211', aadhaar: '**** **** 5678', village: 'Aswaraopeta', mandal: 'Aswaraopeta', district: 'Bhadradri', status: 'Active', gender: 'Male', dob: '1982-11-15', bankName: 'HDFC Bank', bankAccountNumber: '**** **** 8876', ifscCode: 'HDFC0005678', cropType: 'Oil Palm', accountVerified: true, photoUploaded: false, remarks: null, photoUrl: undefined, assignedAgentId: 'USR001', createdAt: pastDate(60), updatedAt: pastDate(4) },
-  { id: 'FARM003', fullName: 'M. Laxmi', fatherName: 'M. Gupta', mobile: '9876543212', aadhaar: '**** **** 9012', village: 'Julurpadu', mandal: 'Khammam', district: 'Khammam', status: 'Inactive', gender: 'Female', dob: '1990-02-10', bankName: 'ICICI Bank', bankAccountNumber: '**** **** 4321', ifscCode: 'ICIC0009012', cropType: 'Oil Palm', accountVerified: false, photoUploaded: true, remarks: 'Account inactive due to land sale.', photoUrl: 'https://i.pravatar.cc/150?u=FARM003', assignedAgentId: 'USR001', createdAt: pastDate(70), updatedAt: pastDate(15) },
-  { id: 'FARM004', fullName: 'K. Srinivas', fatherName: 'K. Murthy', mobile: '9876543213', aadhaar: '**** **** 3456', village: 'Garidepally', mandal: 'Garidepally', district: 'Suryapet', status: 'Active', gender: 'Male', dob: '1968-07-30', bankName: 'Axis Bank', bankAccountNumber: '**** **** 6543', ifscCode: 'UTIB0003456', cropType: 'Oil Palm', accountVerified: true, photoUploaded: true, remarks: 'Participated in the drip irrigation subsidy program.', photoUrl: undefined, assignedAgentId: 'USR001', createdAt: pastDate(45), updatedAt: pastDate(8) },
-  { id: 'FARM005', fullName: 'G. Prasad', fatherName: 'G. Naidu', mobile: '9876543214', aadhaar: '**** **** 7890', village: 'Mothe', mandal: 'Mothe', district: 'Nalgonda', status: 'Active', gender: 'Male', dob: '1978-09-05', bankName: 'State Bank of India', bankAccountNumber: '**** **** 0987', ifscCode: 'SBIN0007890', cropType: 'Oil Palm', accountVerified: false, photoUploaded: false, remarks: 'Awaiting bank account verification.', photoUrl: 'https://i.pravatar.cc/150?u=FARM005', assignedAgentId: 'USR003', createdAt: pastDate(55), updatedAt: pastDate(1) },
+  { id: 'FARM001', fullName: 'R. Venkatesh', fatherName: 'R. Rao', mobile: '9876543210', aadhaar: '**** **** 1234', village: 'Kothawada', mandal: 'Warangal', district: 'Warangal', status: 'Active', gender: 'Male', dob: '1975-05-20', bankName: 'State Bank of India', bankAccountNumber: '**** **** 2034', ifscCode: 'SBIN0001234', cropType: 'Oil Palm', accountVerified: true, photoUploaded: true, remarks: 'Consistently high yield producer.', photoUrl: 'https://i.pravatar.cc/150?u=FARM001', assignedAgentId: 'USR001', createdAt: pastDate(50), updatedAt: pastDate(3) },
+  { id: 'FARM002', fullName: 'S. Kumar', fatherName: 'S. Reddy', mobile: '9876543211', aadhaar: '**** **** 5678', village: 'Eturnagaram', mandal: 'Eturnagaram', district: 'Mulugu', status: 'Active', gender: 'Male', dob: '1982-11-15', bankName: 'HDFC Bank', bankAccountNumber: '**** **** 8876', ifscCode: 'HDFC0005678', cropType: 'Oil Palm', accountVerified: true, photoUploaded: false, remarks: null, photoUrl: undefined, assignedAgentId: 'USR001', createdAt: pastDate(60), updatedAt: pastDate(4) },
+  { id: 'FARM003', fullName: 'M. Laxmi', fatherName: 'M. Gupta', mobile: '9876543212', aadhaar: '**** **** 9012', village: 'Gorrekunta', mandal: 'Geesugonda', district: 'Warangal', status: 'Inactive', gender: 'Female', dob: '1990-02-10', bankName: 'ICICI Bank', bankAccountNumber: '**** **** 4321', ifscCode: 'ICIC0009012', cropType: 'Oil Palm', accountVerified: false, photoUploaded: true, remarks: 'Account inactive due to land sale.', photoUrl: 'https://i.pravatar.cc/150?u=FARM003', assignedAgentId: 'USR001', createdAt: pastDate(70), updatedAt: pastDate(15) },
+  { id: 'FARM004', fullName: 'K. Srinivas', fatherName: 'K. Murthy', mobile: '9876543213', aadhaar: '**** **** 3456', village: 'Hasanparthy', mandal: 'Hasanparthy', district: 'Hanmakonda', status: 'Active', gender: 'Male', dob: '1968-07-30', bankName: 'Axis Bank', bankAccountNumber: '**** **** 6543', ifscCode: 'UTIB0003456', cropType: 'Oil Palm', accountVerified: true, photoUploaded: true, remarks: 'Participated in the drip irrigation subsidy program.', photoUrl: undefined, assignedAgentId: 'USR001', createdAt: pastDate(45), updatedAt: pastDate(8) },
+  { id: 'FARM005', fullName: 'G. Prasad', fatherName: 'G. Naidu', mobile: '9876543214', aadhaar: '**** **** 7890', village: 'Govindaraopet', mandal: 'Govindaraopet', district: 'Mulugu', status: 'Active', gender: 'Male', dob: '1978-09-05', bankName: 'State Bank of India', bankAccountNumber: '**** **** 0987', ifscCode: 'SBIN0007890', cropType: 'Oil Palm', accountVerified: false, photoUploaded: false, remarks: 'Awaiting bank account verification.', photoUrl: 'https://i.pravatar.cc/150?u=FARM005', assignedAgentId: 'USR003', createdAt: pastDate(55), updatedAt: pastDate(1) },
 ];
 
 export const mockTasks: Task[] = [
-  { id: 'TSK001', title: 'Inspect Farmer R. Venkatesh\'s Plot', description: 'Conduct a routine inspection of plot #45B and report on crop health. Check for signs of pest infestation and verify irrigation system functionality. Document findings with photographic evidence.', assignedToId: 'USR001', relatedFarmerId: 'FARM001', dueDate: '2024-08-15', status: 'In Progress', priority: 'High', latitude: 17.25, longitude: 80.15, createdAt: pastDate(10), updatedAt: pastDate(3), completedAt: undefined },
-  { id: 'TSK002', title: 'Verify Subsidy Application #S4521', description: 'Check submitted documents for farmer S. Kumar and verify land records.', assignedToId: 'USR003', relatedFarmerId: 'FARM002', dueDate: '2024-08-10', status: 'Completed', priority: 'Medium', latitude: 17.55, longitude: 80.88, createdAt: pastDate(12), updatedAt: pastDate(1), completedAt: pastDate(1) },
-  { id: 'TSK003', title: 'Collect Soil Samples from Nalgonda', description: 'Collect 5 soil samples from designated areas in Mothe mandal. Samples should be taken from a depth of 15cm and properly labeled for lab analysis.', assignedToId: 'USR001', dueDate: '2024-08-20', status: 'Pending', priority: 'Medium', latitude: 17.06, longitude: 79.26, createdAt: pastDate(8), updatedAt: pastDate(8), completedAt: undefined },
+  { id: 'TSK001', title: 'Inspect Farmer R. Venkatesh\'s Plot', description: 'Conduct a routine inspection of plot #45B and report on crop health. Check for signs of pest infestation and verify irrigation system functionality. Document findings with photographic evidence.', assignedToId: 'USR001', relatedFarmerId: 'FARM001', dueDate: '2024-08-15', status: 'In Progress', priority: 'High', latitude: 17.98, longitude: 79.59, createdAt: pastDate(10), updatedAt: pastDate(3), completedAt: undefined },
+  { id: 'TSK002', title: 'Verify Subsidy Application #S4521', description: 'Check submitted documents for farmer S. Kumar and verify land records.', assignedToId: 'USR003', relatedFarmerId: 'FARM002', dueDate: '2024-08-10', status: 'Completed', priority: 'Medium', latitude: 18.25, longitude: 80.29, createdAt: pastDate(12), updatedAt: pastDate(1), completedAt: pastDate(1) },
+  { id: 'TSK003', title: 'Collect Soil Samples from Hanmakonda', description: 'Collect 5 soil samples from designated areas in Hasanparthy mandal. Samples should be taken from a depth of 15cm and properly labeled for lab analysis.', assignedToId: 'USR001', dueDate: '2024-08-20', status: 'Pending', priority: 'Medium', latitude: 18.00, longitude: 79.58, createdAt: pastDate(8), updatedAt: pastDate(8), completedAt: undefined },
   { id: 'TSK004', title: 'Review Q2 Financial Reports', description: 'Audit and approve the financial statements for the second quarter.', assignedToId: 'USR004', dueDate: '2024-08-12', status: 'Rejected', priority: 'Low', createdAt: pastDate(20), updatedAt: pastDate(5), completedAt: undefined },
-  { id: 'TSK005', title: 'Onboard New Farmers in Bhadradri', description: 'Complete the registration and onboarding process for 10 new farmers.', assignedToId: 'USR002', dueDate: '2024-08-18', status: 'Pending', priority: 'High', createdAt: pastDate(5), updatedAt: pastDate(5), completedAt: undefined },
+  { id: 'TSK005', title: 'Onboard New Farmers in Mulugu', description: 'Complete the registration and onboarding process for 10 new farmers.', assignedToId: 'USR002', dueDate: '2024-08-18', status: 'Pending', priority: 'High', createdAt: pastDate(5), updatedAt: pastDate(5), completedAt: undefined },
 ];
 
 export const mockLandParcels: LandParcel[] = [
-    { id: 'LP001', farmerId: 'FARM001', surveyNumber: 'SN-KMM-01', areaAcres: 5.2, soilType: 'Red Loam', irrigationSource: 'Borewell', latitude: 17.25, longitude: 80.15, status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
-    { id: 'LP002', farmerId: 'FARM001', surveyNumber: 'SN-KMM-02', areaAcres: 3.0, soilType: 'Red Loam', irrigationSource: 'Canal', latitude: 17.26, longitude: 80.16, status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
-    { id: 'LP003', farmerId: 'FARM002', surveyNumber: 'SN-BDR-01', areaAcres: 10.5, soilType: 'Black Cotton', irrigationSource: 'Borewell', latitude: 17.55, longitude: 80.88, status: 'Active', createdAt: pastDate(400), updatedAt: pastDate(50) },
-    { id: 'LP004', farmerId: 'FARM004', surveyNumber: 'SN-SRP-01', areaAcres: 8.0, soilType: 'Sandy Loam', irrigationSource: 'Rainfed', latitude: 17.05, longitude: 79.56, status: 'Active', createdAt: pastDate(250), updatedAt: pastDate(20) },
-    { id: 'LP005', farmerId: 'FARM004', surveyNumber: 'SN-SRP-02', areaAcres: 4.5, soilType: 'Sandy Loam', irrigationSource: 'Borewell', latitude: 17.06, longitude: 79.57, status: 'Active', createdAt: pastDate(250), updatedAt: pastDate(20) },
-    { id: 'LP006', farmerId: 'FARM005', surveyNumber: 'SN-NLG-01', areaAcres: 6.0, soilType: 'Red Sandy', irrigationSource: 'Canal', latitude: 17.06, longitude: 79.26, status: 'Fallow', createdAt: pastDate(300), updatedAt: pastDate(100) },
-    { id: 'LP007', farmerId: 'FARM003', surveyNumber: 'SN-KMM-03', areaAcres: 7.1, soilType: 'Alluvial', irrigationSource: 'Canal', latitude: 17.22, longitude: 80.18, status: 'Sold', createdAt: pastDate(500), updatedAt: pastDate(15) },
+    { id: 'LP001', farmerId: 'FARM001', surveyNumber: 'SN-WGL-01', areaAcres: 5.2, soilType: 'Red Loam', irrigationSource: 'Borewell', latitude: 17.98, longitude: 79.59, status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'LP002', farmerId: 'FARM001', surveyNumber: 'SN-WGL-02', areaAcres: 3.0, soilType: 'Red Loam', irrigationSource: 'Canal', latitude: 17.99, longitude: 79.60, status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'LP003', farmerId: 'FARM002', surveyNumber: 'SN-MUL-01', areaAcres: 10.5, soilType: 'Black Cotton', irrigationSource: 'Borewell', latitude: 18.25, longitude: 80.29, status: 'Active', createdAt: pastDate(400), updatedAt: pastDate(50) },
+    { id: 'LP004', farmerId: 'FARM004', surveyNumber: 'SN-HNK-01', areaAcres: 8.0, soilType: 'Sandy Loam', irrigationSource: 'Rainfed', latitude: 18.00, longitude: 79.58, status: 'Active', createdAt: pastDate(250), updatedAt: pastDate(20) },
+    { id: 'LP005', farmerId: 'FARM004', surveyNumber: 'SN-HNK-02', areaAcres: 4.5, soilType: 'Sandy Loam', irrigationSource: 'Borewell', latitude: 18.01, longitude: 79.59, status: 'Active', createdAt: pastDate(250), updatedAt: pastDate(20) },
+    { id: 'LP006', farmerId: 'FARM005', surveyNumber: 'SN-MUL-02', areaAcres: 6.0, soilType: 'Red Sandy', irrigationSource: 'Canal', latitude: 18.26, longitude: 80.30, status: 'Fallow', createdAt: pastDate(300), updatedAt: pastDate(100) },
+    { id: 'LP007', farmerId: 'FARM003', surveyNumber: 'SN-WGL-03', areaAcres: 7.1, soilType: 'Alluvial', irrigationSource: 'Canal', latitude: 17.97, longitude: 79.58, status: 'Sold', createdAt: pastDate(500), updatedAt: pastDate(15) },
 
 ];
 
 export const mockLocations: Location[] = [
-    { id: 'LOC01', name: 'Khammam Central PC', type: 'Procurement Center', mandal: 'Khammam (Urban)', district: 'Khammam', latitude: 17.247, longitude: 80.151, managerId: 'USR002', createdAt: pastDate(200), updatedAt: pastDate(20) },
-    { id: 'LOC02', name: 'Nalgonda Hub', type: 'Procurement Center', mandal: 'Nalgonda', district: 'Nalgonda', latitude: 17.05, longitude: 79.26, managerId: 'USR003', createdAt: pastDate(180), updatedAt: pastDate(15) },
-    { id: 'LOC03', name: 'Aswaraopeta Factory', type: 'Factory', mandal: 'Aswaraopeta', district: 'Bhadradri Kothagudem', latitude: 17.41, longitude: 81.13, managerId: 'USR007', createdAt: pastDate(300), updatedAt: pastDate(45) },
-    { id: 'LOC04', name: 'Suryapet Warehouse', type: 'Warehouse', mandal: 'Garidepally', district: 'Suryapet', latitude: 17.14, longitude: 79.59, managerId: 'USR006', createdAt: pastDate(150), updatedAt: pastDate(10) },
-    { id: 'LOC05', name: 'Mothe Collection Point', type: 'Procurement Center', mandal: 'Mothe', district: 'Nalgonda', latitude: 17.10, longitude: 79.65, createdAt: pastDate(90), updatedAt: pastDate(5) },
+    { id: 'LOC01', name: 'Warangal Central PC', type: 'Procurement Center', mandal: 'Warangal', district: 'Warangal', latitude: 17.98, longitude: 79.59, managerId: 'USR002', createdAt: pastDate(200), updatedAt: pastDate(20) },
+    { id: 'LOC02', name: 'Mulugu Hub', type: 'Procurement Center', mandal: 'Mulugu', district: 'Mulugu', latitude: 18.25, longitude: 80.29, managerId: 'USR003', createdAt: pastDate(180), updatedAt: pastDate(15) },
+    { id: 'LOC03', name: 'Eturnagaram Factory', type: 'Factory', mandal: 'Eturnagaram', district: 'Mulugu', latitude: 18.37, longitude: 80.43, managerId: 'USR007', createdAt: pastDate(300), updatedAt: pastDate(45) },
+    { id: 'LOC04', name: 'Hasanparthy Warehouse', type: 'Warehouse', mandal: 'Hasanparthy', district: 'Hanmakonda', latitude: 18.06, longitude: 79.53, managerId: 'USR006', createdAt: pastDate(150), updatedAt: pastDate(10) },
+    { id: 'LOC05', name: 'Govindaraopet Collection Point', type: 'Procurement Center', mandal: 'Govindaraopet', district: 'Mulugu', latitude: 18.24, longitude: 80.21, createdAt: pastDate(90), updatedAt: pastDate(5) },
 ];
 
 export const mockProcurementBatches: ProcurementBatch[] = [
     { id: 'PB001', farmerId: 'FARM001', procurementCenterId: 'LOC01', weightKg: 1250.5, qualityGrade: 'A', oilContentPercentage: 22.5, procurementDate: pastDate(2).split('T')[0], pricePerKg: 15.50, totalAmount: 19382.75, paymentStatus: 'Paid', status: 'Active', createdAt: pastDate(2), updatedAt: pastDate(1) },
     { id: 'PB002', farmerId: 'FARM002', procurementCenterId: 'LOC03', weightKg: 875.0, qualityGrade: 'B', oilContentPercentage: 19.8, procurementDate: pastDate(3).split('T')[0], pricePerKg: 14.00, totalAmount: 12250.00, paymentStatus: 'Pending', status: 'Active', createdAt: pastDate(3), updatedAt: pastDate(3) },
-    { id: 'PB003', farmerId: 'FARM004', procurementCenterId: 'LOC02', weightKg: 2100.0, qualityGrade: 'A', oilContentPercentage: 23.1, procurementDate: pastDate(5).split('T')[0], pricePerKg: 15.75, totalAmount: 33075.00, paymentStatus: 'Pending', status: 'Active', createdAt: pastDate(5), updatedAt: pastDate(5) },
+    { id: 'PB003', farmerId: 'FARM004', procurementCenterId: 'LOC04', weightKg: 2100.0, qualityGrade: 'A', oilContentPercentage: 23.1, procurementDate: pastDate(5).split('T')[0], pricePerKg: 15.75, totalAmount: 33075.00, paymentStatus: 'Pending', status: 'Active', createdAt: pastDate(5), updatedAt: pastDate(5) },
     { id: 'PB004', farmerId: 'FARM005', procurementCenterId: 'LOC05', weightKg: 950.2, qualityGrade: 'C', oilContentPercentage: 17.2, procurementDate: pastDate(6).split('T')[0], pricePerKg: 12.00, totalAmount: 11402.40, paymentStatus: 'Paid', status: 'Active', createdAt: pastDate(6), updatedAt: pastDate(4) },
     { id: 'PB005', farmerId: 'FARM001', procurementCenterId: 'LOC01', weightKg: 1500.0, qualityGrade: 'B', oilContentPercentage: 20.1, procurementDate: pastDate(8).split('T')[0], pricePerKg: 14.25, totalAmount: 21375.00, paymentStatus: 'Partial', status: 'Active', createdAt: pastDate(8), updatedAt: pastDate(8) },
     { id: 'PB006', farmerId: 'FARM002', procurementCenterId: 'LOC03', weightKg: 650.0, qualityGrade: 'A', oilContentPercentage: 21.9, procurementDate: pastDate(10).split('T')[0], pricePerKg: 15.50, totalAmount: 10075.00, paymentStatus: 'Paid', status: 'Cancelled', createdAt: pastDate(10), updatedAt: pastDate(9) },
 ];
 
 export const mockProcurementCenters: ProcurementCenter[] = [
-    { id: 'PC001', name: 'Khammam Central PC', mandalId: 'MAND01', managerId: 'USR002', contactPerson: 'Srinivas Rao', contactMobile: '9988776655', status: 'Active', latitude: 17.247, longitude: 80.151, createdAt: pastDate(200), updatedAt: pastDate(20) },
-    { id: 'PC002', name: 'Nalgonda Hub', mandalId: 'MAND03', managerId: 'USR003', contactPerson: 'Lakshmi Devi', contactMobile: '9988776654', status: 'Active', latitude: 17.05, longitude: 79.26, createdAt: pastDate(180), updatedAt: pastDate(15) },
-    { id: 'PC003', name: 'Mothe Collection Point', mandalId: 'MAND04', managerId: 'USR006', contactPerson: 'Ramesh Yadav', contactMobile: '9988776653', status: 'Active', latitude: 17.10, longitude: 79.65, createdAt: pastDate(90), updatedAt: pastDate(5) },
-    { id: 'PC004', name: 'Garidepally Center', mandalId: 'MAND05', status: 'Inactive', contactPerson: 'Anjali Reddy', contactMobile: '9988776652', latitude: 16.99, longitude: 79.93, createdAt: pastDate(150), updatedAt: pastDate(60) },
+    { id: 'PC001', name: 'Warangal Central PC', mandalId: 'MAND01', managerId: 'USR002', contactPerson: 'Srinivas Rao', contactMobile: '9988776655', status: 'Active', latitude: 17.98, longitude: 79.59, createdAt: pastDate(200), updatedAt: pastDate(20) },
+    { id: 'PC002', name: 'Mulugu Hub', mandalId: 'MAND20', managerId: 'USR003', contactPerson: 'Lakshmi Devi', contactMobile: '9988776654', status: 'Active', latitude: 18.25, longitude: 80.29, createdAt: pastDate(180), updatedAt: pastDate(15) },
+    { id: 'PC003', name: 'Govindaraopet Collection Point', mandalId: 'MAND17', managerId: 'USR006', contactPerson: 'Ramesh Yadav', contactMobile: '9988776653', status: 'Active', latitude: 18.24, longitude: 80.21, createdAt: pastDate(90), updatedAt: pastDate(5) },
+    { id: 'PC004', name: 'Hasanparthy Center', mandalId: 'MAND11', status: 'Active', contactPerson: 'Anjali Reddy', contactMobile: '9988776652', latitude: 18.06, longitude: 79.53, createdAt: pastDate(150), updatedAt: pastDate(60) },
 ];
 
 export const mockFactories: Factory[] = [
-    { id: 'FACT01', name: 'Aswaraopeta Oil Mill', mandalId: 'MAND06', managerId: 'USR007', capacityTonsPerDay: 500, contactMobile: '9876543210', status: 'Active', latitude: 17.41, longitude: 81.13, createdAt: pastDate(300), updatedAt: pastDate(45) },
-    { id: 'FACT02', name: 'Suryapet Processing Unit', mandalId: 'MAND05', managerId: 'USR007', capacityTonsPerDay: 350, contactMobile: '9876543211', status: 'Active', latitude: 17.14, longitude: 79.59, createdAt: pastDate(250), updatedAt: pastDate(30) },
-    { id: 'FACT03', name: 'Khammam Refinery', mandalId: 'MAND01', capacityTonsPerDay: 750, contactMobile: '9876543212', status: 'Inactive', createdAt: pastDate(400), updatedAt: pastDate(100) },
+    { id: 'FACT01', name: 'Eturnagaram Oil Mill', mandalId: 'MAND16', managerId: 'USR007', capacityTonsPerDay: 500, contactMobile: '9876543210', status: 'Active', latitude: 18.37, longitude: 80.43, createdAt: pastDate(300), updatedAt: pastDate(45) },
+    { id: 'FACT02', name: 'Hasanparthy Processing Unit', mandalId: 'MAND11', managerId: 'USR007', capacityTonsPerDay: 350, contactMobile: '9876543211', status: 'Active', latitude: 18.06, longitude: 79.53, createdAt: pastDate(250), updatedAt: pastDate(30) },
+    { id: 'FACT03', name: 'Warangal Refinery', mandalId: 'MAND01', capacityTonsPerDay: 750, contactMobile: '9876543212', status: 'Inactive', createdAt: pastDate(400), updatedAt: pastDate(100) },
 ];
 
 export const mockPayments: Payment[] = [
@@ -82,15 +83,16 @@ export const mockQualityInspections: QualityInspection[] = [];
 
 // Master Data
 export const mockDistricts: District[] = [
-    { id: 'DIST01', name: 'Khammam', code: 1, status: 'Active', createdAt: pastDate(200), updatedAt: pastDate(10) },
-    { id: 'DIST02', name: 'Nalgonda', code: 2, status: 'Active', createdAt: pastDate(200), updatedAt: pastDate(10) },
-    { id: 'DIST03', name: 'Suryapet', code: 3, status: 'Active', createdAt: pastDate(200), updatedAt: pastDate(10) },
-    { id: 'DIST04', name: 'Bhadradri Kothagudem', code: 4, status: 'Inactive', createdAt: pastDate(200), updatedAt: pastDate(50) },
     { id: 'DIST05', name: 'Hanmakonda', code: 10, status: 'Active', createdAt: pastDate(150), updatedAt: pastDate(5) },
     { id: 'DIST06', name: 'Mulugu', code: 35, status: 'Active', createdAt: pastDate(120), updatedAt: pastDate(8) },
+    { id: 'DIST07', name: 'Warangal', code: 7, status: 'Active', createdAt: pastDate(200), updatedAt: pastDate(10) },
 ];
 
 export const mockMandals: Mandal[] = [
+    // Warangal Mandals (repurposed)
+    { id: 'MAND01', name: 'Warangal', districtId: 'DIST07', code: '01', status: 'Active', createdAt: pastDate(180), updatedAt: pastDate(5) },
+    { id: 'MAND02', name: 'Geesugonda', districtId: 'DIST07', code: '02', status: 'Active', createdAt: pastDate(180), updatedAt: pastDate(5) },
+    { id: 'MAND03', name: 'Narsampet', districtId: 'DIST07', code: '03', status: 'Active', createdAt: pastDate(180), updatedAt: pastDate(5) },
     // Hanmakonda Mandals
     { id: 'MAND07', name: 'Bheemadavarp', districtId: 'DIST05', code: '01', status: 'Active', createdAt: pastDate(180), updatedAt: pastDate(5) },
     { id: 'MAND08', name: 'Dharmasagar', districtId: 'DIST05', code: '02', status: 'Active', createdAt: pastDate(180), updatedAt: pastDate(5) },
@@ -111,10 +113,6 @@ export const mockMandals: Mandal[] = [
     { id: 'MAND22', name: 'Venkata Puram', districtId: 'DIST06', code: '07', status: 'Active', createdAt: pastDate(180), updatedAt: pastDate(5) },
     { id: 'MAND23', name: 'Venkatapur', districtId: 'DIST06', code: '08', status: 'Active', createdAt: pastDate(180), updatedAt: pastDate(5) },
     { id: 'MAND24', name: 'Wazeed', districtId: 'DIST06', code: '09', status: 'Active', createdAt: pastDate(180), updatedAt: pastDate(5) },
-    // Old Mandals for other districts
-    { id: 'MAND01', name: 'Khammam (Urban)', districtId: 'DIST01', code: '01', status: 'Active', createdAt: pastDate(180), updatedAt: pastDate(5) },
-    { id: 'MAND03', name: 'Nalgonda', districtId: 'DIST02', code: '01', status: 'Active', createdAt: pastDate(180), updatedAt: pastDate(5) },
-    { id: 'MAND05', name: 'Garidepally', districtId: 'DIST03', code: '01', status: 'Active', createdAt: pastDate(180), updatedAt: pastDate(5) },
 ];
 
 export const mockVillages: Village[] = [
@@ -309,9 +307,9 @@ export const mockVillages: Village[] = [
 ];
 
 export const mockOffices: Office[] = [
-    { id: 'OFF01', name: 'Head Office', type: 'Head Office', address: '8-2-293/82/A, Plot No 73, Rd Number 7, Jubilee Hills', mandalId: 'MAND01', contactPerson: 'Rajesh Gupta', contactMobile: '9123456784', status: 'Active', createdAt: pastDate(500), updatedAt: pastDate(10) },
-    { id: 'OFF02', name: 'Khammam Regional Office', type: 'Regional Office', address: 'Wyra Rd, Kaspapadu, Khammam', mandalId: 'MAND01', contactPerson: 'Sunita Sharma', contactMobile: '9123456781', status: 'Active', createdAt: pastDate(300), updatedAt: pastDate(20) },
-    { id: 'OFF03', name: 'Nalgonda Zonal Office', type: 'Zonal Office', address: 'Clock Tower Center, Nalgonda', mandalId: 'MAND03', contactPerson: 'Vijay Singh', contactMobile: '9123456782', status: 'Active', createdAt: pastDate(250), updatedAt: pastDate(30) },
+    { id: 'OFF01', name: 'Head Office', type: 'Head Office', address: '8-2-293/82/A, Plot No 73, Rd Number 7, Jubilee Hills', mandalId: 'MAND10', contactPerson: 'Rajesh Gupta', contactMobile: '9123456784', status: 'Active', createdAt: pastDate(500), updatedAt: pastDate(10) },
+    { id: 'OFF02', name: 'Warangal Regional Office', type: 'Regional Office', address: 'Naimnagar, Hanamkonda', mandalId: 'MAND10', contactPerson: 'Sunita Sharma', contactMobile: '9123456781', status: 'Active', createdAt: pastDate(300), updatedAt: pastDate(20) },
+    { id: 'OFF03', name: 'Mulugu Zonal Office', type: 'Zonal Office', address: 'Main Road, Mulugu', mandalId: 'MAND20', contactPerson: 'Vijay Singh', contactMobile: '9123456782', status: 'Active', createdAt: pastDate(250), updatedAt: pastDate(30) },
 ];
 
 // New Operations Mock Data
@@ -347,12 +345,12 @@ export const mockInspections: Inspection[] = [
 
 export const mockHOSanctions: HOSanction[] = [
     { id: 'HOS001', sanctionType: 'High Value Subsidy', relatedEntityId: 'SUB001', amount: 45000, status: 'Approved', submittedById: 'USR003', reviewedById: 'USR005', createdAt: pastDate(4), updatedAt: pastDate(1) },
-    { id: 'HOS002', sanctionType: 'Bulk Procurement Payment', relatedEntityId: 'PB003', amount: 33075, status: 'Pending Approval', submittedById: 'USR006', notes: 'Bulk payment for Nalgonda Hub, requires immediate approval.', createdAt: pastDate(2), updatedAt: pastDate(2) },
+    { id: 'HOS002', sanctionType: 'Bulk Procurement Payment', relatedEntityId: 'PB003', amount: 33075, status: 'Pending Approval', submittedById: 'USR006', notes: 'Bulk payment for Hasanparthy Hub, requires immediate approval.', createdAt: pastDate(2), updatedAt: pastDate(2) },
     { id: 'HOS003', sanctionType: 'Operational Expense', relatedEntityId: 'OPEX-Q3-LOGISTICS', amount: 150000, status: 'Rejected', submittedById: 'USR002', reviewedById: 'USR005', notes: 'Budget exceeded for this quarter. Resubmit with justification.', createdAt: pastDate(8), updatedAt: pastDate(3) },
     { id: 'HOS004', sanctionType: 'High Value Subsidy', relatedEntityId: 'SUB004', amount: 75000, status: 'Query Raised', submittedById: 'USR003', reviewedById: 'USR005', notes: 'Farmer eligibility requires re-verification based on new guidelines.', createdAt: pastDate(1), updatedAt: pastDate(1) },
 ];
 
-export const mockCultivationLogs: CultivationLog[] = [
+export const mockPlantationLogs: PlantationLog[] = [
     { id: 'PLOG001', farmerId: 'FARM001', landParcelId: 'LP001', activityType: 'Fertilizing', activityDate: pastDate(5).split('T')[0], materialsUsed: 'Urea, Potash', quantity: 50, unit: 'kg', cost: 2500, laborCount: 2, performedById: 'USR001', notes: 'Standard NPK application for pre-fruiting stage.', createdAt: pastDate(5), updatedAt: pastDate(5) },
     { id: 'PLOG002', farmerId: 'FARM002', landParcelId: 'LP003', activityType: 'Pest Control', activityDate: pastDate(10).split('T')[0], materialsUsed: 'Neem Oil', quantity: 5, unit: 'liters', cost: 1200, laborCount: 1, performedById: 'USR001', notes: 'Sprayed neem oil solution to control leaf-eating caterpillars.', createdAt: pastDate(10), updatedAt: pastDate(10) },
     { id: 'PLOG003', farmerId: 'FARM004', landParcelId: 'LP004', activityType: 'Weeding', activityDate: pastDate(2).split('T')[0], cost: 3000, laborCount: 4, performedById: 'USR001', notes: 'Manual weeding completed across 8 acres.', createdAt: pastDate(2), updatedAt: pastDate(2) },
@@ -375,7 +373,7 @@ export const mockMicroIrrigationInstallations: MicroIrrigationInstallation[] = [
 
 // Inventory Mock Data
 export const mockNurseryInventory: NurseryInventoryItem[] = [
-    { id: 'NINV001', name: 'Tenera Palm Seedling (6 months)', type: 'Seedling', quantity: 5000, unit: 'units', supplier: 'Govt. Nursery Khammam', purchaseDate: pastDate(30), costPerUnit: 150, createdAt: pastDate(30), updatedAt: pastDate(2) },
+    { id: 'NINV001', name: 'Tenera Palm Seedling (6 months)', type: 'Seedling', quantity: 5000, unit: 'units', supplier: 'Govt. Nursery Warangal', purchaseDate: pastDate(30), costPerUnit: 150, createdAt: pastDate(30), updatedAt: pastDate(2) },
     { id: 'NINV002', name: 'Urea (46-0-0)', type: 'Fertilizer', quantity: 250, unit: 'bags (50kg)', supplier: 'Coromandel International', purchaseDate: pastDate(15), costPerUnit: 300, createdAt: pastDate(15), updatedAt: pastDate(5) },
     { id: 'NINV003', name: 'Chlorpyrifos 20% EC', type: 'Pesticide', quantity: 100, unit: 'litres', supplier: 'Bayer CropScience', purchaseDate: pastDate(45), costPerUnit: 800, createdAt: pastDate(45), updatedAt: pastDate(10) },
     { id: 'NINV004', name: 'Harvesting Sickle', type: 'Tool', quantity: 50, unit: 'units', supplier: 'Local Agro Tools', purchaseDate: pastDate(60), costPerUnit: 450, createdAt: pastDate(60), updatedAt: pastDate(20) },

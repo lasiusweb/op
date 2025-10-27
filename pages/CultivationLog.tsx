@@ -1,19 +1,20 @@
+
 import React, { useState, useMemo, FormEvent, useRef } from 'react';
-import type { CultivationLog, CultivationActivityType, Farmer, LandParcel, User } from '../types';
-import { mockCultivationLogs, mockFarmersData, mockLandParcels, mockUsers } from '../data/mockData';
+import type { PlantationLog, PlantationActivityType, Farmer, LandParcel, User } from '../types';
+import { mockPlantationLogs, mockFarmersData, mockLandParcels, mockUsers } from '../data/mockData';
 import DashboardCard from '../components/DashboardCard';
 import { DocumentChartBarIcon, PencilIcon } from '../components/Icons';
 import { exportToCSV, exportToExcel } from '../services/exportService';
 import { exportElementAsPDF } from '../services/pdfService';
 
-const activityTypes: CultivationActivityType[] = ['Planting', 'Fertilizing', 'Pest Control', 'Weeding', 'Pruning', 'Harvesting', 'Soil Testing'];
+const activityTypes: PlantationActivityType[] = ['Planting', 'Fertilizing', 'Pest Control', 'Weeding', 'Pruning', 'Harvesting', 'Soil Testing'];
 
 const CultivationLogModal: React.FC<{
-    log: Partial<CultivationLog>;
+    log: Partial<PlantationLog>;
     farmers: Farmer[];
     landParcels: LandParcel[];
     users: User[];
-    onSave: (log: Partial<CultivationLog>) => void;
+    onSave: (log: Partial<PlantationLog>) => void;
     onCancel: () => void;
 }> = ({ log, farmers, landParcels, users, onSave, onCancel }) => {
     const [formData, setFormData] = useState(log);
@@ -109,18 +110,18 @@ const CultivationLogModal: React.FC<{
 
 
 const CultivationLog: React.FC = () => {
-    const [logs, setLogs] = useState<CultivationLog[]>(mockCultivationLogs);
+    const [logs, setLogs] = useState<PlantationLog[]>(mockPlantationLogs);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [currentLog, setCurrentLog] = useState<Partial<CultivationLog> | null>(null);
+    const [currentLog, setCurrentLog] = useState<Partial<PlantationLog> | null>(null);
     const [filterFarmer, setFilterFarmer] = useState<string>('All');
-    const [filterActivity, setFilterActivity] = useState<CultivationActivityType | 'All'>('All');
+    const [filterActivity, setFilterActivity] = useState<PlantationActivityType | 'All'>('All');
     const contentRef = useRef<HTMLDivElement>(null);
 
     const farmerMap = useMemo(() => new Map(mockFarmersData.map(f => [f.id, f.fullName])), []);
     const landParcelMap = useMemo(() => new Map(mockLandParcels.map(p => [p.id, p.surveyNumber])), []);
     const userMap = useMemo(() => new Map(mockUsers.map(u => [u.id, u.fullName])), []);
 
-    const handleOpenModal = (log?: CultivationLog) => {
+    const handleOpenModal = (log?: PlantationLog) => {
         const today = new Date().toISOString().split('T')[0];
         setCurrentLog(log || { activityDate: today });
         setIsModalOpen(true);
@@ -131,17 +132,17 @@ const CultivationLog: React.FC = () => {
         setCurrentLog(null);
     };
 
-    const handleSaveLog = (logData: Partial<CultivationLog>) => {
+    const handleSaveLog = (logData: Partial<PlantationLog>) => {
         const now = new Date().toISOString();
         if (logData.id) { // Edit
-            setLogs(logs.map(l => l.id === logData.id ? { ...l, ...logData, updatedAt: now } as CultivationLog : l));
+            setLogs(logs.map(l => l.id === logData.id ? { ...l, ...logData, updatedAt: now } as PlantationLog : l));
         } else { // Add
-            const newLog: CultivationLog = {
+            const newLog: PlantationLog = {
                 id: `PLOG${Date.now()}`,
                 createdAt: now,
                 updatedAt: now,
                 ...logData
-            } as CultivationLog;
+            } as PlantationLog;
             setLogs(prev => [newLog, ...prev]);
         }
         handleCloseModal();

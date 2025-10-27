@@ -11,13 +11,14 @@ import StrategicAdvisor from '../components/StrategicAdvisor';
 const procurementDistrictData = [
   { district: 'Hanmakonda', volume: 6800 },
   { district: 'Mulugu', volume: 5100 },
+  { district: 'Warangal', volume: 4500 },
 ];
 const procurementFarmerData = [
-  { rank: 1, name: 'R. Venkatesh', yield: 142.5, location: 'Hanmakonda' },
-  { rank: 2, name: 'S. Kumar', yield: 139.8, location: 'Hanmakonda' },
-  { rank: 3, name: 'M. Laxmi', yield: 135.1, location: 'Mulugu' },
-  { rank: 4, name: 'K. Srinivas', yield: 128.4, location: 'Mulugu' },
-  { rank: 5, name: 'G. Prasad', yield: 122.9, location: 'Hanmakonda' },
+  { rank: 1, name: 'R. Venkatesh', yield: 142.5, location: 'Warangal' },
+  { rank: 2, name: 'S. Kumar', yield: 139.8, location: 'Mulugu' },
+  { rank: 3, name: 'M. Laxmi', yield: 135.1, location: 'Warangal' },
+  { rank: 4, name: 'K. Srinivas', yield: 128.4, location: 'Hanmakonda' },
+  { rank: 5, name: 'G. Prasad', yield: 122.9, location: 'Mulugu' },
 ];
 const procurementTargetData = [
   { name: 'Monthly Target', value: 78, fill: '#06b6d4' },
@@ -63,8 +64,8 @@ const predictiveSupplyDemandData = [
 ];
 const predictiveAnomalyData = [
     { id: 1, type: 'Quality', description: 'Batch #B789 shows 15% lower oil content than average.', severity: 'High' },
-    { id: 2, type: 'Payment', description: 'Payment for Khammam center delayed by 3 days.', severity: 'Medium' },
-    { id: 3, type: 'Quantity', description: 'Nalgonda district yield is 20% below forecast.', severity: 'High' },
+    { id: 2, type: 'Payment', description: 'Payment for Warangal center delayed by 3 days.', severity: 'Medium' },
+    { id: 3, type: 'Quantity', description: 'Mulugu district yield is 20% below forecast.', severity: 'High' },
 ];
 
 const allDashboardData = {

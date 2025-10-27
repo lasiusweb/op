@@ -1,18 +1,27 @@
-import React, { useRef } from 'react';
-import type { User } from '../types';
+import React, { useRef, useState } from 'react';
+import type { User, UserRole } from '../types';
 import DashboardCard from '../components/DashboardCard';
 import { exportToCSV, exportToExcel } from '../services/exportService';
 import { exportElementAsPDF } from '../services/pdfService';
+import { ArrowUpTrayIcon } from '../components/Icons';
+import BulkImportModal from '../components/BulkImportModal';
 
 interface UsersProps {
   currentUser: User;
   allUsers: User[];
+  setAllUsers: React.Dispatch<React.SetStateAction<User[]>>;
   onViewProfile: (userId: string) => void;
 }
 
-const Users: React.FC<UsersProps> = ({ currentUser, allUsers, onViewProfile }) => {
+const userTemplateHeaders = [
+    "fullName", "role", "email", "mobile", "region", "status", "reportingManagerId"
+];
+const validRoles: UserRole[] = ['Admin', 'Field Agent', 'Reviewer', 'Accountant', 'Mandal Coordinator', 'Procurement Center Manager', 'Factory Manager'];
+
+const Users: React.FC<UsersProps> = ({ currentUser, allUsers, setAllUsers, onViewProfile }) => {
   const isAdmin = currentUser.role === 'Admin';
   const contentRef = useRef<HTMLDivElement>(null);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
   const handleExportPDF = () => {
     if (contentRef.current) {
@@ -40,6 +49,29 @@ const Users: React.FC<UsersProps> = ({ currentUser, allUsers, onViewProfile }) =
       exportToExcel([{ title: 'Users', data: getDataForExport() }], 'users_list');
   };
 
+    const handleImport = (newUsersData: any[]) => {
+        const now = new Date().toISOString();
+        const processedUsers: User[] = newUsersData.map((item, index) => {
+            const role = validRoles.includes(item.role) ? item.role : 'Field Agent';
+            const status = ['Active', 'Inactive'].includes(item.status) ? item.status : 'Active';
+            return {
+                id: `USR-IMP-${Date.now() + index}`,
+                fullName: item.fullName || 'Unnamed',
+                role: role,
+                email: item.email || '',
+                mobile: item.mobile || '',
+                region: item.region || 'Unassigned',
+                status: status,
+                reportingManagerId: item.reportingManagerId || undefined,
+                createdAt: now,
+                updatedAt: now,
+            };
+        });
+        setAllUsers(prev => [...prev, ...processedUsers]);
+        alert(`${processedUsers.length} new users imported successfully!`);
+        setIsImportModalOpen(false);
+    };
+
   const exportOptions = {
     csv: handleExportCSV,
     excel: handleExportExcel,
@@ -47,6 +79,14 @@ const Users: React.FC<UsersProps> = ({ currentUser, allUsers, onViewProfile }) =
   };
 
   return (
+    <>
+    <BulkImportModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        onImport={handleImport}
+        templateHeaders={userTemplateHeaders}
+        entityName="Users"
+    />
     <DashboardCard title="User & Role Management" exportOptions={exportOptions} contentRef={contentRef}>
        <div className="mb-4 flex justify-between items-center">
         <input 
@@ -55,9 +95,18 @@ const Users: React.FC<UsersProps> = ({ currentUser, allUsers, onViewProfile }) =
           className="bg-gray-800 border border-gray-700 rounded-md px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
         />
         {isAdmin && (
-            <button className="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-md transition-colors">
-              Add New User
-            </button>
+            <div className="flex items-center gap-4">
+                 <button 
+                    onClick={() => setIsImportModalOpen(true)}
+                    className="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-md transition-colors flex items-center gap-2"
+                >
+                    <ArrowUpTrayIcon className="h-5 w-5" />
+                    Import Users
+                </button>
+                <button className="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-md transition-colors">
+                  Add New User
+                </button>
+            </div>
         )}
       </div>
       <div className="overflow-x-auto rounded-lg border border-gray-700/50">
@@ -103,6 +152,7 @@ const Users: React.FC<UsersProps> = ({ currentUser, allUsers, onViewProfile }) =
         </table>
       </div>
     </DashboardCard>
+    </>
   );
 };
 

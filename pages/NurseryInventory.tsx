@@ -1,12 +1,14 @@
 import React, { useState, useMemo, FormEvent, useRef } from 'react';
 import type { NurseryInventoryItem, NurseryItemType } from '../types';
-import { mockNurseryInventory } from '../data/mockData';
 import DashboardCard from '../components/DashboardCard';
-import { PencilIcon, WrenchScrewdriverIcon } from '../components/Icons';
+import { PencilIcon, WrenchScrewdriverIcon, ArrowUpTrayIcon } from '../components/Icons';
 import { exportToCSV, exportToExcel } from '../services/exportService';
 import { exportElementAsPDF } from '../services/pdfService';
+import BulkImportModal from '../components/BulkImportModal';
+
 
 const itemTypes: NurseryItemType[] = ['Seedling', 'Fertilizer', 'Pesticide', 'Tool'];
+const itemTemplateHeaders = ["name", "type", "quantity", "unit", "supplier", "purchaseDate", "costPerUnit"];
 
 const NurseryInventoryModal: React.FC<{
     item: Partial<NurseryInventoryItem>;
@@ -74,11 +76,16 @@ const NurseryInventoryModal: React.FC<{
     );
 };
 
-const NurseryInventory: React.FC = () => {
-    const [inventory, setInventory] = useState<NurseryInventoryItem[]>(mockNurseryInventory);
+interface NurseryInventoryProps {
+    allItems: NurseryInventoryItem[];
+    setAllItems: React.Dispatch<React.SetStateAction<NurseryInventoryItem[]>>;
+}
+
+const NurseryInventory: React.FC<NurseryInventoryProps> = ({ allItems, setAllItems }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentItem, setCurrentItem] = useState<Partial<NurseryInventoryItem> | null>(null);
     const [filterType, setFilterType] = useState<NurseryItemType | 'All'>('All');
+    const [isImportModalOpen, setIsImportModalOpen] = useState(false);
     const contentRef = useRef<HTMLDivElement>(null);
 
     const handleOpenModal = (item?: NurseryInventoryItem) => {
@@ -91,7 +98,7 @@ const NurseryInventory: React.FC = () => {
     const handleSaveItem = (itemData: Partial<NurseryInventoryItem>) => {
         const now = new Date().toISOString();
         if (itemData.id) { // Edit
-            setInventory(inventory.map(i => i.id === itemData.id ? { ...i, ...itemData, updatedAt: now } as NurseryInventoryItem : i));
+            setAllItems(allItems.map(i => i.id === itemData.id ? { ...i, ...itemData, updatedAt: now } as NurseryInventoryItem : i));
         } else { // Add
             const newItem: NurseryInventoryItem = {
                 id: `NINV${Date.now()}`,
@@ -99,14 +106,36 @@ const NurseryInventory: React.FC = () => {
                 updatedAt: now,
                 ...itemData
             } as NurseryInventoryItem;
-            setInventory(prev => [newItem, ...prev]);
+            setAllItems(prev => [newItem, ...prev]);
         }
         handleCloseModal();
     };
 
+    const handleImport = (newItemsData: any[]) => {
+        const now = new Date().toISOString();
+        const processedItems: NurseryInventoryItem[] = newItemsData.map((item, index) => {
+            const itemType = itemTypes.includes(item.type) ? item.type : 'Tool';
+            return {
+                id: `NINV-IMP-${Date.now() + index}`,
+                name: item.name || 'Unnamed Item',
+                type: itemType,
+                quantity: Number(item.quantity) || 0,
+                unit: item.unit || 'units',
+                supplier: item.supplier || 'Unknown',
+                purchaseDate: item.purchaseDate || new Date().toISOString().split('T')[0],
+                costPerUnit: Number(item.costPerUnit) || 0,
+                createdAt: now,
+                updatedAt: now,
+            };
+        });
+        setAllItems(prev => [...prev, ...processedItems]);
+        alert(`${processedItems.length} new items imported successfully!`);
+        setIsImportModalOpen(false);
+    };
+
     const filteredInventory = useMemo(() => {
-        return inventory.filter(item => filterType === 'All' || item.type === filterType);
-    }, [inventory, filterType]);
+        return allItems.filter(item => filterType === 'All' || item.type === filterType);
+    }, [allItems, filterType]);
     
     const handleExportPDF = () => {
         if (contentRef.current) {
@@ -142,6 +171,14 @@ const NurseryInventory: React.FC = () => {
     };
 
     return (
+        <>
+        <BulkImportModal
+            isOpen={isImportModalOpen}
+            onClose={() => setIsImportModalOpen(false)}
+            onImport={handleImport}
+            templateHeaders={itemTemplateHeaders}
+            entityName="Nursery Inventory Items"
+        />
         <DashboardCard title="Nursery Inventory" icon={<WrenchScrewdriverIcon />} exportOptions={exportOptions} contentRef={contentRef}>
             {isModalOpen && currentItem && (
                 <NurseryInventoryModal item={currentItem} onSave={handleSaveItem} onCancel={handleCloseModal} />
@@ -154,9 +191,18 @@ const NurseryInventory: React.FC = () => {
                        {itemTypes.map(t => <option key={t} value={t}>{t}</option>)}
                     </select>
                 </div>
-                <button onClick={() => handleOpenModal()} className="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-md transition-colors">
-                    Add New Item
-                </button>
+                <div className="flex items-center gap-4">
+                     <button 
+                        onClick={() => setIsImportModalOpen(true)}
+                        className="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-md transition-colors flex items-center gap-2"
+                    >
+                        <ArrowUpTrayIcon className="h-5 w-5" />
+                        Import Items
+                    </button>
+                    <button onClick={() => handleOpenModal()} className="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-md transition-colors">
+                        Add New Item
+                    </button>
+                </div>
             </div>
             <div className="overflow-x-auto rounded-lg border border-gray-700/50">
                 <table className="w-full text-sm text-left text-gray-400">
@@ -189,6 +235,7 @@ const NurseryInventory: React.FC = () => {
                 </table>
             </div>
         </DashboardCard>
+        </>
     );
 };
 

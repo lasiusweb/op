@@ -1,3 +1,4 @@
+
 export interface DistrictVolume {
   district: string;
   volume: number;
@@ -281,13 +282,13 @@ export interface HOSanction {
   updatedAt: string;
 }
 
-export type CultivationActivityType = 'Planting' | 'Fertilizing' | 'Pest Control' | 'Weeding' | 'Pruning' | 'Harvesting' | 'Soil Testing';
+export type PlantationActivityType = 'Planting' | 'Fertilizing' | 'Pest Control' | 'Weeding' | 'Pruning' | 'Harvesting' | 'Soil Testing';
 
-export interface CultivationLog {
+export interface PlantationLog {
   id: string;
   farmerId: string;
   landParcelId: string;
-  activityType: CultivationActivityType;
+  activityType: PlantationActivityType;
   activityDate: string;
   materialsUsed?: string;
   quantity?: number;
