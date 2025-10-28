@@ -140,7 +140,7 @@ const ProcurementCenterMaster: React.FC = () => {
     const handleSaveCenter = (centerData: Partial<ProcurementCenter>) => {
         const now = new Date().toISOString();
         if (centerData.id) { // Edit
-            // FIX: Cast the updated center object to the `ProcurementCenter` type to resolve a TypeScript error where the `status` property from form data is inferred as a generic `string`, which is not assignable to the more specific `'Active' | 'Inactive'` type.
+            // FIX: Cast the updated center object to the `ProcurementCenter` type to resolve TypeScript error.
             setCenters(centers.map(c => c.id === centerData.id ? { ...c, ...centerData, updatedAt: now } as ProcurementCenter : c));
         } else { // Add
             const newCenter: ProcurementCenter = {

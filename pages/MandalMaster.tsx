@@ -108,7 +108,7 @@ const MandalMaster: React.FC = () => {
     const handleSaveMandal = (mandalData: Partial<Mandal>) => {
         const now = new Date().toISOString();
         if (mandalData.id) { // Edit
-            // FIX: Cast the updated mandal object to the `Mandal` type to resolve a TypeScript error where the `status` property from form data is inferred as a generic `string`, which is not assignable to the more specific `'Active' | 'Inactive'` type.
+            // FIX: Cast the updated mandal object to the `Mandal` type to resolve TypeScript error.
             setMandals(mandals.map(m => m.id === mandalData.id ? { ...m, ...mandalData, updatedAt: now } as Mandal : m));
         } else { // Add
             const newMandal: Mandal = {

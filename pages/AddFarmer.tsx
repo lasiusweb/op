@@ -96,6 +96,7 @@ const labelMap: { [key: string]: string } = {
 };
 
 const AddFarmer: React.FC<AddFarmerProps> = ({ onAddFarmer, onCancel, allFarmers }) => {
+    const [currentStep, setCurrentStep] = useState(1);
     const [formData, setFormData] = useState<any>({
         gender: 'Male',
         cropType: 'Oil Palm',
@@ -123,7 +124,7 @@ const AddFarmer: React.FC<AddFarmerProps> = ({ onAddFarmer, onCancel, allFarmers
     const videoRef = useRef<HTMLVideoElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
-
+    const TOTAL_STEPS = 6;
     const fieldAgents = useMemo(() => mockUsers.filter(u => u.role === 'Field Agent'), []);
 
     // Handle location dropdown filtering
@@ -204,46 +205,59 @@ const AddFarmer: React.FC<AddFarmerProps> = ({ onAddFarmer, onCancel, allFarmers
     }, [formData.districtId, formData.mandalId, formData.villageId, allFarmers]);
 
 
-    const validate = useCallback((data: any): FormErrors => {
+    const validateStep = (step: number) => {
         const newErrors: FormErrors = {};
+        switch (step) {
+            case 1:
+                if (!formData.districtId) newErrors.districtId = "District is required.";
+                if (!formData.mandalId) newErrors.mandalId = "Mandal is required.";
+                if (!formData.villageId) newErrors.villageId = "Village is required.";
+                if (farmerId.startsWith('Select')) newErrors.farmerId = "Please select a valid location to generate the Farmer ID.";
+                break;
+            case 2:
+                if (!formData.fullName) newErrors.fullName = "Full name is required.";
+                if (!formData.fatherName) newErrors.fatherName = "Father's name is required.";
+                if (!formData.mobile) newErrors.mobile = "Mobile number is required.";
+                else if (!/^[6-9]\d{9}$/.test(formData.mobile)) newErrors.mobile = "Must be a valid 10-digit Indian mobile number.";
+                if (!formData.aadhaar) newErrors.aadhaar = "Aadhaar number is required.";
+                else if (!/^\d{12}$/.test(formData.aadhaar)) newErrors.aadhaar = "Aadhaar must be 12 digits.";
+                if (!formData.dob) newErrors.dob = "Date of birth is required.";
+                else if (new Date(formData.dob) > new Date()) newErrors.dob = "Date of birth cannot be in the future.";
+                if (!formData.caste) newErrors.caste = "Caste is required.";
+                break;
+            case 4:
+                if (!formData.surveyNumber) newErrors.surveyNumber = "Survey number is required.";
+                if (formData.areaAcres === undefined || formData.areaAcres === '') newErrors.areaAcres = "Area is required.";
+                else if (Number(formData.areaAcres) <= 0) newErrors.areaAcres = "Area must be greater than 0.";
+                if (formData.mlrdPlants === undefined || formData.mlrdPlants === '') newErrors.mlrdPlants = "MLRD plants count is required.";
+                else if (Number(formData.mlrdPlants) < 0) newErrors.mlrdPlants = "Cannot be a negative number.";
+                if (formData.fullCostPlants === undefined || formData.fullCostPlants === '') newErrors.fullCostPlants = "Full cost plants count is required.";
+                else if (Number(formData.fullCostPlants) < 0) newErrors.fullCostPlants = "Cannot be a negative number.";
+                break;
+            case 5:
+                if (!formData.bankName) newErrors.bankName = "Bank name is required.";
+                if (!formData.bankAccountNumber) newErrors.bankAccountNumber = "Account number is required.";
+                else if (!/^\d{9,18}$/.test(formData.bankAccountNumber)) newErrors.bankAccountNumber = "Account number must be between 9 and 18 digits.";
+                if (!formData.ifscCode) newErrors.ifscCode = "IFSC code is required.";
+                else if (!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(formData.ifscCode.toUpperCase())) newErrors.ifscCode = "Invalid IFSC code format (e.g., ABCD0123456).";
+                if (!formData.assignedAgentId) newErrors.assignedAgentId = "An agent must be assigned.";
+                break;
+            default:
+                break;
+        }
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
-        // Location
-        if (!data.districtId) newErrors.districtId = "District is required.";
-        if (!data.mandalId) newErrors.mandalId = "Mandal is required.";
-        if (!data.villageId) newErrors.villageId = "Village is required.";
-        
-        // Personal Info
-        if (!data.fullName) newErrors.fullName = "Full name is required.";
-        if (!data.fatherName) newErrors.fatherName = "Father's name is required.";
-        if (!data.mobile) newErrors.mobile = "Mobile number is required.";
-        else if (!/^[6-9]\d{9}$/.test(data.mobile)) newErrors.mobile = "Must be a valid 10-digit Indian mobile number.";
-        if (!data.aadhaar) newErrors.aadhaar = "Aadhaar number is required.";
-        else if (!/^\d{12}$/.test(data.aadhaar)) newErrors.aadhaar = "Aadhaar must be 12 digits.";
-        if (!data.dob) newErrors.dob = "Date of birth is required.";
-        else if (new Date(data.dob) > new Date()) newErrors.dob = "Date of birth cannot be in the future.";
-        if (!data.caste) newErrors.caste = "Caste is required.";
+    const handleNext = () => {
+        if (validateStep(currentStep)) {
+            setCurrentStep(prev => Math.min(prev + 1, TOTAL_STEPS));
+        }
+    };
 
-        // Plantation & Land
-        if (!data.surveyNumber) newErrors.surveyNumber = "Survey number is required.";
-        if (data.areaAcres === undefined || data.areaAcres === '') newErrors.areaAcres = "Area is required.";
-        else if (Number(data.areaAcres) <= 0) newErrors.areaAcres = "Area must be greater than 0.";
-        if (data.mlrdPlants === undefined || data.mlrdPlants === '') newErrors.mlrdPlants = "MLRD plants count is required.";
-        else if (Number(data.mlrdPlants) < 0) newErrors.mlrdPlants = "Cannot be a negative number.";
-        if (data.fullCostPlants === undefined || data.fullCostPlants === '') newErrors.fullCostPlants = "Full cost plants count is required.";
-        else if (Number(data.fullCostPlants) < 0) newErrors.fullCostPlants = "Cannot be a negative number.";
-
-        // Bank Info
-        if (!data.bankName) newErrors.bankName = "Bank name is required.";
-        if (!data.bankAccountNumber) newErrors.bankAccountNumber = "Account number is required.";
-        else if (!/^\d{9,18}$/.test(data.bankAccountNumber)) newErrors.bankAccountNumber = "Account number must be between 9 and 18 digits.";
-        if (!data.ifscCode) newErrors.ifscCode = "IFSC code is required.";
-        else if (!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(data.ifscCode.toUpperCase())) newErrors.ifscCode = "Invalid IFSC code format (e.g., ABCD0123456).";
-        
-        // Assignment
-        if (!data.assignedAgentId) newErrors.assignedAgentId = "An agent must be assigned.";
-
-        return newErrors;
-    }, []);
+    const handlePrevious = () => {
+        setCurrentStep(prev => Math.max(prev - 1, 1));
+    };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -356,26 +370,27 @@ const AddFarmer: React.FC<AddFarmerProps> = ({ onAddFarmer, onCancel, allFarmers
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        const validationErrors = validate(formData);
-        setErrors(validationErrors);
+        // One final validation of all fields before submitting
+        const allFieldNames = [
+            ...Object.keys(labelMap),
+            ...Object.keys(formData)
+        ];
+        const finalErrors: FormErrors = {};
+        allFieldNames.forEach(key => {
+            const step1Errors = validateStep(1);
+            const step2Errors = validateStep(2);
+            const step4Errors = validateStep(4);
+            const step5Errors = validateStep(5);
+            Object.assign(finalErrors, step1Errors, step2Errors, step4Errors, step5Errors);
+        });
 
-        if (Object.keys(validationErrors).length > 0) {
-            const firstErrorField = Object.keys(validationErrors)[0];
-            if (firstErrorField) {
-                const element = document.getElementsByName(firstErrorField)[0];
-                if (element) {
-                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-            }
-            return;
-        }
-
-        if (farmerId.startsWith('Select')) {
-            setErrors(prev => ({ ...prev, villageId: 'Please select a valid location to generate the Farmer ID.' }));
-            const element = document.getElementsByName('villageId')[0];
-            if (element) {
-                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
+        if (Object.keys(finalErrors).length > 0) {
+            setErrors(finalErrors);
+            // Find the first step with an error and navigate to it
+            if (finalErrors.districtId || finalErrors.mandalId || finalErrors.villageId) setCurrentStep(1);
+            else if (finalErrors.fullName || finalErrors.fatherName || finalErrors.mobile || finalErrors.aadhaar || finalErrors.dob || finalErrors.caste) setCurrentStep(2);
+            else if (finalErrors.surveyNumber || finalErrors.areaAcres || finalErrors.mlrdPlants || finalErrors.fullCostPlants) setCurrentStep(4);
+            else if (finalErrors.bankName || finalErrors.bankAccountNumber || finalErrors.ifscCode || finalErrors.assignedAgentId) setCurrentStep(5);
             return;
         }
 
@@ -435,7 +450,6 @@ const AddFarmer: React.FC<AddFarmerProps> = ({ onAddFarmer, onCancel, allFarmers
     
         const finalClassName = `${commonClasses} ${error ? errorClasses : normalClasses} ${readOnly ? readOnlyClasses : ''}`;
         
-        // Clone children (e.g., a select element) to inject shared props
         const childWithProps = children ? React.cloneElement(children, {
             className: `${finalClassName} ${disabledClasses}`,
             id: name,
@@ -521,135 +535,156 @@ const AddFarmer: React.FC<AddFarmerProps> = ({ onAddFarmer, onCancel, allFarmers
         </div>
     );
 
+    const StepIndicator = () => {
+        const steps = [
+            "Location", "Personal Info", "Photo", "Land Details", "Bank & Assignment", "Review"
+        ];
+        return (
+            <nav aria-label="Progress">
+                <ol role="list" className="space-y-4 md:flex md:space-x-8 md:space-y-0 mb-8">
+                    {steps.map((stepName, stepIdx) => (
+                        <li key={stepName} className="md:flex-1">
+                            {stepIdx < currentStep ? (
+                                <div className="group flex w-full flex-col border-l-4 border-teal-500 py-2 pl-4 transition-colors md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4">
+                                    <span className="text-sm font-medium text-teal-500 transition-colors ">{`Step ${stepIdx + 1}`}</span>
+                                    <span className="text-sm font-medium text-gray-300">{stepName}</span>
+                                </div>
+                            ) : stepIdx === currentStep - 1 ? (
+                                <div className="flex w-full flex-col border-l-4 border-teal-500 py-2 pl-4 md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4" aria-current="step">
+                                    <span className="text-sm font-medium text-teal-500">{`Step ${stepIdx + 1}`}</span>
+                                    <span className="text-sm font-medium text-white">{stepName}</span>
+                                </div>
+                            ) : (
+                                <div className="group flex w-full flex-col border-l-4 border-gray-600 py-2 pl-4 transition-colors md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4">
+                                    <span className="text-sm font-medium text-gray-500 transition-colors">{`Step ${stepIdx + 1}`}</span>
+                                    <span className="text-sm font-medium text-gray-500">{stepName}</span>
+                                </div>
+                            )}
+                        </li>
+                    ))}
+                </ol>
+            </nav>
+        );
+    };
 
     return (
         <DashboardCard title="New Farmer Registration">
             {isCameraOpen && <CameraModal />}
             {imageToCrop && <ImageCropperModal />}
+            
+            <StepIndicator />
+
             <form onSubmit={handleSubmit} className="space-y-8">
-                {Object.keys(errors).length > 0 && (
-                    <div className="bg-red-900/30 border border-red-500/50 text-red-300 px-4 py-3 rounded-lg flex gap-3" role="alert">
-                        <ExclamationCircleIcon className="h-6 w-6 flex-shrink-0 mt-0.5"/>
+                {currentStep === 1 && (
+                     <fieldset className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-end">
+                        <legend className="text-lg font-semibold text-teal-400 w-full col-span-full border-b border-gray-700 pb-2 mb-2">Location & ID Generation</legend>
+                        <FormInput name="districtId" label="District" required error={errors.districtId}>
+                            <select><option value="">-- Select District --</option>{mockDistricts.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}</select>
+                        </FormInput>
+                        <FormInput name="mandalId" label="Mandal" required error={errors.mandalId}>
+                            <select disabled={!formData.districtId}><option value="">-- Select Mandal --</option>{filteredMandals.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}</select>
+                        </FormInput>
+                        <FormInput name="villageId" label="Village" required error={errors.villageId}>
+                            <select disabled={!formData.mandalId}><option value="">-- Select Village --</option>{filteredVillages.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}</select>
+                        </FormInput>
+                        <FormInput name="farmerId" label="Generated Farmer ID" readOnly value={farmerId} type="text" error={errors.farmerId}/>
+                    </fieldset>
+                )}
+
+                {currentStep === 2 && (
+                    <fieldset className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <legend className="text-lg font-semibold text-teal-400 w-full col-span-full border-b border-gray-700 pb-2 mb-2">Personal Information</legend>
+                        <FormInput name="fullName" label="Full Name" required error={errors.fullName} />
+                        <FormInput name="fatherName" label="Father's Name" required error={errors.fatherName} />
+                        <FormInput name="mobile" label="Mobile Number" required type="tel" error={errors.mobile} />
+                        <FormInput name="aadhaar" label="Aadhaar Number" required error={errors.aadhaar} />
+                        <FormInput name="dob" label="Date of Birth" required type="date" error={errors.dob} />
+                        <FormInput name="gender" label="Gender" error={errors.gender}><select><option value="Male">Male</option><option value="Female">Female</option><option value="Other">Other</option></select></FormInput>
+                        <FormInput name="caste" label="Caste" required error={errors.caste}><select><option value="">-- Select Caste --</option><option>BC</option><option>OC</option><option>SC</option><option>ST</option></select></FormInput>
+                    </fieldset>
+                )}
+                
+                {currentStep === 3 && (
+                    <fieldset>
+                        <legend className="text-lg font-semibold text-teal-400 w-full col-span-full border-b border-gray-700 pb-2 mb-2">Farmer Photo</legend>
+                        <div className="flex flex-col md:flex-row items-center gap-6 mt-4">
+                            <div className="flex-shrink-0">
+                                {photoUrl ? (<img src={photoUrl} alt="Farmer preview" className="h-40 w-40 rounded-full object-cover border-4 border-gray-600" />) 
+                                : (<div className="h-40 w-40 rounded-full bg-gray-700 flex items-center justify-center border-4 border-gray-600"><UserCircleIcon className="h-32 w-32 text-gray-500" /></div>)}
+                            </div>
+                            <div className="flex flex-col gap-4">
+                                <input type="file" accept="image/jpeg,image/png,image/gif" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
+                                <button type="button" onClick={handleUploadClick} className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md flex items-center justify-center gap-2"><ArrowUpTrayIcon className="h-5 w-5"/> Upload Photo</button>
+                                <button type="button" onClick={openCamera} className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md flex items-center justify-center gap-2"><CameraIcon className="h-5 w-5"/> Take Photo</button>
+                                {photoError && <p className="text-red-400 text-xs">{photoError}</p>}
+                                <p className="text-xs text-gray-400">Upload or take a recent, clear photo of the farmer. (Max 5MB)</p>
+                            </div>
+                        </div>
+                    </fieldset>
+                )}
+
+                {currentStep === 4 && (
+                     <fieldset className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <legend className="text-lg font-semibold text-teal-400 w-full col-span-full border-b border-gray-700 pb-2 mb-2">Plantation & Land Details</legend>
+                        <FormInput name="surveyNumber" label="Survey Number" required error={errors.surveyNumber}/>
+                        <FormInput name="areaAcres" label="Total Area (in Acres)" required type="number" error={errors.areaAcres} />
+                        <FormInput name="mlrdPlants" label="MLRD Plants" required type="number" error={errors.mlrdPlants} />
+                        <FormInput name="fullCostPlants" label="Full Cost Plants" required type="number" error={errors.fullCostPlants} />
                         <div>
-                            <strong className="font-bold">Please correct the {Object.keys(errors).length} error(s) below to proceed.</strong>
-                            <ul className="mt-2 list-disc list-inside text-sm">
-                                {Object.keys(errors).map(key => labelMap[key] ? <li key={key}><strong>{labelMap[key]}:</strong> {errors[key as keyof FormErrors]}</li> : null)}
-                            </ul>
+                            <label className="block text-sm font-medium text-gray-300 mb-1">Total Plants</label>
+                            <input type="text" value={formData.totalPlants || 0} readOnly className="w-full bg-gray-800/50 border border-gray-600 rounded-md px-3 py-2 text-gray-300 cursor-not-allowed" />
+                            {plantAreaValidation && (<p className="text-yellow-400 text-xs mt-1">{plantAreaValidation}</p>)}
+                        </div>
+                        <FormInput name="plantationType" label="Plantation Type" error={errors.plantationType}><select><option>Monocrop</option><option>Intercrop</option></select></FormInput>
+                    </fieldset>
+                )}
+
+                {currentStep === 5 && (
+                    <fieldset className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <legend className="text-lg font-semibold text-teal-400 w-full col-span-full border-b border-gray-700 pb-2 mb-2">Bank & Assignment</legend>
+                        <FormInput name="bankName" label="Bank Name" required error={errors.bankName} />
+                        <FormInput name="bankAccountNumber" label="Account Number" required error={errors.bankAccountNumber} />
+                        <FormInput name="ifscCode" label="IFSC Code" required error={errors.ifscCode} />
+                        <div className="md:col-span-3">
+                            <FormInput name="assignedAgentId" label="Assign Field Agent" required error={errors.assignedAgentId}>
+                                <select><option value="">-- Select Agent --</option>{fieldAgents.map(a => <option key={a.id} value={a.id}>{a.fullName}</option>)}</select>
+                            </FormInput>
+                        </div>
+                    </fieldset>
+                )}
+                
+                {currentStep === 6 && (
+                    <div>
+                        <legend className="text-lg font-semibold text-teal-400 w-full col-span-full border-b border-gray-700 pb-2 mb-2">Review & Submit</legend>
+                        <div className="bg-gray-900/50 p-6 rounded-lg space-y-4">
+                            <h3 className="text-xl font-bold text-white">{formData.fullName}</h3>
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+                                <p><strong className="text-gray-400 block">Farmer ID:</strong> {farmerId}</p>
+                                <p><strong className="text-gray-400 block">Mobile:</strong> {formData.mobile}</p>
+                                <p><strong className="text-gray-400 block">Location:</strong> {mockVillages.find(v => v.id === formData.villageId)?.name}, {mockMandals.find(m => m.id === formData.mandalId)?.name}</p>
+                                <p><strong className="text-gray-400 block">Survey No:</strong> {formData.surveyNumber}</p>
+                                <p><strong className="text-gray-400 block">Area:</strong> {formData.areaAcres} Acres</p>
+                                <p><strong className="text-gray-400 block">Total Plants:</strong> {formData.totalPlants}</p>
+                                <p><strong className="text-gray-400 block">Assigned Agent:</strong> {mockUsers.find(u => u.id === formData.assignedAgentId)?.fullName}</p>
+                            </div>
+                             {Object.keys(errors).length > 0 && (
+                                <div className="bg-red-900/30 border border-red-500/50 text-red-300 px-4 py-3 rounded-lg text-sm">
+                                    <p><strong>Warning:</strong> Some fields have errors. Please go back and correct them.</p>
+                                </div>
+                            )}
                         </div>
                     </div>
                 )}
                 
-                <fieldset className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-end">
-                    <legend className="text-lg font-semibold text-teal-400 w-full col-span-full border-b border-gray-700 pb-2 mb-2">Location & ID Generation</legend>
-                    <FormInput name="districtId" label="District" required error={errors.districtId}>
-                        <select>
-                            <option value="">-- Select District --</option>
-                            {mockDistricts.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
-                        </select>
-                    </FormInput>
-                    <FormInput name="mandalId" label="Mandal" required error={errors.mandalId}>
-                        <select disabled={!formData.districtId}>
-                            <option value="">-- Select Mandal --</option>
-                            {filteredMandals.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
-                        </select>
-                    </FormInput>
-                    <FormInput name="villageId" label="Village" required error={errors.villageId}>
-                         <select disabled={!formData.mandalId}>
-                            <option value="">-- Select Village --</option>
-                            {filteredVillages.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}
-                        </select>
-                    </FormInput>
-                     <FormInput name="farmerId" label="Generated Farmer ID" readOnly value={farmerId} type="text"/>
-                </fieldset>
-
-                <fieldset className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <legend className="text-lg font-semibold text-teal-400 w-full col-span-full border-b border-gray-700 pb-2 mb-2">Personal Information</legend>
-                    <FormInput name="fullName" label="Full Name" required error={errors.fullName} />
-                    <FormInput name="fatherName" label="Father's Name" required error={errors.fatherName} />
-                    <FormInput name="mobile" label="Mobile Number" required type="tel" error={errors.mobile} />
-                    <FormInput name="aadhaar" label="Aadhaar Number" required error={errors.aadhaar} />
-                    <FormInput name="dob" label="Date of Birth" required type="date" error={errors.dob} />
-                    <FormInput name="gender" label="Gender" error={errors.gender}>
-                         <select>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </FormInput>
-                    <FormInput name="caste" label="Caste" required error={errors.caste}>
-                         <select>
-                            <option value="">-- Select Caste --</option>
-                            <option value="BC">BC</option><option value="OC">OC</option><option value="SC">SC</option><option value="ST">ST</option>
-                        </select>
-                    </FormInput>
-                </fieldset>
-
-                <fieldset>
-                    <legend className="text-lg font-semibold text-teal-400 w-full col-span-full border-b border-gray-700 pb-2 mb-2">Farmer Photo</legend>
-                    <div className="flex flex-col md:flex-row items-center gap-6 mt-4">
-                        <div className="flex-shrink-0">
-                            {photoUrl ? (
-                                <img src={photoUrl} alt="Farmer preview" className="h-40 w-40 rounded-full object-cover border-4 border-gray-600" />
-                            ) : (
-                                <div className="h-40 w-40 rounded-full bg-gray-700 flex items-center justify-center border-4 border-gray-600">
-                                    <UserCircleIcon className="h-32 w-32 text-gray-500" />
-                                </div>
-                            )}
-                        </div>
-                        <div className="flex flex-col gap-4">
-                            <input type="file" accept="image/jpeg,image/png,image/gif" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
-                            <button type="button" onClick={handleUploadClick} className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md flex items-center justify-center gap-2">
-                                <ArrowUpTrayIcon className="h-5 w-5"/> Upload Photo
-                            </button>
-                            <button type="button" onClick={openCamera} className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md flex items-center justify-center gap-2">
-                               <CameraIcon className="h-5 w-5"/> Take Photo
-                            </button>
-                             {photoError && <p className="text-red-400 text-xs">{photoError}</p>}
-                            <p className="text-xs text-gray-400">Upload or take a recent, clear photo of the farmer. (Max 5MB)</p>
-                        </div>
-                    </div>
-                </fieldset>
-
-                 <fieldset className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <legend className="text-lg font-semibold text-teal-400 w-full col-span-full border-b border-gray-700 pb-2 mb-2">Plantation & Land Details</legend>
-                    <FormInput name="surveyNumber" label="Survey Number" required error={errors.surveyNumber}/>
-                    <FormInput name="areaAcres" label="Total Area (in Acres)" required type="number" error={errors.areaAcres} />
-                    <FormInput name="mlrdPlants" label="MLRD Plants" required type="number" error={errors.mlrdPlants} />
-                    <FormInput name="fullCostPlants" label="Full Cost Plants" required type="number" error={errors.fullCostPlants} />
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Total Plants</label>
-                        <input type="text" value={formData.totalPlants || 0} readOnly className="w-full bg-gray-800/50 border border-gray-600 rounded-md px-3 py-2 text-gray-300 cursor-not-allowed" />
-                        {plantAreaValidation && (
-                            <p className="text-yellow-400 text-xs mt-1">{plantAreaValidation}</p>
-                        )}
-                    </div>
-                     <FormInput name="plantationType" label="Plantation Type" error={errors.plantationType}>
-                         <select>
-                            <option>Monocrop</option><option>Intercrop</option>
-                        </select>
-                    </FormInput>
-                </fieldset>
-
-                <fieldset className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <legend className="text-lg font-semibold text-teal-400 w-full col-span-full border-b border-gray-700 pb-2 mb-2">Bank Information</legend>
-                    <FormInput name="bankName" label="Bank Name" required error={errors.bankName} />
-                    <FormInput name="bankAccountNumber" label="Account Number" required error={errors.bankAccountNumber} />
-                    <FormInput name="ifscCode" label="IFSC Code" required error={errors.ifscCode} />
-                </fieldset>
-
-                <fieldset className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                     <legend className="text-lg font-semibold text-teal-400 w-full col-span-full border-b border-gray-700 pb-2 mb-2">Assignment</legend>
-                     <FormInput name="assignedAgentId" label="Assign Field Agent" required error={errors.assignedAgentId}>
-                         <select>
-                            <option value="">-- Select Agent --</option>
-                            {fieldAgents.map(a => <option key={a.id} value={a.id}>{a.fullName}</option>)}
-                        </select>
-                    </FormInput>
-                </fieldset>
-
-                <div className="flex justify-end gap-4 pt-4">
-                    <button type="button" onClick={onCancel} className="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-6 rounded-md transition-colors">Cancel</button>
-                    <button type="submit" className="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-6 rounded-md transition-colors">Save Farmer</button>
+                <div className="flex justify-between gap-4 pt-4">
+                    <button type="button" onClick={currentStep === 1 ? onCancel : handlePrevious} className="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-6 rounded-md transition-colors">
+                        {currentStep === 1 ? 'Cancel' : 'Previous'}
+                    </button>
+                    {currentStep < TOTAL_STEPS ? (
+                        <button type="button" onClick={handleNext} className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-md transition-colors">Next</button>
+                    ) : (
+                        <button type="submit" className="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-6 rounded-md transition-colors">Save Farmer</button>
+                    )}
                 </div>
             </form>
         </DashboardCard>

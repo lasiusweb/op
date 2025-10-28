@@ -2,7 +2,6 @@ import React, { useState, useMemo, FormEvent } from 'react';
 import type { Factory, User, Mandal, District } from '../types';
 import { mockFactories, mockUsers, mockMandals, mockDistricts } from '../data/mockData';
 import DashboardCard from '../components/DashboardCard';
-// FIX: Revert placeholder icon and use the newly added `BuildingOfficeIcon`.
 import { PencilIcon, BuildingOfficeIcon } from '../components/Icons';
 
 const Highlight: React.FC<{ text: string; highlight: string }> = ({ text, highlight }) => {
@@ -139,7 +138,7 @@ const FactoryMaster: React.FC = () => {
     const handleSaveFactory = (factoryData: Partial<Factory>) => {
         const now = new Date().toISOString();
         if (factoryData.id) { // Edit
-            // FIX: Cast the updated factory object to the `Factory` type to resolve a TypeScript error where the `status` property from form data is inferred as a generic `string`, which is not assignable to the more specific `'Active' | 'Inactive'` type.
+            // FIX: Cast the updated factory object to the `Factory` type to resolve TypeScript error.
             setFactories(factories.map(c => c.id === factoryData.id ? { ...c, ...factoryData, updatedAt: now } as Factory : c));
         } else { // Add
             const newFactory: Factory = {

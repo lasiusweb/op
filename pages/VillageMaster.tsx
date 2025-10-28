@@ -109,7 +109,7 @@ const VillageMaster: React.FC = () => {
     const handleSaveVillage = (villageData: Partial<Village>) => {
         const now = new Date().toISOString();
         if (villageData.id) { // Edit
-            // FIX: Cast the updated village object to the `Village` type to resolve a TypeScript error where the `status` property from form data is inferred as a generic `string`, which is not assignable to the more specific `'Active' | 'Inactive'` type.
+            // FIX: Cast the updated village object to the `Village` type to resolve TypeScript error.
             setVillages(villages.map(v => v.id === villageData.id ? ({ ...v, ...villageData, updatedAt: now } as Village) : v));
         } else { // Add
             const newVillage: Village = {

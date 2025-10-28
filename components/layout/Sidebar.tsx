@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CubeIcon, PeopleIcon, UserGroupIcon, ClipboardListIcon, GlobeAltIcon, ChevronDownIcon, ChevronUpIcon, DocumentTextIcon, ClipboardDocumentCheckIcon, MagnifyingGlassIcon, BanknotesIcon, DocumentChartBarIcon, ReceiptPercentIcon, WrenchScrewdriverIcon, MapPinIcon, HomeModernIcon, BuildingLibraryIcon, BeakerIcon, CreditCardIcon, ShieldCheckIcon, CloudIcon, BookOpenIcon, LinkIcon, SignalIcon, RectangleGroupIcon, UmbrellaIcon, FolderIcon, Squares2X2Icon, RectangleStackIcon, XMarkIcon } from '../Icons';
+import { CubeIcon, PeopleIcon, UserGroupIcon, ClipboardListIcon, GlobeAltIcon, ChevronDownIcon, ChevronUpIcon, DocumentTextIcon, ClipboardDocumentCheckIcon, MagnifyingGlassIcon, BanknotesIcon, DocumentChartBarIcon, ReceiptPercentIcon, WrenchScrewdriverIcon, MapPinIcon, HomeModernIcon, BuildingLibraryIcon, BeakerIcon, CreditCardIcon, ShieldCheckIcon, CloudIcon, BookOpenIcon, LinkIcon, SignalIcon, RectangleGroupIcon, UmbrellaIcon, FolderIcon, Squares2X2Icon, RectangleStackIcon, XMarkIcon, BriefcaseIcon, ClipboardDocumentListIcon } from '../Icons';
 
 interface SidebarProps {
   currentPage: string;
@@ -9,13 +9,6 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage, isSidebarOpen, setIsSidebarOpen }) => {
-  const navItems = [
-    { name: 'Farmer Management', icon: <PeopleIcon />, page: 'farmers' },
-    { name: 'User Management', icon: <UserGroupIcon />, page: 'users' },
-    { name: 'Field Agent Tasks', icon: <MapPinIcon />, page: 'fieldAgentTasks' },
-    { name: 'General Tasks', icon: <ClipboardListIcon />, page: 'generalTasks' },
-  ];
-
   const dashboardsAndReportsPagesInfo = [
     { name: 'Executive Dashboard', page: 'dashboard', icon: <CubeIcon className="h-5 w-5 mr-3"/> },
     { name: 'Analytics', page: 'analyticsDashboard', icon: <DocumentChartBarIcon className="h-5 w-5 mr-3"/> },
@@ -24,46 +17,25 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage, isSideba
     { name: 'IoT & Sensor Data', page: 'iotSensorData', icon: <SignalIcon className="h-5 w-5 mr-3"/> },
   ];
 
-  const masterPagesInfo = [
-    { name: 'Districts', page: 'districtMaster' },
-    { name: 'Mandals', page: 'mandalMaster' },
-    { name: 'Villages', page: 'villageMaster' },
-    { name: 'Land Parcels', page: 'landParcelMaster' },
-    { name: 'Procurement Centers', page: 'procurementCenterMaster' },
-    { name: 'Factory Master', page: 'factoryMaster' },
-    { name: 'Partner & Vendor Mgmt', page: 'vendorManagement' },
-    { name: 'All Locations', page: 'locationMaster' },
+  const coreManagementPagesInfo = [
+    { name: 'Farmer Management', page: 'farmers', icon: <PeopleIcon className="h-5 w-5 mr-3"/> },
+    { name: 'User Management', page: 'users', icon: <UserGroupIcon className="h-5 w-5 mr-3"/> },
+    { name: 'Partner & Vendor Mgmt', page: 'vendorManagement', icon: <BriefcaseIcon className="h-5 w-5 mr-3"/> },
   ];
 
-  const operationsPagesInfo = [
+  const taskManagementPagesInfo = [
+    { name: 'Field Agent Tasks', page: 'fieldAgentTasks', icon: <MapPinIcon className="h-5 w-5 mr-3"/> },
+    { name: 'General Tasks', page: 'generalTasks', icon: <ClipboardListIcon className="h-5 w-5 mr-3"/> },
+  ];
+
+  const farmerServicesPagesInfo = [
+      { name: 'Farmer Self-Service', page: 'farmerPortal', icon: <RectangleGroupIcon className="h-5 w-5 mr-3"/> },
       { name: 'Subsidy Applications', page: 'subsidyApplications', icon: <DocumentTextIcon className="h-5 w-5 mr-3"/> },
       { name: 'Document Verification', page: 'documentVerification', icon: <ClipboardDocumentCheckIcon className="h-5 w-5 mr-3"/> },
-      { name: 'Inspection Log', page: 'inspections', icon: <MagnifyingGlassIcon className="h-5 w-5 mr-3"/> },
-      { name: 'Procurement Batches', page: 'procurementBatches', icon: <CubeIcon className="h-5 w-5 mr-3"/> },
-      { name: 'Financial Sanctions', page: 'financialSanctions', icon: <BanknotesIcon className="h-5 w-5 mr-3"/> },
-      { name: 'Plantation Log', page: 'plantationLog', icon: <DocumentChartBarIcon className="h-5 w-5 mr-3"/> },
-      { name: 'Harvest Log', page: 'harvestLog', icon: <ReceiptPercentIcon className="h-5 w-5 mr-3"/> },
-      { name: 'Irrigation Tracker', page: 'microIrrigationTracker', icon: <WrenchScrewdriverIcon className="h-5 w-5 mr-3"/> },
-      { name: 'Oil Extraction', page: 'oilExtraction', icon: <BeakerIcon className="h-5 w-5 mr-3"/> },
-      { name: 'Billing & Financials', page: 'billing', icon: <CreditCardIcon className="h-5 w-5 mr-3"/> },
-      { name: 'Payment Reconciliation', page: 'paymentReconciliation', icon: <BanknotesIcon className="h-5 w-5 mr-3"/> },
-      { name: 'Non-Subsidy Payments', page: 'nonSubsidyPaymentLog', icon: <BanknotesIcon className="h-5 w-5 mr-3"/> },
+      { name: 'Crop Insurance', page: 'cropInsurance', icon: <UmbrellaIcon className="h-5 w-5 mr-3"/> },
       { name: 'Farmer Assistance', page: 'farmerAssistanceLedger', icon: <ReceiptPercentIcon className="h-5 w-5 mr-3"/> },
   ];
   
-  const inventoryPagesInfo = [
-      { name: 'Nursery Inventory', page: 'nurseryInventory', icon: <WrenchScrewdriverIcon className="h-5 w-5 mr-3"/> },
-      { name: 'Procurement Centers', page: 'procurementCenterInventory', icon: <HomeModernIcon className="h-5 w-5 mr-3"/> },
-      { name: 'Factory Inventory', page: 'factoryInventory', icon: <BuildingLibraryIcon className="h-5 w-5 mr-3"/> },
-      { name: 'Stock Reconciliation', page: 'stockReconciliation', icon: <ClipboardDocumentCheckIcon className="h-5 w-5 mr-3"/> },
-  ];
-  
-  const managementPagesInfo = [
-    { name: 'SLA & Performance', page: 'slaPerformanceManager', icon: <ShieldCheckIcon className="h-5 w-5 mr-3" /> },
-    { name: 'Banking Integration', page: 'bankingIntegration', icon: <LinkIcon className="h-5 w-5 mr-3" /> },
-    { name: 'Crop Insurance', page: 'cropInsurance', icon: <UmbrellaIcon className="h-5 w-5 mr-3" /> },
-  ];
-
   const visitManagementPagesInfo = [
     { name: 'Manage Visits', page: 'manageVisits' },
     { name: 'Add Visit', page: 'addVisit' },
@@ -83,21 +55,103 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage, isSideba
     { name: 'Average Meeting Monthly', page: 'averageMeetingMonthly' },
     { name: 'Hourly Visit Report', page: 'hourlyVisitReport' },
   ];
+  
+  const farmAndProcurementOpsPagesInfo = [
+      { name: 'Procurement Batches', page: 'procurementBatches', icon: <CubeIcon className="h-5 w-5 mr-3"/> },
+      { name: 'Plantation Log', page: 'plantationLog', icon: <DocumentChartBarIcon className="h-5 w-5 mr-3"/> },
+      { name: 'Harvest Log', page: 'harvestLog', icon: <ReceiptPercentIcon className="h-5 w-5 mr-3"/> },
+      { name: 'Irrigation Tracker', page: 'microIrrigationTracker', icon: <WrenchScrewdriverIcon className="h-5 w-5 mr-3"/> },
+      { name: 'Oil Extraction', page: 'oilExtraction', icon: <BeakerIcon className="h-5 w-5 mr-3"/> },
+      { name: 'Inspection Log', page: 'inspections', icon: <MagnifyingGlassIcon className="h-5 w-5 mr-3"/> },
+  ];
 
+  const financialsPagesInfo = [
+      { name: 'Financial Sanctions', page: 'financialSanctions', icon: <BanknotesIcon className="h-5 w-5 mr-3"/> },
+      { name: 'Billing & Financials', page: 'billing', icon: <CreditCardIcon className="h-5 w-5 mr-3"/> },
+      { name: 'Payment Reconciliation', page: 'paymentReconciliation', icon: <BanknotesIcon className="h-5 w-5 mr-3"/> },
+      { name: 'Non-Subsidy Payments', page: 'nonSubsidyPaymentLog', icon: <BanknotesIcon className="h-5 w-5 mr-3"/> },
+      { name: 'Banking Integration', page: 'bankingIntegration', icon: <LinkIcon className="h-5 w-5 mr-3" /> },
+  ];
+  
+  const inventoryPagesInfo = [
+      { name: 'Nursery Inventory', page: 'nurseryInventory', icon: <WrenchScrewdriverIcon className="h-5 w-5 mr-3"/> },
+      { name: 'Procurement Centers', page: 'procurementCenterInventory', icon: <HomeModernIcon className="h-5 w-5 mr-3"/> },
+      { name: 'Factory Inventory', page: 'factoryInventory', icon: <BuildingLibraryIcon className="h-5 w-5 mr-3"/> },
+      { name: 'Stock Reconciliation', page: 'stockReconciliation', icon: <ClipboardDocumentCheckIcon className="h-5 w-5 mr-3"/> },
+  ];
+  
+  const masterPagesInfo = [
+    { name: 'Districts', page: 'districtMaster' },
+    { name: 'Mandals', page: 'mandalMaster' },
+    { name: 'Villages', page: 'villageMaster' },
+    { name: 'Land Parcels', page: 'landParcelMaster' },
+    { name: 'Procurement Centers', page: 'procurementCenterMaster' },
+    { name: 'Factory Master', page: 'factoryMaster' },
+    { name: 'All Locations', page: 'locationMaster' },
+  ];
 
-  const resourcesPagesInfo = [
+  const systemAndResourcesPagesInfo = [
+    { name: 'SLA & Performance', page: 'slaPerformanceManager', icon: <ShieldCheckIcon className="h-5 w-5 mr-3" /> },
     { name: 'Knowledge Base', page: 'knowledgeBase', icon: <BookOpenIcon className="h-5 w-5 mr-3" /> },
     { name: 'Document Management', page: 'documentManager', icon: <FolderIcon className="h-5 w-5 mr-3" /> },
   ];
 
-  const [isDashboardsOpen, setIsDashboardsOpen] = useState(dashboardsAndReportsPagesInfo.some(p => p.page === currentPage));
-  const [isMastersOpen, setIsMastersOpen] = useState(masterPagesInfo.some(p => p.page === currentPage));
-  const [isOperationsOpen, setIsOperationsOpen] = useState(operationsPagesInfo.some(p => p.page === currentPage));
-  const [isInventoryOpen, setIsInventoryOpen] = useState(inventoryPagesInfo.some(p => p.page === currentPage));
-  const [isManagementOpen, setIsManagementOpen] = useState(managementPagesInfo.some(p => p.page === currentPage));
-  const [isVisitManagementOpen, setIsVisitManagementOpen] = useState(visitManagementPagesInfo.some(p => p.page === currentPage));
-  const [isResourcesOpen, setIsResourcesOpen] = useState(resourcesPagesInfo.some(p => p.page === currentPage));
 
+  const [isDashboardsOpen, setIsDashboardsOpen] = useState(dashboardsAndReportsPagesInfo.some(p => p.page === currentPage));
+  const [isCoreManagementOpen, setIsCoreManagementOpen] = useState(coreManagementPagesInfo.some(p => p.page === currentPage));
+  const [isTaskManagementOpen, setIsTaskManagementOpen] = useState(taskManagementPagesInfo.some(p => p.page === currentPage));
+  const [isFarmerServicesOpen, setIsFarmerServicesOpen] = useState(farmerServicesPagesInfo.some(p => p.page === currentPage));
+  const [isVisitManagementOpen, setIsVisitManagementOpen] = useState(visitManagementPagesInfo.some(p => p.page === currentPage));
+  const [isOpsOpen, setIsOpsOpen] = useState(farmAndProcurementOpsPagesInfo.some(p => p.page === currentPage));
+  const [isFinancialsOpen, setIsFinancialsOpen] = useState(financialsPagesInfo.some(p => p.page === currentPage));
+  const [isInventoryOpen, setIsInventoryOpen] = useState(inventoryPagesInfo.some(p => p.page === currentPage));
+  const [isMastersOpen, setIsMastersOpen] = useState(masterPagesInfo.some(p => p.page === currentPage));
+  const [isSystemResourcesOpen, setIsSystemResourcesOpen] = useState(systemAndResourcesPagesInfo.some(p => p.page === currentPage));
+
+
+  const renderCollapsibleMenu = (
+    title: string,
+    icon: React.ReactNode,
+    isOpen: boolean,
+    setIsOpen: (isOpen: boolean) => void,
+    pages: { name: string; page: string; icon?: React.ReactNode }[]
+  ) => (
+      <li>
+        <button
+            onClick={() => setIsOpen(!isOpen)}
+            className={`w-full flex items-center justify-between p-3 my-1 rounded-lg transition-colors duration-200 ${
+            isOpen || pages.some(p => p.page === currentPage)
+                ? 'text-white'
+                : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+            }`}
+        >
+            <div className="flex items-center">
+            {icon}
+            <span className="font-medium">{title}</span>
+            </div>
+            {isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
+        </button>
+        {isOpen && (
+            <ul className="pl-6 border-l border-gray-700 ml-4">
+            {pages.map(item => (
+                <li key={item.name}>
+                    <button
+                    onClick={() => setCurrentPage(item.page)}
+                    className={`w-full flex items-center py-2 px-3 my-1 rounded-md text-sm transition-colors duration-200 ${
+                        currentPage === item.page
+                        ? 'bg-teal-500/10 text-teal-300'
+                        : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                    }`}
+                    >
+                    {item.icon}
+                    {item.name}
+                    </button>
+                </li>
+            ))}
+            </ul>
+        )}
+    </li>
+  );
 
   return (
     <aside className={`bg-gray-900/70 backdrop-blur-md border-r border-gray-700/50 p-4 flex flex-col transition-transform duration-300 ease-in-out w-64 fixed inset-y-0 left-0 z-30 lg:static lg:translate-x-0 flex-shrink-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
@@ -112,284 +166,16 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage, isSideba
       </div>
       <nav className="flex-grow overflow-y-auto">
         <ul className="space-y-1">
-            {/* Dashboards & Reports Menu */}
-            <li>
-                <button
-                    onClick={() => setIsDashboardsOpen(!isDashboardsOpen)}
-                    className={`w-full flex items-center justify-between p-3 my-1 rounded-lg transition-colors duration-200 ${
-                    isDashboardsOpen || dashboardsAndReportsPagesInfo.some(p => p.page === currentPage)
-                        ? 'text-white'
-                        : 'text-gray-400 hover:bg-gray-800 hover:text-white'
-                    }`}
-                >
-                    <div className="flex items-center">
-                    <Squares2X2Icon className="h-5 w-5 mr-3" />
-                    <span className="font-medium">Dashboards & Reports</span>
-                    </div>
-                    {isDashboardsOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
-                </button>
-                {isDashboardsOpen && (
-                    <ul className="pl-6 border-l border-gray-700 ml-4">
-                    {dashboardsAndReportsPagesInfo.map(item => (
-                        <li key={item.name}>
-                            <button
-                            onClick={() => setCurrentPage(item.page)}
-                            className={`w-full flex items-center py-2 px-3 my-1 rounded-md text-sm transition-colors duration-200 ${
-                                currentPage === item.page
-                                ? 'bg-teal-500/10 text-teal-300'
-                                : 'text-gray-400 hover:bg-gray-800 hover:text-white'
-                            }`}
-                            >
-                            {item.icon}
-                            {item.name}
-                            </button>
-                        </li>
-                    ))}
-                    </ul>
-                )}
-            </li>
-             <li>
-                <button
-                    onClick={() => setCurrentPage('farmerPortal')}
-                    className={`w-full flex items-center p-3 my-1 rounded-lg transition-colors duration-200 ${
-                        currentPage === 'farmerPortal'
-                        ? 'bg-teal-500/20 text-teal-300'
-                        : 'text-gray-400 hover:bg-gray-800 hover:text-white'
-                    }`}
-                >
-                    <div className="mr-3"><RectangleGroupIcon /></div>
-                    <span className="font-medium">Farmer Self-Service</span>
-                </button>
-            </li>
-          {navItems.map(item => (
-            <li key={item.name}>
-              <button
-                onClick={() => setCurrentPage(item.page)}
-                className={`w-full flex items-center p-3 my-1 rounded-lg transition-colors duration-200 ${
-                  currentPage === item.page
-                    ? 'bg-teal-500/20 text-teal-300'
-                    : 'text-gray-400 hover:bg-gray-800 hover:text-white'
-                }`}
-              >
-                <div className="mr-3">{item.icon}</div>
-                <span className="font-medium">{item.name}</span>
-              </button>
-            </li>
-          ))}
-          {/* Visit Management Menu */}
-            <li>
-                <button
-                    onClick={() => setIsVisitManagementOpen(!isVisitManagementOpen)}
-                    className={`w-full flex items-center justify-between p-3 my-1 rounded-lg transition-colors duration-200 ${
-                    isVisitManagementOpen || visitManagementPagesInfo.some(p => p.page === currentPage)
-                        ? 'text-white'
-                        : 'text-gray-400 hover:bg-gray-800 hover:text-white'
-                    }`}
-                >
-                    <div className="flex items-center">
-                    <ClipboardListIcon className="mr-3" />
-                    <span className="font-medium">Visit Management</span>
-                    </div>
-                    {isVisitManagementOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
-                </button>
-                {isVisitManagementOpen && (
-                    <ul className="pl-6 border-l border-gray-700 ml-4">
-                    {visitManagementPagesInfo.map(item => (
-                        <li key={item.name}>
-                            <button
-                            onClick={() => setCurrentPage(item.page)}
-                            className={`w-full flex items-center py-2 px-3 my-1 rounded-md text-sm transition-colors duration-200 ${
-                                currentPage === item.page
-                                ? 'bg-teal-500/10 text-teal-300'
-                                : 'text-gray-400 hover:bg-gray-800 hover:text-white'
-                            }`}
-                            >
-                            {item.name}
-                            </button>
-                        </li>
-                    ))}
-                    </ul>
-                )}
-            </li>
-            {/* Operations Menu */}
-            <li>
-                <button
-                    onClick={() => setIsOperationsOpen(!isOperationsOpen)}
-                    className={`w-full flex items-center justify-between p-3 my-1 rounded-lg transition-colors duration-200 ${
-                    isOperationsOpen || operationsPagesInfo.some(p => p.page === currentPage)
-                        ? 'text-white'
-                        : 'text-gray-400 hover:bg-gray-800 hover:text-white'
-                    }`}
-                >
-                    <div className="flex items-center">
-                    <DocumentTextIcon className="mr-3" />
-                    <span className="font-medium">Operations</span>
-                    </div>
-                    {isOperationsOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
-                </button>
-                {isOperationsOpen && (
-                    <ul className="pl-6 border-l border-gray-700 ml-4">
-                    {operationsPagesInfo.map(item => (
-                        <li key={item.name}>
-                            <button
-                            onClick={() => setCurrentPage(item.page)}
-                            className={`w-full flex items-center py-2 px-3 my-1 rounded-md text-sm transition-colors duration-200 ${
-                                currentPage === item.page
-                                ? 'bg-teal-500/10 text-teal-300'
-                                : 'text-gray-400 hover:bg-gray-800 hover:text-white'
-                            }`}
-                            >
-                            {item.icon}
-                            {item.name}
-                            </button>
-                        </li>
-                    ))}
-                    </ul>
-                )}
-            </li>
-             {/* Inventory Menu */}
-           <li>
-              <button
-                onClick={() => setIsInventoryOpen(!isInventoryOpen)}
-                className={`w-full flex items-center justify-between p-3 my-1 rounded-lg transition-colors duration-200 ${
-                  isInventoryOpen || inventoryPagesInfo.some(p => p.page === currentPage)
-                    ? 'text-white'
-                    : 'text-gray-400 hover:bg-gray-800 hover:text-white'
-                }`}
-              >
-                <div className="flex items-center">
-                  <RectangleStackIcon className="h-5 w-5 mr-3" />
-                  <span className="font-medium">Inventory Mgmt</span>
-                </div>
-                {isInventoryOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
-              </button>
-              {isInventoryOpen && (
-                <ul className="pl-6 border-l border-gray-700 ml-4">
-                  {inventoryPagesInfo.map(item => (
-                     <li key={item.name}>
-                        <button
-                          onClick={() => setCurrentPage(item.page)}
-                           className={`w-full flex items-center py-2 px-3 my-1 rounded-md text-sm transition-colors duration-200 ${
-                            currentPage === item.page
-                              ? 'bg-teal-500/10 text-teal-300'
-                              : 'text-gray-400 hover:bg-gray-800 hover:text-white'
-                          }`}
-                        >
-                          {item.icon}
-                          {item.name}
-                        </button>
-                     </li>
-                  ))}
-                </ul>
-              )}
-            </li>
-           {/* Management Menu */}
-            <li>
-                <button
-                    onClick={() => setIsManagementOpen(!isManagementOpen)}
-                    className={`w-full flex items-center justify-between p-3 my-1 rounded-lg transition-colors duration-200 ${
-                    isManagementOpen || managementPagesInfo.some(p => p.page === currentPage)
-                        ? 'text-white'
-                        : 'text-gray-400 hover:bg-gray-800 hover:text-white'
-                    }`}
-                >
-                    <div className="flex items-center">
-                    <ShieldCheckIcon className="mr-3" />
-                    <span className="font-medium">Management</span>
-                    </div>
-                    {isManagementOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
-                </button>
-                {isManagementOpen && (
-                    <ul className="pl-6 border-l border-gray-700 ml-4">
-                    {managementPagesInfo.map(item => (
-                        <li key={item.name}>
-                            <button
-                            onClick={() => setCurrentPage(item.page)}
-                            className={`w-full flex items-center py-2 px-3 my-1 rounded-md text-sm transition-colors duration-200 ${
-                                currentPage === item.page
-                                ? 'bg-teal-500/10 text-teal-300'
-                                : 'text-gray-400 hover:bg-gray-800 hover:text-white'
-                            }`}
-                            >
-                            {item.icon}
-                            {item.name}
-                            </button>
-                        </li>
-                    ))}
-                    </ul>
-                )}
-            </li>
-           {/* Masters Menu */}
-           <li>
-              <button
-                onClick={() => setIsMastersOpen(!isMastersOpen)}
-                className={`w-full flex items-center justify-between p-3 my-1 rounded-lg transition-colors duration-200 ${
-                  isMastersOpen || masterPagesInfo.some(p => p.page === currentPage)
-                    ? 'text-white'
-                    : 'text-gray-400 hover:bg-gray-800 hover:text-white'
-                }`}
-              >
-                <div className="flex items-center">
-                  <GlobeAltIcon className="mr-3" />
-                  <span className="font-medium">Masters</span>
-                </div>
-                {isMastersOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
-              </button>
-              {isMastersOpen && (
-                <ul className="pl-6 border-l border-gray-700 ml-4">
-                  {masterPagesInfo.map(item => (
-                     <li key={item.name}>
-                        <button
-                          onClick={() => setCurrentPage(item.page)}
-                           className={`w-full flex items-center py-2 px-3 my-1 rounded-md text-sm transition-colors duration-200 ${
-                            currentPage === item.page
-                              ? 'bg-teal-500/10 text-teal-300'
-                              : 'text-gray-400 hover:bg-gray-800 hover:text-white'
-                          }`}
-                        >
-                          {item.name}
-                        </button>
-                     </li>
-                  ))}
-                </ul>
-              )}
-            </li>
-            {/* Resources Menu */}
-            <li>
-                <button
-                    onClick={() => setIsResourcesOpen(!isResourcesOpen)}
-                    className={`w-full flex items-center justify-between p-3 my-1 rounded-lg transition-colors duration-200 ${
-                    isResourcesOpen || resourcesPagesInfo.some(p => p.page === currentPage)
-                        ? 'text-white'
-                        : 'text-gray-400 hover:bg-gray-800 hover:text-white'
-                    }`}
-                >
-                    <div className="flex items-center">
-                    <BookOpenIcon className="mr-3" />
-                    <span className="font-medium">Resources</span>
-                    </div>
-                    {isResourcesOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
-                </button>
-                {isResourcesOpen && (
-                    <ul className="pl-6 border-l border-gray-700 ml-4">
-                    {resourcesPagesInfo.map(item => (
-                        <li key={item.name}>
-                            <button
-                            onClick={() => setCurrentPage(item.page)}
-                            className={`w-full flex items-center py-2 px-3 my-1 rounded-md text-sm transition-colors duration-200 ${
-                                currentPage === item.page
-                                ? 'bg-teal-500/10 text-teal-300'
-                                : 'text-gray-400 hover:bg-gray-800 hover:text-white'
-                            }`}
-                            >
-                            {item.icon}
-                            {item.name}
-                            </button>
-                        </li>
-                    ))}
-                    </ul>
-                )}
-            </li>
+            {renderCollapsibleMenu("Dashboards & Reports", <Squares2X2Icon className="h-5 w-5 mr-3" />, isDashboardsOpen, setIsDashboardsOpen, dashboardsAndReportsPagesInfo)}
+            {renderCollapsibleMenu("Core Management", <UserGroupIcon className="h-5 w-5 mr-3" />, isCoreManagementOpen, setIsCoreManagementOpen, coreManagementPagesInfo)}
+            {renderCollapsibleMenu("Task Management", <ClipboardListIcon className="h-5 w-5 mr-3" />, isTaskManagementOpen, setIsTaskManagementOpen, taskManagementPagesInfo)}
+            {renderCollapsibleMenu("Farmer Services", <PeopleIcon className="h-5 w-5 mr-3" />, isFarmerServicesOpen, setIsFarmerServicesOpen, farmerServicesPagesInfo)}
+            {renderCollapsibleMenu("Visit Management", <ClipboardDocumentListIcon className="h-5 w-5 mr-3" />, isVisitManagementOpen, setIsVisitManagementOpen, visitManagementPagesInfo)}
+            {renderCollapsibleMenu("Farm & Procurement Ops", <WrenchScrewdriverIcon className="h-5 w-5 mr-3" />, isOpsOpen, setIsOpsOpen, farmAndProcurementOpsPagesInfo)}
+            {renderCollapsibleMenu("Financials", <CreditCardIcon className="h-5 w-5 mr-3" />, isFinancialsOpen, setIsFinancialsOpen, financialsPagesInfo)}
+            {renderCollapsibleMenu("Inventory Management", <RectangleStackIcon className="h-5 w-5 mr-3" />, isInventoryOpen, setIsInventoryOpen, inventoryPagesInfo)}
+            {renderCollapsibleMenu("Masters", <GlobeAltIcon className="h-5 w-5 mr-3" />, isMastersOpen, setIsMastersOpen, masterPagesInfo)}
+            {renderCollapsibleMenu("System & Resources", <BookOpenIcon className="h-5 w-5 mr-3" />, isSystemResourcesOpen, setIsSystemResourcesOpen, systemAndResourcesPagesInfo)}
         </ul>
       </nav>
       <div className="mt-auto text-center text-gray-500 text-xs">

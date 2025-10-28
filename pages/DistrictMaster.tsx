@@ -99,7 +99,7 @@ const DistrictMaster: React.FC = () => {
     const handleSaveDistrict = (districtData: Partial<District>) => {
         const now = new Date().toISOString();
         if (districtData.id) { // Edit
-            // FIX: Cast the updated district object to the `District` type to resolve a TypeScript error where the `status` property from form data is inferred as a generic `string`, which is not assignable to the more specific `'Active' | 'Inactive'` type.
+            // FIX: Cast the updated district object to the `District` type to resolve TypeScript error.
             setDistricts(districts.map(d => d.id === districtData.id ? ({ ...d, ...districtData, updatedAt: now } as District) : d));
         } else { // Add
             const newDistrict: District = {
