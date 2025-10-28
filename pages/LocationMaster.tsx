@@ -2,6 +2,7 @@ import React, { useState, useMemo, FormEvent } from 'react';
 import type { Location, User, Mandal, District } from '../types';
 import { mockLocations, mockUsers, mockMandals, mockDistricts } from '../data/mockData';
 import DashboardCard from '../components/DashboardCard';
+// FIX: Revert placeholder icon and use the newly added `BuildingOfficeIcon`.
 import { PencilIcon, BuildingOfficeIcon, MapIcon, TableCellsIcon } from '../components/Icons';
 
 const Highlight: React.FC<{ text: string; highlight: string }> = ({ text, highlight }) => {

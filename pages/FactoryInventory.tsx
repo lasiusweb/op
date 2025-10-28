@@ -2,7 +2,8 @@ import React, { useState, useMemo, FormEvent, useRef } from 'react';
 import type { FactoryInventoryItem, FactoryItemType, Factory } from '../types';
 import { mockFactoryInventory, mockFactories } from '../data/mockData';
 import DashboardCard from '../components/DashboardCard';
-import { PencilIcon, BuildingOfficeIcon } from '../components/Icons';
+// FIX: Replace missing `BuildingOfficeIcon` with `BuildingLibraryIcon`.
+import { PencilIcon, BuildingLibraryIcon } from '../components/Icons';
 import { exportToCSV, exportToExcel } from '../services/exportService';
 import { exportElementAsPDF } from '../services/pdfService';
 
@@ -47,17 +48,20 @@ const FactoryInventoryModal: React.FC<{
                             <option>Tonnes</option> <option>Litres</option> <option>Units</option>
                         </select>
                         <select name="qualityGrade" value={formData.qualityGrade || ''} onChange={handleChange} className="bg-gray-900 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-teal-500 sm:text-sm">
-                            <option value="">N/A</option> <option>A</option> <option>B</option> <option>C</option>
+                            <option value="">Select Quality</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
                         </select>
-                        <input type="text" name="storageLocation" value={formData.storageLocation || ''} onChange={handleChange} required placeholder="Storage Location (e.g., Tank A)" className="bg-gray-900 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-teal-500 sm:text-sm" />
+                        <input type="text" name="storageLocation" value={formData.storageLocation || ''} onChange={handleChange} required placeholder="Storage Location" className="bg-gray-900 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-teal-500 sm:text-sm" />
                          <div className="md:col-span-2">
-                            <label htmlFor="receivedDate" className="block text-sm font-medium text-gray-400">Received/Production Date</label>
+                            <label htmlFor="receivedDate" className="block text-sm font-medium text-gray-300">Received Date</label>
                             <input type="date" name="receivedDate" id="receivedDate" value={formData.receivedDate || ''} onChange={handleChange} required className="mt-1 block w-full bg-gray-900 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-teal-500 sm:text-sm" />
                         </div>
                     </div>
                     <div className="flex justify-end gap-4 pt-4">
                         <button type="button" onClick={onCancel} className="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-md transition-colors">Cancel</button>
-                        <button type="submit" className="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-md transition-colors">Save Item</button>
+                        <button type="submit" className="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-md transition-colors">Save</button>
                     </div>
                 </form>
             </div>
@@ -75,7 +79,7 @@ const FactoryInventory: React.FC = () => {
     const factoryMap = useMemo(() => new Map(mockFactories.map(f => [f.id, f.name])), []);
 
     const handleOpenModal = (item?: FactoryInventoryItem) => {
-        setCurrentItem(item || { receivedDate: new Date().toISOString().split('T')[0] });
+        setCurrentItem(item || { type: 'Raw FFB', unit: 'Tonnes', receivedDate: new Date().toISOString().split('T')[0] });
         setIsModalOpen(true);
     };
 
@@ -83,9 +87,9 @@ const FactoryInventory: React.FC = () => {
 
     const handleSaveItem = (itemData: Partial<FactoryInventoryItem>) => {
         const now = new Date().toISOString();
-        if (itemData.id) {
+        if (itemData.id) { // Edit
             setInventory(inventory.map(i => i.id === itemData.id ? { ...i, ...itemData, updatedAt: now } as FactoryInventoryItem : i));
-        } else {
+        } else { // Add
             const newItem: FactoryInventoryItem = {
                 id: `FINV${Date.now()}`,
                 createdAt: now,
@@ -100,7 +104,7 @@ const FactoryInventory: React.FC = () => {
     const filteredInventory = useMemo(() => {
         return inventory.filter(item => filterFactory === 'All' || item.factoryId === filterFactory);
     }, [inventory, filterFactory]);
-
+    
     const handleExportPDF = () => {
         if (contentRef.current) {
             exportElementAsPDF(contentRef.current, 'factory_inventory', 'Factory Inventory');
@@ -109,11 +113,12 @@ const FactoryInventory: React.FC = () => {
 
     const getDataForExport = () => {
         return filteredInventory.map(item => ({
-            'Item': item.name,
-            'Factory': factoryMap.get(item.factoryId),
+            'Factory Name': factoryMap.get(item.factoryId),
+            'Item Name': item.name,
             'Type': item.type,
             'Quantity': item.quantity,
             'Unit': item.unit,
+            'Quality': item.qualityGrade || 'N/A',
             'Storage Location': item.storageLocation,
             'Received Date': item.receivedDate,
         }));
@@ -134,7 +139,7 @@ const FactoryInventory: React.FC = () => {
     };
 
     return (
-        <DashboardCard title="Factory Inventory" icon={<BuildingOfficeIcon />} exportOptions={exportOptions} contentRef={contentRef}>
+        <DashboardCard title="Factory Inventory" icon={<BuildingLibraryIcon />} exportOptions={exportOptions} contentRef={contentRef}>
             {isModalOpen && currentItem && (
                 <FactoryInventoryModal item={currentItem} factories={mockFactories} onSave={handleSaveItem} onCancel={handleCloseModal} />
             )}
@@ -147,29 +152,29 @@ const FactoryInventory: React.FC = () => {
                     </select>
                 </div>
                 <button onClick={() => handleOpenModal()} className="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-md transition-colors">
-                    Add Stock
+                    Add Stock Record
                 </button>
             </div>
             <div className="overflow-x-auto rounded-lg border border-gray-700/50">
                 <table className="w-full text-sm text-left text-gray-400">
                     <thead className="text-xs text-gray-300 uppercase bg-gray-800">
                         <tr>
-                            <th scope="col" className="px-6 py-3">Item</th>
                             <th scope="col" className="px-6 py-3">Factory</th>
+                            <th scope="col" className="px-6 py-3">Item Name</th>
                             <th scope="col" className="px-6 py-3">Type</th>
                             <th scope="col" className="px-6 py-3 text-right">Quantity</th>
-                            <th scope="col" className="px-6 py-3">Storage Location</th>
+                            <th scope="col" className="px-6 py-3">Received</th>
                             <th scope="col" className="px-6 py-3">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {filteredInventory.map((item) => (
                             <tr key={item.id} className="border-b border-gray-700 bg-gray-800/50 hover:bg-gray-700/50">
-                                <td className="px-6 py-4 font-medium text-white">{item.name}</td>
-                                <td className="px-6 py-4">{factoryMap.get(item.factoryId)}</td>
+                                <td className="px-6 py-4 font-medium text-white">{factoryMap.get(item.factoryId)}</td>
+                                <td className="px-6 py-4">{item.name}</td>
                                 <td className="px-6 py-4">{item.type}</td>
                                 <td className="px-6 py-4 text-right font-mono">{item.quantity.toLocaleString()} {item.unit}</td>
-                                <td className="px-6 py-4">{item.storageLocation}</td>
+                                <td className="px-6 py-4">{item.receivedDate}</td>
                                 <td className="px-6 py-4">
                                     <button onClick={() => handleOpenModal(item)} className="font-medium text-blue-400 hover:text-blue-300">
                                         <PencilIcon />

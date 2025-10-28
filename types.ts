@@ -1,4 +1,5 @@
 
+
 export interface DistrictVolume {
   district: string;
   volume: number;
@@ -336,6 +337,26 @@ export interface MicroIrrigationInstallation {
   updatedAt: string;
 }
 
+// Farmer Portal Types
+export type FarmVisitRequestStatus = 'Pending' | 'Scheduled' | 'Completed' | 'Cancelled';
+export type FarmVisitUrgency = 'Normal' | 'Urgent';
+
+export interface FarmVisitRequest {
+    id: string;
+    farmerId: string;
+    landParcelId: string;
+    requestType: string;
+    urgency: FarmVisitUrgency;
+    description: string;
+    requestDate: string;
+    status: FarmVisitRequestStatus;
+    assignedAgentId?: string;
+    visitDate?: string;
+    agentNotes?: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
 
 // Inventory Types
 export type NurseryItemType = 'Seedling' | 'Fertilizer' | 'Pesticide' | 'Tool';
@@ -377,4 +398,13 @@ export interface ProcurementCenterInventory {
     status: PCInventoryStatus;
     createdAt: string;
     updatedAt: string;
+}
+
+export interface UserActivity {
+  id: string;
+  userId: string;
+  action: string;
+  timestamp: string;
+  details?: string;
+  icon: 'task' | 'user' | 'subsidy' | 'payment';
 }

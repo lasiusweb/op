@@ -6,6 +6,7 @@ import FinancialDashboard from '../components/FinancialDashboard';
 import ComplianceSlaDashboard from '../components/ComplianceSlaDashboard';
 import PredictiveInsightsDashboard from '../components/PredictiveInsightsDashboard';
 import StrategicAdvisor from '../components/StrategicAdvisor';
+import { DashboardCardSkeleton } from '../components/Skeletons';
 
 // Centralized Data for Dashboard Components
 const procurementDistrictData = [
@@ -76,7 +77,20 @@ const allDashboardData = {
     predictive: { supplyDemandData: predictiveSupplyDemandData, anomalyData: predictiveAnomalyData },
 };
 
-const Dashboard: React.FC = () => {
+interface DashboardProps {
+    loading: boolean;
+}
+
+const Dashboard: React.FC<DashboardProps> = ({ loading }) => {
+  if (loading) {
+    return (
+        <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6">
+            {[...Array(6)].map((_, i) => (
+                <DashboardCardSkeleton key={i} />
+            ))}
+        </div>
+    );
+  }
   return (
     <div>
         <p className="text-gray-400 mb-6 -mt-4">

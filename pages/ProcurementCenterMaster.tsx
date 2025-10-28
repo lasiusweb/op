@@ -2,6 +2,7 @@ import React, { useState, useMemo, FormEvent } from 'react';
 import type { ProcurementCenter, User, Mandal, District } from '../types';
 import { mockProcurementCenters, mockUsers, mockMandals, mockDistricts } from '../data/mockData';
 import DashboardCard from '../components/DashboardCard';
+// FIX: Revert placeholder icon and use the newly added `BuildingStorefrontIcon`.
 import { PencilIcon, BuildingStorefrontIcon, MapIcon, TableCellsIcon, UserIcon, PhoneIcon } from '../components/Icons';
 
 const Highlight: React.FC<{ text: string; highlight: string }> = ({ text, highlight }) => {
@@ -140,7 +141,8 @@ const ProcurementCenterMaster: React.FC = () => {
     const handleSaveCenter = (centerData: Partial<ProcurementCenter>) => {
         const now = new Date().toISOString();
         if (centerData.id) { // Edit
-            setCenters(centers.map(c => c.id === centerData.id ? { ...c, ...centerData, status: centerData.status as 'Active' | 'Inactive', updatedAt: now } : c));
+            // FIX: Cast the updated center object to the `ProcurementCenter` type to resolve a TypeScript error where the `status` property from form data is inferred as a generic `string`, which is not assignable to the more specific `'Active' | 'Inactive'` type.
+            setCenters(centers.map(c => c.id === centerData.id ? { ...c, ...centerData, updatedAt: now } as ProcurementCenter : c));
         } else { // Add
             const newCenter: ProcurementCenter = {
                 id: `PC${Date.now()}`,

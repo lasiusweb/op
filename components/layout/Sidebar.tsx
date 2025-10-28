@@ -1,14 +1,14 @@
-
 import React, { useState } from 'react';
-// FIX: Added BuildingStorefrontIcon and BuildingOfficeIcon to imports.
-import { CubeIcon, PeopleIcon, UserGroupIcon, ClipboardListIcon, GlobeAltIcon, ChevronDownIcon, ChevronUpIcon, DocumentTextIcon, ClipboardDocumentCheckIcon, MagnifyingGlassIcon, BanknotesIcon, DocumentChartBarIcon, ReceiptPercentIcon, WrenchScrewdriverIcon, ArchiveBoxIcon, MapPinIcon, TruckIcon, BuildingStorefrontIcon, BuildingOfficeIcon, BeakerIcon, CreditCardIcon, ShieldCheckIcon, CloudIcon, BookOpenIcon, BriefcaseIcon, LinkIcon, SignalIcon, RectangleGroupIcon, UmbrellaIcon, FolderIcon } from '../Icons';
+import { CubeIcon, PeopleIcon, UserGroupIcon, ClipboardListIcon, GlobeAltIcon, ChevronDownIcon, ChevronUpIcon, DocumentTextIcon, ClipboardDocumentCheckIcon, MagnifyingGlassIcon, BanknotesIcon, DocumentChartBarIcon, ReceiptPercentIcon, WrenchScrewdriverIcon, MapPinIcon, HomeModernIcon, BuildingLibraryIcon, BeakerIcon, CreditCardIcon, ShieldCheckIcon, CloudIcon, BookOpenIcon, LinkIcon, SignalIcon, RectangleGroupIcon, UmbrellaIcon, FolderIcon, Squares2X2Icon, RectangleStackIcon, XMarkIcon } from '../Icons';
 
 interface SidebarProps {
   currentPage: string;
   setCurrentPage: (page: string) => void;
+  isSidebarOpen: boolean;
+  setIsSidebarOpen: (isOpen: boolean) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage }) => {
+const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage, isSidebarOpen, setIsSidebarOpen }) => {
   const navItems = [
     { name: 'Farmer Management', icon: <PeopleIcon />, page: 'farmers' },
     { name: 'User Management', icon: <UserGroupIcon />, page: 'users' },
@@ -53,8 +53,8 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage }) => {
   
   const inventoryPagesInfo = [
       { name: 'Nursery Inventory', page: 'nurseryInventory', icon: <WrenchScrewdriverIcon className="h-5 w-5 mr-3"/> },
-      { name: 'Procurement Centers', page: 'procurementCenterInventory', icon: <BuildingStorefrontIcon className="h-5 w-5 mr-3"/> },
-      { name: 'Factory Inventory', page: 'factoryInventory', icon: <BuildingOfficeIcon className="h-5 w-5 mr-3"/> },
+      { name: 'Procurement Centers', page: 'procurementCenterInventory', icon: <HomeModernIcon className="h-5 w-5 mr-3"/> },
+      { name: 'Factory Inventory', page: 'factoryInventory', icon: <BuildingLibraryIcon className="h-5 w-5 mr-3"/> },
       { name: 'Stock Reconciliation', page: 'stockReconciliation', icon: <ClipboardDocumentCheckIcon className="h-5 w-5 mr-3"/> },
   ];
   
@@ -63,6 +63,27 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage }) => {
     { name: 'Banking Integration', page: 'bankingIntegration', icon: <LinkIcon className="h-5 w-5 mr-3" /> },
     { name: 'Crop Insurance', page: 'cropInsurance', icon: <UmbrellaIcon className="h-5 w-5 mr-3" /> },
   ];
+
+  const visitManagementPagesInfo = [
+    { name: 'Manage Visits', page: 'manageVisits' },
+    { name: 'Add Visit', page: 'addVisit' },
+    { name: 'Manage Visit Slots', page: 'manageVisitSlots' },
+    { name: 'Visit Report', page: 'visitReport' },
+    { name: 'Visit Count Report', page: 'visitCountReport' },
+    { name: 'Visit Map View', page: 'visitMapView' },
+    { name: 'Visit Travel Time', page: 'visitTravelTime' },
+    { name: 'Visit Setting', page: 'visitSetting' },
+    { name: 'Visit Summary Report', page: 'visitSummaryReport' },
+    { name: 'Monthly Visit Report', page: 'monthlyVisitReport' },
+    { name: 'Employee Visit Setting', page: 'employeeVisitSetting' },
+    { name: 'Missed Route Visit Report', page: 'missedRouteVisitReport' },
+    { name: 'Manage Assign Visit Template', page: 'manageAssignVisitTemplate' },
+    { name: 'Manage Assign Equipment Template', page: 'manageAssignEquipmentTemplate' },
+    { name: 'Visit Template Report', page: 'visitTemplateReport' },
+    { name: 'Average Meeting Monthly', page: 'averageMeetingMonthly' },
+    { name: 'Hourly Visit Report', page: 'hourlyVisitReport' },
+  ];
+
 
   const resourcesPagesInfo = [
     { name: 'Knowledge Base', page: 'knowledgeBase', icon: <BookOpenIcon className="h-5 w-5 mr-3" /> },
@@ -74,16 +95,22 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage }) => {
   const [isOperationsOpen, setIsOperationsOpen] = useState(operationsPagesInfo.some(p => p.page === currentPage));
   const [isInventoryOpen, setIsInventoryOpen] = useState(inventoryPagesInfo.some(p => p.page === currentPage));
   const [isManagementOpen, setIsManagementOpen] = useState(managementPagesInfo.some(p => p.page === currentPage));
+  const [isVisitManagementOpen, setIsVisitManagementOpen] = useState(visitManagementPagesInfo.some(p => p.page === currentPage));
   const [isResourcesOpen, setIsResourcesOpen] = useState(resourcesPagesInfo.some(p => p.page === currentPage));
 
 
   return (
-    <aside className="w-64 bg-gray-900/70 backdrop-blur-md border-r border-gray-700/50 p-4 flex flex-col flex-shrink-0">
-      <div className="text-white text-2xl font-bold mb-8 flex items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2h1a2 2 0 002-2v-1a2 2 0 012-2h1.945M12 4v7m0 0l-3-3m3 3l3-3m-3 7a4 4 0 110-8 4 4 0 010 8z" /></svg>
-        <span>Agri-Platform</span>
+    <aside className={`bg-gray-900/70 backdrop-blur-md border-r border-gray-700/50 p-4 flex flex-col transition-transform duration-300 ease-in-out w-64 fixed inset-y-0 left-0 z-30 lg:static lg:translate-x-0 flex-shrink-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      <div className="text-white text-2xl font-bold mb-8 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2h1a2 2 0 002-2v-1a2 2 0 012-2h1.945M12 4v7m0 0l-3-3m3 3l3-3m-3 7a4 4 0 110-8 4 4 0 010 8z" /></svg>
+            <span>Hapsara</span>
+        </div>
+        <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden text-gray-400 hover:text-white" aria-label="Close sidebar">
+            <XMarkIcon className="h-6 w-6" />
+        </button>
       </div>
-      <nav className="flex-grow">
+      <nav className="flex-grow overflow-y-auto">
         <ul className="space-y-1">
             {/* Dashboards & Reports Menu */}
             <li>
@@ -96,7 +123,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage }) => {
                     }`}
                 >
                     <div className="flex items-center">
-                    <CubeIcon className="mr-3" />
+                    <Squares2X2Icon className="h-5 w-5 mr-3" />
                     <span className="font-medium">Dashboards & Reports</span>
                     </div>
                     {isDashboardsOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
@@ -149,6 +176,41 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage }) => {
               </button>
             </li>
           ))}
+          {/* Visit Management Menu */}
+            <li>
+                <button
+                    onClick={() => setIsVisitManagementOpen(!isVisitManagementOpen)}
+                    className={`w-full flex items-center justify-between p-3 my-1 rounded-lg transition-colors duration-200 ${
+                    isVisitManagementOpen || visitManagementPagesInfo.some(p => p.page === currentPage)
+                        ? 'text-white'
+                        : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                    }`}
+                >
+                    <div className="flex items-center">
+                    <ClipboardListIcon className="mr-3" />
+                    <span className="font-medium">Visit Management</span>
+                    </div>
+                    {isVisitManagementOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
+                </button>
+                {isVisitManagementOpen && (
+                    <ul className="pl-6 border-l border-gray-700 ml-4">
+                    {visitManagementPagesInfo.map(item => (
+                        <li key={item.name}>
+                            <button
+                            onClick={() => setCurrentPage(item.page)}
+                            className={`w-full flex items-center py-2 px-3 my-1 rounded-md text-sm transition-colors duration-200 ${
+                                currentPage === item.page
+                                ? 'bg-teal-500/10 text-teal-300'
+                                : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                            }`}
+                            >
+                            {item.name}
+                            </button>
+                        </li>
+                    ))}
+                    </ul>
+                )}
+            </li>
             {/* Operations Menu */}
             <li>
                 <button
@@ -196,7 +258,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage }) => {
                 }`}
               >
                 <div className="flex items-center">
-                  <ArchiveBoxIcon className="mr-3" />
+                  <RectangleStackIcon className="h-5 w-5 mr-3" />
                   <span className="font-medium">Inventory Mgmt</span>
                 </div>
                 {isInventoryOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}

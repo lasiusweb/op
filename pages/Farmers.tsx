@@ -7,6 +7,7 @@ import { getGeminiInsights } from '../services/geminiService';
 import { exportToCSV, exportToExcel } from '../services/exportService';
 import { exportElementAsPDF } from '../services/pdfService';
 import BulkImportModal from '../components/BulkImportModal';
+import { TableSkeleton } from '../components/Skeletons';
 
 const DetailItem: React.FC<{ label: string; value: string | number | boolean }> = ({ label, value }) => (
     <div>
@@ -75,6 +76,7 @@ interface FarmersProps {
     onAddNewFarmer: () => void;
     allFarmers: Farmer[];
     setAllFarmers: React.Dispatch<React.SetStateAction<Farmer[]>>;
+    loading: boolean;
 }
 
 const farmerTemplateHeaders = [
@@ -84,7 +86,7 @@ const farmerTemplateHeaders = [
 ];
 
 
-const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, setAllFarmers }) => {
+const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, setAllFarmers, loading }) => {
     const [expandedRow, setExpandedRow] = useState<string | null>(null);
     const [editingFarmerId, setEditingFarmerId] = useState<string | null>(null);
     const [editableFarmerData, setEditableFarmerData] = useState<Farmer | null>(null);
@@ -104,6 +106,7 @@ const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, setAllFar
     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
 
+    const checkboxRef = useRef<HTMLInputElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
 
@@ -217,6 +220,12 @@ const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, setAllFar
     const isAllSelected = visibleIds.length > 0 && selectedVisibleIds.length === visibleIds.length;
     const isSomeSelected = selectedVisibleIds.length > 0 && selectedVisibleIds.length < visibleIds.length;
     
+    useEffect(() => {
+        if (checkboxRef.current) {
+            checkboxRef.current.indeterminate = isSomeSelected;
+        }
+    }, [isSomeSelected]);
+
     const handleSelectOne = (farmerId: string) => {
         setSelectedFarmerIds(prev =>
             prev.includes(farmerId)
@@ -590,99 +599,102 @@ const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, setAllFar
       
       <BulkActionsBar />
 
-      <div className="overflow-x-auto rounded-lg border border-gray-700/50">
-        <table className="w-full text-sm text-left text-gray-400">
-          <thead className="text-xs text-gray-300 uppercase bg-gray-800">
-            <tr>
-              <th scope="col" className="p-4">
-                    <div className="flex items-center">
-                        <input 
-                            id="checkbox-all" 
-                            type="checkbox" 
-                            className="w-4 h-4 text-teal-600 bg-gray-700 border-gray-600 rounded focus:ring-teal-500"
-                            checked={isAllSelected}
-                            ref={el => el && (el.indeterminate = isSomeSelected)}
-                            onChange={handleSelectAll}
-                        />
-                        <label htmlFor="checkbox-all" className="sr-only">checkbox</label>
-                    </div>
-                </th>
-              <SortableHeader label="Farmer ID" sortKey="id" />
-              <SortableHeader label="Full Name" sortKey="fullName" />
-              <SortableHeader label="Mobile" sortKey="mobile" />
-              <SortableHeader label="Location" sortKey="location" />
-              <SortableHeader label="Assigned Agent" sortKey="assignedAgent" />
-              <SortableHeader label="Parcels" sortKey="landParcelCount" />
-              <SortableHeader label="Status" sortKey="status" />
-              <th scope="col" className="px-6 py-3">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {sortedAndFilteredFarmers.map((farmer) => (
-              <React.Fragment key={farmer.id}>
-                <tr className={`border-b border-gray-700 ${selectedFarmerIds.includes(farmer.id) ? 'bg-teal-900/50' : 'bg-gray-800/50 hover:bg-gray-700/50'}`}>
-                    <td className="w-4 p-4">
+      {loading ? (
+        <TableSkeleton rows={10} />
+      ) : (
+        <div className="overflow-x-auto rounded-lg border border-gray-700/50">
+            <table className="w-full text-sm text-left text-gray-400">
+            <thead className="text-xs text-gray-300 uppercase bg-gray-800">
+                <tr>
+                <th scope="col" className="p-4">
                         <div className="flex items-center">
                             <input 
-                                id={`checkbox-${farmer.id}`}
+                                id="checkbox-all" 
                                 type="checkbox" 
                                 className="w-4 h-4 text-teal-600 bg-gray-700 border-gray-600 rounded focus:ring-teal-500"
-                                checked={selectedFarmerIds.includes(farmer.id)}
-                                onChange={() => handleSelectOne(farmer.id)}
-                                onClick={(e) => e.stopPropagation()}
+                                checked={isAllSelected}
+                                ref={checkboxRef}
+                                onChange={handleSelectAll}
                             />
-                            <label htmlFor={`checkbox-${farmer.id}`} className="sr-only">checkbox</label>
+                            <label htmlFor="checkbox-all" className="sr-only">checkbox</label>
                         </div>
-                    </td>
-                    <td className="px-6 py-4 font-medium text-white whitespace-nowrap">{farmer.id}</td>
-                    <td className="px-6 py-4 text-white">{farmer.fullName}</td>
-                    <td className="px-6 py-4">{farmer.mobile}</td>
-                    <td className="px-6 py-4">{`${farmer.village}, ${farmer.district}`}</td>
-                    <td className="px-6 py-4">{userMap.get(farmer.assignedAgentId) || <span className="text-gray-500">Unassigned</span>}</td>
-                    <td className="px-6 py-4 text-center">{landParcelCounts[farmer.id] || 0}</td>
-                    <td className="px-6 py-4">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        farmer.status === 'Active' ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'
-                    }`}>
-                        {farmer.status}
-                    </span>
-                    </td>
-                    <td className="px-6 py-4">
-                        <div className="flex items-center gap-4">
-                            <button 
-                                onClick={() => handleToggleRow(farmer.id)}
-                                className="font-medium text-teal-400 hover:text-teal-300 flex items-center gap-1"
-                                aria-label={expandedRow === farmer.id ? 'Hide Details' : 'Show Details'}
-                            >
-                                <span>Details</span>
-                                {expandedRow === farmer.id ? <ChevronUpIcon /> : <ChevronDownIcon />}
-                            </button>
-                            <button
-                                onClick={() => handleEditClick(farmer)}
-                                className="font-medium text-blue-400 hover:text-blue-300"
-                                aria-label={`Edit farmer ${farmer.fullName}`}
-                            >
-                                <PencilIcon />
-                            </button>
-                             <button
-                                onClick={() => handleDeleteClick(farmer)}
-                                className="font-medium text-red-400 hover:text-red-300"
-                                aria-label={`Delete farmer ${farmer.fullName}`}
-                            >
-                                <TrashIcon />
-                            </button>
-                        </div>
-                    </td>
+                    </th>
+                <SortableHeader label="Farmer ID" sortKey="id" />
+                <SortableHeader label="Full Name" sortKey="fullName" />
+                <SortableHeader label="Mobile" sortKey="mobile" />
+                <SortableHeader label="Location" sortKey="location" />
+                <SortableHeader label="Assigned Agent" sortKey="assignedAgent" />
+                <SortableHeader label="Parcels" sortKey="landParcelCount" />
+                <SortableHeader label="Status" sortKey="status" />
+                <th scope="col" className="px-6 py-3">Actions</th>
                 </tr>
-                {expandedRow === farmer.id && (
-                    <tr className="bg-gray-900/50">
-                        <td colSpan={9} className="p-4 transition-all duration-300 ease-in-out">
-                           <div className="bg-gray-800/50 p-6 rounded-lg space-y-6">
-                            {editingFarmerId === farmer.id && editableFarmerData ? (
-                                <>
-                                    <div className="flex items-start gap-6">
-                                        <div className="flex-shrink-0">
-                                             <h3 className="text-sm font-semibold text-teal-400 mb-3">Profile Photo</h3>
+            </thead>
+            <tbody>
+                {sortedAndFilteredFarmers.map((farmer) => (
+                <React.Fragment key={farmer.id}>
+                    <tr className={`border-b border-gray-700 ${selectedFarmerIds.includes(farmer.id) ? 'bg-teal-900/50' : 'bg-gray-800/50 hover:bg-gray-700/50'}`}>
+                        <td className="w-4 p-4">
+                            <div className="flex items-center">
+                                <input 
+                                    id={`checkbox-${farmer.id}`}
+                                    type="checkbox" 
+                                    className="w-4 h-4 text-teal-600 bg-gray-700 border-gray-600 rounded focus:ring-teal-500"
+                                    checked={selectedFarmerIds.includes(farmer.id)}
+                                    onChange={() => handleSelectOne(farmer.id)}
+                                    onClick={(e) => e.stopPropagation()}
+                                />
+                                <label htmlFor={`checkbox-${farmer.id}`} className="sr-only">checkbox</label>
+                            </div>
+                        </td>
+                        <td className="px-6 py-4 font-medium text-white whitespace-nowrap">{farmer.id}</td>
+                        <td className="px-6 py-4 text-white">{farmer.fullName}</td>
+                        <td className="px-6 py-4">{farmer.mobile}</td>
+                        <td className="px-6 py-4">{`${farmer.village}, ${farmer.district}`}</td>
+                        <td className="px-6 py-4">{userMap.get(farmer.assignedAgentId) || <span className="text-gray-500">Unassigned</span>}</td>
+                        <td className="px-6 py-4 text-center">{landParcelCounts[farmer.id] || 0}</td>
+                        <td className="px-6 py-4">
+                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                            farmer.status === 'Active' ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'
+                        }`}>
+                            {farmer.status}
+                        </span>
+                        </td>
+                        <td className="px-6 py-4">
+                            <div className="flex items-center gap-4">
+                                <button 
+                                    onClick={() => handleToggleRow(farmer.id)}
+                                    className="font-medium text-teal-400 hover:text-teal-300 flex items-center gap-1"
+                                    aria-label={expandedRow === farmer.id ? 'Hide Details' : 'Show Details'}
+                                >
+                                    <span>Details</span>
+                                    {expandedRow === farmer.id ? <ChevronUpIcon /> : <ChevronDownIcon />}
+                                </button>
+                                <button
+                                    onClick={() => handleEditClick(farmer)}
+                                    className="font-medium text-blue-400 hover:text-blue-300"
+                                    aria-label={`Edit farmer ${farmer.fullName}`}
+                                >
+                                    <PencilIcon />
+                                </button>
+                                 <button
+                                    onClick={() => handleDeleteClick(farmer)}
+                                    className="font-medium text-red-400 hover:text-red-300"
+                                    aria-label={`Delete farmer ${farmer.fullName}`}
+                                >
+                                    <TrashIcon />
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {expandedRow === farmer.id && (
+                        <tr className="bg-gray-900/50">
+                            <td colSpan={9} className="p-4 transition-all duration-300 ease-in-out">
+                               <div className="bg-gray-800/50 p-6 rounded-lg space-y-6">
+                                {editingFarmerId === farmer.id && editableFarmerData ? (
+                                    <>
+                                     <div className="flex items-start gap-6">
+                                         <div className="flex-shrink-0">
+                                              <h3 className="text-sm font-semibold text-teal-400 mb-3">Profile Photo</h3>
                                              {editableFarmerData.photoUrl ? (
                                                 <img src={editableFarmerData.photoUrl} alt="Farmer" className="h-24 w-24 rounded-full object-cover" />
                                             ) : (
@@ -698,16 +710,16 @@ const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, setAllFar
                                         <div className="flex-grow">
                                             <h3 className="text-sm font-semibold text-teal-400 mb-3">Edit Personal & Location Information</h3>
                                             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                                <EditableInput label="Full Name" name="fullName" value={editableFarmerData.fullName} onChange={handleInputChange} />
-                                                <EditableInput label="Father's Name" name="fatherName" value={editableFarmerData.fatherName} onChange={handleInputChange} />
-                                                <EditableInput label="Date of Birth" name="dob" type="date" value={editableFarmerData.dob} onChange={handleInputChange} />
-                                                <EditableInput label="Gender" name="gender" type="select" options={['Male', 'Female', 'Other'].map(o => ({ value: o, label: o }))} value={editableFarmerData.gender} onChange={handleInputChange} />
-                                                <EditableInput label="Mobile" name="mobile" value={editableFarmerData.mobile} onChange={handleInputChange} />
-                                                <EditableInput label="Village" name="village" value={editableFarmerData.village} onChange={handleInputChange} />
-                                                <EditableInput label="Mandal" name="mandal" value={editableFarmerData.mandal} onChange={handleInputChange} />
-                                                <EditableInput label="District" name="district" value={editableFarmerData.district} onChange={handleInputChange} />
-                                                <EditableInput label="Assigned Agent" name="assignedAgentId" type="select" options={fieldAgents.map(a => ({ value: a.id, label: a.fullName }))} value={editableFarmerData.assignedAgentId} onChange={handleInputChange} />
-                                            </div>
+                                                 <EditableInput label="Full Name" name="fullName" value={editableFarmerData.fullName} onChange={handleInputChange} />
+                                                 <EditableInput label="Father's Name" name="fatherName" value={editableFarmerData.fatherName} onChange={handleInputChange} />
+                                                 <EditableInput label="Date of Birth" name="dob" type="date" value={editableFarmerData.dob} onChange={handleInputChange} />
+                                                 <EditableInput label="Gender" name="gender" type="select" options={['Male', 'Female', 'Other'].map(o => ({ value: o, label: o }))} value={editableFarmerData.gender} onChange={handleInputChange} />
+                                                 <EditableInput label="Mobile" name="mobile" value={editableFarmerData.mobile} onChange={handleInputChange} />
+                                                 <EditableInput label="Village" name="village" value={editableFarmerData.village} onChange={handleInputChange} />
+                                                 <EditableInput label="Mandal" name="mandal" value={editableFarmerData.mandal} onChange={handleInputChange} />
+                                                 <EditableInput label="District" name="district" value={editableFarmerData.district} onChange={handleInputChange} />
+                                                 <EditableInput label="Assigned Agent" name="assignedAgentId" type="select" options={fieldAgents.map(a => ({ value: a.id, label: a.fullName }))} value={editableFarmerData.assignedAgentId} onChange={handleInputChange} />
+                                             </div>
                                         </div>
                                     </div>
                                     
@@ -800,9 +812,9 @@ const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, setAllFar
                                                 {mockLandParcels.filter(lp => lp.farmerId === farmer.id).map(parcel => (
                                                     <div key={parcel.id} className="p-3 bg-gray-700/30 rounded-md grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                                                         <div><span className="text-gray-400">Survey No:</span> <span className="text-white font-medium">{parcel.surveyNumber}</span></div>
-                                                        <div><span className="text-gray-400">Area:</span> <span className="text-white font-medium">{parcel.areaAcres} Acres</span></div>
-                                                        <div><span className="text-gray-400">Irrigation:</span> <span className="text-white font-medium">{parcel.irrigationSource}</span></div>
-                                                         <div><span className="text-gray-400">Status:</span> <span className="text-white font-medium">{parcel.status}</span></div>
+                                                         <div><span className="text-gray-400">Area:</span> <span className="text-white font-medium">{parcel.areaAcres} Acres</span></div>
+                                                         <div><span className="text-gray-400">Irrigation:</span> <span className="text-white font-medium">{parcel.irrigationSource}</span></div>
+                                                          <div><span className="text-gray-400">Status:</span> <span className="text-white font-medium">{parcel.status}</span></div>
                                                     </div>
                                                 ))}
                                                 {(landParcelCounts[farmer.id] || 0) === 0 && <p className="text-gray-400 text-center">No land parcels on record.</p>}
@@ -817,16 +829,17 @@ const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, setAllFar
                                        )}
                                    </div>
                                </div>
-                           )}
-                           </div>
-                        </td>
-                    </tr>
-                )}
-              </React.Fragment>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                               )}
+                               </div>
+                            </td>
+                        </tr>
+                    )}
+                </React.Fragment>
+                ))}
+            </tbody>
+            </table>
+        </div>
+      )}
     </DashboardCard>
     </>
   );

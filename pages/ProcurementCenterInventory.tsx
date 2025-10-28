@@ -2,7 +2,8 @@ import React, { useState, useMemo, FormEvent, useRef } from 'react';
 import type { ProcurementCenterInventory, PCInventoryStatus, ProcurementCenter } from '../types';
 import { mockProcurementCenterInventory, mockProcurementCenters } from '../data/mockData';
 import DashboardCard from '../components/DashboardCard';
-import { PencilIcon, BuildingStorefrontIcon } from '../components/Icons';
+// FIX: Replace missing `BuildingStorefrontIcon` with `HomeModernIcon`.
+import { PencilIcon, HomeModernIcon } from '../components/Icons';
 import { exportToCSV, exportToExcel } from '../services/exportService';
 import { exportElementAsPDF } from '../services/pdfService';
 
@@ -135,7 +136,7 @@ const ProcurementCenterInventory: React.FC = () => {
     };
 
     return (
-        <DashboardCard title="Procurement Center Inventory" icon={<BuildingStorefrontIcon />} exportOptions={exportOptions} contentRef={contentRef}>
+        <DashboardCard title="Procurement Center Inventory" icon={<HomeModernIcon />} exportOptions={exportOptions} contentRef={contentRef}>
             {isModalOpen && currentItem && (
                 <PCInventoryModal item={currentItem} centers={mockProcurementCenters} onSave={handleSaveItem} onCancel={handleCloseModal} />
             )}

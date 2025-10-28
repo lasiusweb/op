@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react';
-import type { User, UserRole } from '../types';
+import React, { useRef, useState, useMemo } from 'react';
+import type { User, UserRole, FarmVisitRequest } from '../types';
 import DashboardCard from '../components/DashboardCard';
 import { exportToCSV, exportToExcel } from '../services/exportService';
 import { exportElementAsPDF } from '../services/pdfService';
@@ -9,8 +9,10 @@ import BulkImportModal from '../components/BulkImportModal';
 interface UsersProps {
   currentUser: User;
   allUsers: User[];
+  allVisitRequests: FarmVisitRequest[];
   setAllUsers: React.Dispatch<React.SetStateAction<User[]>>;
   onViewProfile: (userId: string) => void;
+  onViewVisits: (userId: string) => void;
 }
 
 const userTemplateHeaders = [
@@ -18,10 +20,26 @@ const userTemplateHeaders = [
 ];
 const validRoles: UserRole[] = ['Admin', 'Field Agent', 'Reviewer', 'Accountant', 'Mandal Coordinator', 'Procurement Center Manager', 'Factory Manager'];
 
-const Users: React.FC<UsersProps> = ({ currentUser, allUsers, setAllUsers, onViewProfile }) => {
+const Users: React.FC<UsersProps> = ({ currentUser, allUsers, setAllUsers, onViewProfile, allVisitRequests, onViewVisits }) => {
   const isAdmin = currentUser.role === 'Admin';
   const contentRef = useRef<HTMLDivElement>(null);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  
+  const visitCounts = useMemo(() => {
+    const counts: { [userId: string]: number } = {};
+    for (const user of allUsers) {
+        counts[user.id] = 0;
+    }
+    for (const visit of allVisitRequests) {
+        if (visit.assignedAgentId && (visit.status === 'Pending' || visit.status === 'Scheduled')) {
+            if (counts[visit.assignedAgentId] !== undefined) {
+                counts[visit.assignedAgentId]++;
+            }
+        }
+    }
+    return counts;
+  }, [allUsers, allVisitRequests]);
+
 
   const handleExportPDF = () => {
     if (contentRef.current) {
@@ -35,6 +53,7 @@ const Users: React.FC<UsersProps> = ({ currentUser, allUsers, setAllUsers, onVie
         'Full Name': user.fullName,
         'Role': user.role,
         'Region': user.region,
+        'Active Visits': visitCounts[user.id] || 0,
         'Status': user.status,
         'Email': user.email,
         'Mobile': user.mobile,
@@ -117,6 +136,7 @@ const Users: React.FC<UsersProps> = ({ currentUser, allUsers, setAllUsers, onVie
               <th scope="col" className="px-6 py-3">Full Name</th>
               <th scope="col" className="px-6 py-3">Role</th>
               <th scope="col" className="px-6 py-3">Region</th>
+              <th scope="col" className="px-6 py-3">Active Visits</th>
               <th scope="col" className="px-6 py-3">Status</th>
               {isAdmin && (
                 <th scope="col" className="px-6 py-3"><span className="sr-only">Actions</span></th>
@@ -134,6 +154,22 @@ const Users: React.FC<UsersProps> = ({ currentUser, allUsers, setAllUsers, onVie
                 </td>
                 <td className="px-6 py-4">{user.role}</td>
                 <td className="px-6 py-4">{user.region}</td>
+                <td className="px-6 py-4">
+                  {user.role === 'Field Agent' && (
+                    <button
+                        onClick={() => onViewVisits(user.id)}
+                        className={`px-3 py-1 text-xs font-semibold rounded-full transition-colors ${
+                            visitCounts[user.id] > 0
+                            ? 'bg-teal-500/20 text-teal-300 hover:bg-teal-500/40'
+                            : 'bg-gray-700/50 text-gray-400 cursor-default'
+                        }`}
+                        disabled={visitCounts[user.id] === 0}
+                        aria-label={`View ${visitCounts[user.id]} visits for ${user.fullName}`}
+                    >
+                      {visitCounts[user.id]}
+                    </button>
+                  )}
+                </td>
                 <td className="px-6 py-4">
                   <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                     user.status === 'Active' ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'

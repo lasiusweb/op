@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Sidebar from './components/layout/Sidebar';
 import Header from './components/layout/Header';
 import Dashboard from './pages/Dashboard';
@@ -43,19 +43,80 @@ import FarmerPortal from './pages/FarmerPortal';
 import CropInsurance from './pages/CropInsurance';
 import DocumentManager from './pages/DocumentManager';
 import AddFarmer from './pages/AddFarmer';
+import ManageVisits from './pages/ManageVisits';
+import ManageVisitSlots from './pages/ManageVisitSlots';
+import VisitReport from './pages/VisitReport';
+import VisitCountReport from './pages/VisitCountReport';
+import VisitMapView from './pages/VisitMapView';
+import VisitTravelTime from './pages/VisitTravelTime';
+import VisitSetting from './pages/VisitSetting';
+import VisitSummaryReport from './pages/VisitSummaryReport';
+import MonthlyVisitReport from './pages/MonthlyVisitReport';
+import EmployeeVisitSetting from './pages/EmployeeVisitSetting';
+import MissedRouteVisitReport from './pages/MissedRouteVisitReport';
+import ManageAssignVisitTemplate from './pages/ManageAssignVisitTemplate';
+import ManageAssignEquipmentTemplate from './pages/ManageAssignEquipmentTemplate';
+import VisitTemplateReport from './pages/VisitTemplateReport';
+import AverageMeetingMonthly from './pages/AverageMeetingMonthly';
+import HourlyVisitReport from './pages/HourlyVisitReport';
 
 
-import type { User, Farmer, LandParcel, NurseryInventoryItem } from './types';
-import { mockUsers, mockTasks, mockFarmersData, mockLandParcels, mockNurseryInventory } from './data/mockData';
+import type { User, Farmer, LandParcel, NurseryInventoryItem, PlantationLog as PlantationLogType, FarmVisitRequest, UserActivity, Task } from './types';
+import { mockUsers, mockTasks, mockFarmersData, mockLandParcels, mockNurseryInventory, mockSubsidyApplications, mockProcurementBatches, mockPlantationLogs, mockFarmVisitRequests, mockUserActivity } from './data/mockData';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState('dashboard');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 1024);
   const [users, setUsers] = useState<User[]>(mockUsers);
+  const [tasks, setTasks] = useState<Task[]>(mockTasks);
   const [farmers, setFarmers] = useState<Farmer[]>(mockFarmersData);
   const [landParcels, setLandParcels] = useState<LandParcel[]>(mockLandParcels);
   const [nurseryInventory, setNurseryInventory] = useState<NurseryInventoryItem[]>(mockNurseryInventory);
+  const [plantationLogs, setPlantationLogs] = useState<PlantationLogType[]>(mockPlantationLogs);
+  const [farmVisitRequests, setFarmVisitRequests] = useState<FarmVisitRequest[]>(mockFarmVisitRequests);
+  const [userActivity, setUserActivity] = useState<UserActivity[]>(mockUserActivity);
   const [currentUser, setCurrentUser] = useState<User>(users[1]); // Default to a non-admin
   const [viewingUserId, setViewingUserId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [visitFilterAgentId, setVisitFilterAgentId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setIsSidebarOpen(true);
+      } else {
+        setIsSidebarOpen(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+
+    const timer = setTimeout(() => setLoading(false), 2500); // Simulate loading for skeletons
+
+    return () => {
+        window.removeEventListener('resize', handleResize);
+        clearTimeout(timer);
+    };
+  }, []);
+
+  const handleSetCurrentPage = useCallback((page: string) => {
+    if (page !== 'manageVisits') {
+        setVisitFilterAgentId(null);
+    }
+    setCurrentPage(page);
+    if (window.innerWidth < 1024) {
+      setIsSidebarOpen(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (currentPage === 'profile' && viewingUserId) {
+      const userExists = users.some(u => u.id === viewingUserId);
+      if (!userExists) {
+        handleSetCurrentPage('users');
+      }
+    }
+  }, [currentPage, viewingUserId, users, handleSetCurrentPage]);
+
 
   const pageTitles: { [key: string]: string } = {
       dashboard: 'Executive Dashboard',
@@ -100,11 +161,33 @@ const App: React.FC = () => {
       farmerPortal: 'Farmer Self-Service Portal',
       cropInsurance: 'Crop Insurance & Risk Manager',
       documentManager: 'Document Management System',
+      manageVisits: "Manage Visits",
+      addVisit: "Add Visit",
+      manageVisitSlots: "Manage Visit Slots",
+      visitReport: "Visit Report",
+      visitCountReport: "Visit Count Report",
+      visitMapView: "Visit Map View",
+      visitTravelTime: "Visit Travel Time",
+      visitSetting: "Visit Setting",
+      visitSummaryReport: "Visit Summary Report",
+      monthlyVisitReport: "Monthly Visit Report",
+      employeeVisitSetting: "Employee Visit Setting",
+      missedRouteVisitReport: "Missed Route Visit Report",
+      manageAssignVisitTemplate: "Manage Assign Visit Template",
+      manageAssignEquipmentTemplate: "Manage Assign Equipment Template",
+      visitTemplateReport: "Visit Template Report",
+      averageMeetingMonthly: "Average Meeting Monthly",
+      hourlyVisitReport: "Hourly Visit Report",
   }
 
   const handleViewProfile = (userId: string) => {
     setViewingUserId(userId);
-    setCurrentPage('profile');
+    handleSetCurrentPage('profile');
+  };
+  
+  const handleViewUserVisits = (userId: string) => {
+    setVisitFilterAgentId(userId);
+    handleSetCurrentPage('manageVisits');
   };
 
   const handleUpdateUser = (updatedUser: User) => {
@@ -115,25 +198,49 @@ const App: React.FC = () => {
         setCurrentUser(updatedUser);
     }
     // Go back to the user list after saving
-    setCurrentPage('users');
+    handleSetCurrentPage('users');
+  };
+
+  const handleUpdateTask = (updatedTask: Task) => {
+    setTasks(prevTasks => prevTasks.map(t => t.id === updatedTask.id ? updatedTask : t));
   };
 
   const handleAddNewFarmer = (newFarmer: Farmer, newLandParcel: LandParcel) => {
     setFarmers(prev => [newFarmer, ...prev]);
     setLandParcels(prev => [newLandParcel, ...prev]);
-    setCurrentPage('farmers');
+    handleSetCurrentPage('farmers');
   };
+
+  const handleAddPlantationLog = (newLog: PlantationLogType) => {
+    setPlantationLogs(prev => [newLog, ...prev]);
+  };
+
+  const handleAddFarmVisitRequest = (newRequest: FarmVisitRequest) => {
+    setFarmVisitRequests(prev => [newRequest, ...prev]);
+  };
+
+  const handleUpdateFarmVisitRequest = (updatedRequest: FarmVisitRequest) => {
+      setFarmVisitRequests(prev => prev.map(r => r.id === updatedRequest.id ? updatedRequest : r));
+  };
+
 
   const renderPage = () => {
     switch (currentPage) {
       case 'dashboard':
-        return <Dashboard />;
+        return <Dashboard loading={loading} />;
       case 'farmers':
-        return <Farmers onAddNewFarmer={() => setCurrentPage('addFarmer')} allFarmers={farmers} setAllFarmers={setFarmers} />;
+        return <Farmers loading={loading} onAddNewFarmer={() => handleSetCurrentPage('addFarmer')} allFarmers={farmers} setAllFarmers={setFarmers} />;
       case 'addFarmer':
-        return <AddFarmer onAddFarmer={handleAddNewFarmer} onCancel={() => setCurrentPage('farmers')} allFarmers={farmers} />;
+        return <AddFarmer onAddFarmer={handleAddNewFarmer} onCancel={() => handleSetCurrentPage('farmers')} allFarmers={farmers} />;
       case 'users':
-          return <Users currentUser={currentUser} allUsers={users} setAllUsers={setUsers} onViewProfile={handleViewProfile} />;
+          return <Users 
+                    currentUser={currentUser} 
+                    allUsers={users} 
+                    setAllUsers={setUsers} 
+                    onViewProfile={handleViewProfile} 
+                    allVisitRequests={farmVisitRequests}
+                    onViewVisits={handleViewUserVisits}
+                 />;
       case 'generalTasks':
           return <Tasks />;
       case 'fieldAgentTasks':
@@ -203,42 +310,92 @@ const App: React.FC = () => {
       case 'iotSensorData':
         return <IotSensorData />;
       case 'farmerPortal':
-        return <FarmerPortal />;
+        return <FarmerPortal 
+          allFarmers={farmers}
+          allLandParcels={landParcels}
+          allSubsidyApps={mockSubsidyApplications} 
+          allProcurementBatches={mockProcurementBatches}
+          plantationLogs={plantationLogs}
+          farmVisitRequests={farmVisitRequests}
+          onAddLog={handleAddPlantationLog}
+          onAddVisitRequest={handleAddFarmVisitRequest}
+          setCurrentPage={handleSetCurrentPage}
+        />;
       case 'cropInsurance':
         return <CropInsurance />;
       case 'documentManager':
         return <DocumentManager />;
+       case 'manageVisits':
+            return <ManageVisits 
+                allVisitRequests={farmVisitRequests}
+                onAddRequest={handleAddFarmVisitRequest}
+                onUpdateRequest={handleUpdateFarmVisitRequest}
+                filterAgentId={visitFilterAgentId}
+            />;
+        case 'addVisit': return <ManageVisits allVisitRequests={farmVisitRequests} onAddRequest={handleAddFarmVisitRequest} onUpdateRequest={handleUpdateFarmVisitRequest} />;
+        case 'manageVisitSlots': return <ManageVisitSlots />;
+        case 'visitReport': return <VisitReport />;
+        case 'visitCountReport': return <VisitCountReport />;
+        case 'visitMapView': return <VisitMapView />;
+        case 'visitTravelTime': return <VisitTravelTime />;
+        case 'visitSetting': return <VisitSetting />;
+        case 'visitSummaryReport': return <VisitSummaryReport />;
+        case 'monthlyVisitReport': return <MonthlyVisitReport />;
+        case 'employeeVisitSetting': return <EmployeeVisitSetting />;
+        case 'missedRouteVisitReport': return <MissedRouteVisitReport />;
+        case 'manageAssignVisitTemplate': return <ManageAssignVisitTemplate />;
+        case 'manageAssignEquipmentTemplate': return <ManageAssignEquipmentTemplate />;
+        case 'visitTemplateReport': return <VisitTemplateReport />;
+        case 'averageMeetingMonthly': return <AverageMeetingMonthly />;
+        case 'hourlyVisitReport': return <HourlyVisitReport />;
       case 'profile': {
           const viewingUser = users.find(u => u.id === viewingUserId);
-          if (viewingUser) {
-            return <Profile 
-                viewingUser={viewingUser} 
-                currentUser={currentUser}
-                allTasks={mockTasks}
-                onUpdateUser={handleUpdateUser}
-             />;
+          if (!viewingUser) {
+            // Render nothing while the useEffect handles the redirect.
+            return null;
           }
-          // Fallback if user not found
-          setCurrentPage('users');
-          return <Users currentUser={currentUser} allUsers={users} setAllUsers={setUsers} onViewProfile={handleViewProfile} />;
+          return <Profile 
+              viewingUser={viewingUser} 
+              currentUser={currentUser}
+              allUsers={users}
+              allTasks={tasks}
+              allActivity={userActivity}
+              onUpdateUser={handleUpdateUser}
+              onUpdateTask={handleUpdateTask}
+           />;
       }
       default:
-        return <Dashboard />;
+        return <Dashboard loading={loading}/>;
     }
   };
 
   return (
     <div className="flex h-screen bg-gray-900 text-gray-200 font-sans">
-      <Sidebar currentPage={currentPage} setCurrentPage={setCurrentPage} />
-      <div className="flex-1 grid grid-rows-[auto_1fr]">
+       {/* Overlay for mobile */}
+      {isSidebarOpen && (
+        <div
+          onClick={() => setIsSidebarOpen(false)}
+          className="fixed inset-0 z-20 bg-black/60 lg:hidden"
+          aria-hidden="true"
+        ></div>
+      )}
+      <Sidebar 
+        currentPage={currentPage} 
+        setCurrentPage={handleSetCurrentPage}
+        isSidebarOpen={isSidebarOpen}
+        setIsSidebarOpen={setIsSidebarOpen}
+       />
+      <div className="flex-1 flex flex-col overflow-hidden">
         <Header 
             title={pageTitles[currentPage] || 'Dashboard'} 
             currentUser={currentUser}
             allUsers={users}
+            allTasks={tasks}
             setCurrentUser={setCurrentUser}
             onViewProfile={() => handleViewProfile(currentUser.id)}
+            onToggleSidebar={() => setIsSidebarOpen(true)}
         />
-        <main className="overflow-x-hidden overflow-y-auto bg-gray-800/50 p-4 sm:p-6 lg:p-8">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-800/50 p-4 sm:p-6 lg:p-8">
             {renderPage()}
         </main>
       </div>

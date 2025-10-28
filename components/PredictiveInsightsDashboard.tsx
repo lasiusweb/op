@@ -48,7 +48,8 @@ const PredictiveInsightsDashboard: React.FC<PredictiveInsightsDashboardProps> = 
   };
   
   const handleExportExcel = () => {
-    let sectionsForExcel = [...exportDataSections];
+    // FIX: Correctly type `sectionsForExcel` to allow for a custom `Summary` property when exporting to Excel.
+    let sectionsForExcel: { title: string; data: any[] }[] = [...exportDataSections];
     if (insights) {
         const plainTextInsights = insights.replace(/<[^>]+>/g, '').replace(/•/g, '- ').replace(/\*/g, '- ');
         sectionsForExcel.push({ title: 'AI Summary', data: [{ Summary: plainTextInsights }] });
