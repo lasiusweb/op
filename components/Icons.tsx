@@ -390,3 +390,9 @@ export const BuildingStorefrontIcon: React.FC<IconProps> = ({ className = "h-6 w
       <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 21v-7.5A.75.75 0 0114.25 12h.75a.75.75 0 01.75.75v7.5m-4.5 0v-7.5A.75.75 0 019.75 12h.75a.75.75 0 01.75.75v7.5m-4.5 0v-7.5A.75.75 0 015.25 12h.75a.75.75 0 01.75.75v7.5m-4.5 0v-7.5a.75.75 0 01.75-.75h16.5a.75.75 0 01.75.75v7.5m0 0v-7.5a.75.75 0 00-.75-.75H3.75a.75.75 0 00-.75.75v7.5m19.5 0h.008v.008h-.008V18.75zM4.5 12V4.5a.75.75 0 01.75-.75h13.5a.75.75 0 01.75.75V12" />
     </svg>
 );
+
+export const ExclamationCircleIcon: React.FC<IconProps> = ({ className = "h-6 w-6" }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+    </svg>
+);

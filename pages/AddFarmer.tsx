@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import type { Farmer, LandParcel, District, Mandal, Village, User } from '../types';
 import { mockDistricts, mockMandals, mockVillages, mockUsers } from '../data/mockData';
 import DashboardCard from '../components/DashboardCard';
-import { UserCircleIcon, CameraIcon, ArrowUpTrayIcon } from '../components/Icons';
+import { UserCircleIcon, CameraIcon, ArrowUpTrayIcon, ExclamationCircleIcon } from '../components/Icons';
 import Cropper from 'react-easy-crop';
 import type { Area } from 'react-easy-crop';
 
@@ -72,13 +72,35 @@ interface AddFarmerProps {
     allFarmers: Farmer[];
 }
 
+// A more specific type for the errors state object
+type FormErrors = { [key in keyof (Farmer & LandParcel)]?: string } & { [key: string]: string };
+
+const labelMap: { [key: string]: string } = {
+    districtId: "District",
+    mandalId: "Mandal",
+    villageId: "Village",
+    fullName: "Full Name",
+    fatherName: "Father's Name",
+    mobile: "Mobile Number",
+    aadhaar: "Aadhaar Number",
+    dob: "Date of Birth",
+    caste: "Caste",
+    surveyNumber: "Survey Number",
+    areaAcres: "Total Area",
+    mlrdPlants: "MLRD Plants",
+    fullCostPlants: "Full Cost Plants",
+    bankName: "Bank Name",
+    bankAccountNumber: "Account Number",
+    ifscCode: "IFSC Code",
+    assignedAgentId: "Assigned Agent",
+};
+
 const AddFarmer: React.FC<AddFarmerProps> = ({ onAddFarmer, onCancel, allFarmers }) => {
     const [formData, setFormData] = useState<any>({
         gender: 'Male',
         cropType: 'Oil Palm',
         accountVerified: false,
         photoUploaded: false,
-        caste: 'BC',
         plantationType: 'Monocrop',
     });
     const [filteredMandals, setFilteredMandals] = useState<Mandal[]>([]);
@@ -88,7 +110,8 @@ const AddFarmer: React.FC<AddFarmerProps> = ({ onAddFarmer, onCancel, allFarmers
     const [photoUrl, setPhotoUrl] = useState<string | null>(null);
     const [isCameraOpen, setIsCameraOpen] = useState(false);
     const [isCameraLoading, setIsCameraLoading] = useState(false);
-    const [errors, setErrors] = useState<{ mobile?: string }>({});
+    const [errors, setErrors] = useState<FormErrors>({});
+    const [photoError, setPhotoError] = useState<string | null>(null);
 
     // State for image cropping
     const [imageToCrop, setImageToCrop] = useState<string | null>(null);
@@ -181,23 +204,58 @@ const AddFarmer: React.FC<AddFarmerProps> = ({ onAddFarmer, onCancel, allFarmers
     }, [formData.districtId, formData.mandalId, formData.villageId, allFarmers]);
 
 
-    // Validation function for mobile number
-    const validateMobileNumber = (mobile: string): string => {
-        if (!mobile) return ""; // Let required attribute handle empty
-        const mobileRegex = /^[6-9]\d{9}$/;
-        if (!mobileRegex.test(mobile)) {
-            return "Must be a valid 10-digit Indian mobile number.";
-        }
-        return "";
-    };
+    const validate = useCallback((data: any): FormErrors => {
+        const newErrors: FormErrors = {};
+
+        // Location
+        if (!data.districtId) newErrors.districtId = "District is required.";
+        if (!data.mandalId) newErrors.mandalId = "Mandal is required.";
+        if (!data.villageId) newErrors.villageId = "Village is required.";
+        
+        // Personal Info
+        if (!data.fullName) newErrors.fullName = "Full name is required.";
+        if (!data.fatherName) newErrors.fatherName = "Father's name is required.";
+        if (!data.mobile) newErrors.mobile = "Mobile number is required.";
+        else if (!/^[6-9]\d{9}$/.test(data.mobile)) newErrors.mobile = "Must be a valid 10-digit Indian mobile number.";
+        if (!data.aadhaar) newErrors.aadhaar = "Aadhaar number is required.";
+        else if (!/^\d{12}$/.test(data.aadhaar)) newErrors.aadhaar = "Aadhaar must be 12 digits.";
+        if (!data.dob) newErrors.dob = "Date of birth is required.";
+        else if (new Date(data.dob) > new Date()) newErrors.dob = "Date of birth cannot be in the future.";
+        if (!data.caste) newErrors.caste = "Caste is required.";
+
+        // Plantation & Land
+        if (!data.surveyNumber) newErrors.surveyNumber = "Survey number is required.";
+        if (data.areaAcres === undefined || data.areaAcres === '') newErrors.areaAcres = "Area is required.";
+        else if (Number(data.areaAcres) <= 0) newErrors.areaAcres = "Area must be greater than 0.";
+        if (data.mlrdPlants === undefined || data.mlrdPlants === '') newErrors.mlrdPlants = "MLRD plants count is required.";
+        else if (Number(data.mlrdPlants) < 0) newErrors.mlrdPlants = "Cannot be a negative number.";
+        if (data.fullCostPlants === undefined || data.fullCostPlants === '') newErrors.fullCostPlants = "Full cost plants count is required.";
+        else if (Number(data.fullCostPlants) < 0) newErrors.fullCostPlants = "Cannot be a negative number.";
+
+        // Bank Info
+        if (!data.bankName) newErrors.bankName = "Bank name is required.";
+        if (!data.bankAccountNumber) newErrors.bankAccountNumber = "Account number is required.";
+        else if (!/^\d{9,18}$/.test(data.bankAccountNumber)) newErrors.bankAccountNumber = "Account number must be between 9 and 18 digits.";
+        if (!data.ifscCode) newErrors.ifscCode = "IFSC code is required.";
+        else if (!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(data.ifscCode.toUpperCase())) newErrors.ifscCode = "Invalid IFSC code format (e.g., ABCD0123456).";
+        
+        // Assignment
+        if (!data.assignedAgentId) newErrors.assignedAgentId = "An agent must be assigned.";
+
+        return newErrors;
+    }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormData((prev: any) => ({ ...prev, [name]: value }));
 
-        if (name === 'mobile') {
-            const error = validateMobileNumber(value);
-            setErrors(prev => ({ ...prev, mobile: error }));
+        // Clear the error for the field being edited
+        if (errors[name]) {
+            setErrors(prev => {
+                const newErrors = { ...prev };
+                delete newErrors[name];
+                return newErrors;
+            });
         }
     };
 
@@ -206,8 +264,20 @@ const AddFarmer: React.FC<AddFarmerProps> = ({ onAddFarmer, onCancel, allFarmers
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setPhotoError(null);
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+            if (!allowedTypes.includes(file.type)) {
+                setPhotoError('Invalid file type. Please select a JPG, PNG, or GIF.');
+                return;
+            }
+            const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
+            if (file.size > maxSizeInBytes) {
+                setPhotoError('File is too large. Maximum size is 5MB.');
+                return;
+            }
+
             const reader = new FileReader();
             reader.onloadend = () => {
                 setImageToCrop(reader.result as string);
@@ -219,6 +289,7 @@ const AddFarmer: React.FC<AddFarmerProps> = ({ onAddFarmer, onCancel, allFarmers
     const openCamera = async () => {
         setIsCameraOpen(true);
         setIsCameraLoading(true);
+        setPhotoError(null);
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ video: true });
             if (videoRef.current) {
@@ -229,7 +300,7 @@ const AddFarmer: React.FC<AddFarmerProps> = ({ onAddFarmer, onCancel, allFarmers
             }
         } catch (err) {
             console.error("Error accessing camera: ", err);
-            alert("Could not access the camera. Please ensure you have given permission.");
+            setPhotoError("Could not access camera. Please ensure permissions are granted.");
             setIsCameraOpen(false);
             setIsCameraLoading(false);
         }
@@ -285,16 +356,26 @@ const AddFarmer: React.FC<AddFarmerProps> = ({ onAddFarmer, onCancel, allFarmers
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Final validation check before submitting
-        const mobileError = validateMobileNumber(formData.mobile || '');
-        if (mobileError) {
-            setErrors({ mobile: mobileError });
-            alert(`Validation Error: ${mobileError}`);
+        const validationErrors = validate(formData);
+        setErrors(validationErrors);
+
+        if (Object.keys(validationErrors).length > 0) {
+            const firstErrorField = Object.keys(validationErrors)[0];
+            if (firstErrorField) {
+                const element = document.getElementsByName(firstErrorField)[0];
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
             return;
         }
 
         if (farmerId.startsWith('Select')) {
-            alert('Please select a valid location to generate the Farmer ID.');
+            setErrors(prev => ({ ...prev, villageId: 'Please select a valid location to generate the Farmer ID.' }));
+            const element = document.getElementsByName('villageId')[0];
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
             return;
         }
 
@@ -345,14 +426,43 @@ const AddFarmer: React.FC<AddFarmerProps> = ({ onAddFarmer, onCancel, allFarmers
         onAddFarmer(newFarmer, newLandParcel);
     };
 
-    const FormInput = ({ name, label, required = false, type = 'text', children, readOnly = false, value }: any) => (
+    const FormInput = ({ name, label, required = false, type = 'text', children, readOnly = false, value, error }: any) => {
+        const commonClasses = "w-full bg-gray-700 border rounded-md px-3 py-2 text-white focus:outline-none focus:ring-1";
+        const errorClasses = "border-red-500 focus:ring-red-500";
+        const normalClasses = "border-gray-600 focus:ring-teal-500";
+        const readOnlyClasses = "bg-gray-800/50 text-gray-400 cursor-not-allowed";
+        const disabledClasses = "disabled:bg-gray-800 disabled:cursor-not-allowed disabled:text-gray-400";
+    
+        const finalClassName = `${commonClasses} ${error ? errorClasses : normalClasses} ${readOnly ? readOnlyClasses : ''}`;
+        
+        // Clone children (e.g., a select element) to inject shared props
+        const childWithProps = children ? React.cloneElement(children, {
+            className: `${finalClassName} ${disabledClasses}`,
+            id: name,
+            name: name,
+            value: formData[name] || '',
+            onChange: handleChange,
+            required: required,
+        }) : null;
+    
+        return (
          <div>
             <label htmlFor={name} className="block text-sm font-medium text-gray-300 mb-1">{label}</label>
-            {children ? children : 
-                <input type={type} id={name} name={name} value={value || formData[name] || ''} onChange={handleChange} required={required} readOnly={readOnly} className={`w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-1 focus:ring-teal-500 ${readOnly ? 'bg-gray-800/50 text-gray-400' : ''}`} />
+            {children ? childWithProps : 
+                <input 
+                    type={type} 
+                    id={name} 
+                    name={name} 
+                    value={value || formData[name] || ''} 
+                    onChange={handleChange} 
+                    required={required} 
+                    readOnly={readOnly} 
+                    className={finalClassName} 
+                />
             }
+            {error && <p className="text-red-400 text-xs mt-1">{error}</p>}
         </div>
-    );
+    )};
 
     const CameraModal = () => (
         <div className="fixed inset-0 bg-black/80 z-50 flex flex-col justify-center items-center p-4">
@@ -417,67 +527,58 @@ const AddFarmer: React.FC<AddFarmerProps> = ({ onAddFarmer, onCancel, allFarmers
             {isCameraOpen && <CameraModal />}
             {imageToCrop && <ImageCropperModal />}
             <form onSubmit={handleSubmit} className="space-y-8">
+                {Object.keys(errors).length > 0 && (
+                    <div className="bg-red-900/30 border border-red-500/50 text-red-300 px-4 py-3 rounded-lg flex gap-3" role="alert">
+                        <ExclamationCircleIcon className="h-6 w-6 flex-shrink-0 mt-0.5"/>
+                        <div>
+                            <strong className="font-bold">Please correct the {Object.keys(errors).length} error(s) below to proceed.</strong>
+                            <ul className="mt-2 list-disc list-inside text-sm">
+                                {Object.keys(errors).map(key => labelMap[key] ? <li key={key}><strong>{labelMap[key]}:</strong> {errors[key as keyof FormErrors]}</li> : null)}
+                            </ul>
+                        </div>
+                    </div>
+                )}
                 
                 <fieldset className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-end">
                     <legend className="text-lg font-semibold text-teal-400 w-full col-span-full border-b border-gray-700 pb-2 mb-2">Location & ID Generation</legend>
-                    <FormInput name="districtId" label="District" required>
-                        <select id="districtId" name="districtId" value={formData.districtId || ''} onChange={handleChange} required className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-1 focus:ring-teal-500">
+                    <FormInput name="districtId" label="District" required error={errors.districtId}>
+                        <select>
                             <option value="">-- Select District --</option>
                             {mockDistricts.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
                         </select>
                     </FormInput>
-                    <FormInput name="mandalId" label="Mandal" required>
-                        <select id="mandalId" name="mandalId" value={formData.mandalId || ''} onChange={handleChange} required disabled={!formData.districtId} className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-1 focus:ring-teal-500 disabled:bg-gray-800">
+                    <FormInput name="mandalId" label="Mandal" required error={errors.mandalId}>
+                        <select disabled={!formData.districtId}>
                             <option value="">-- Select Mandal --</option>
                             {filteredMandals.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
                         </select>
                     </FormInput>
-                    <FormInput name="villageId" label="Village" required>
-                         <select id="villageId" name="villageId" value={formData.villageId || ''} onChange={handleChange} required disabled={!formData.mandalId} className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-1 focus:ring-teal-500 disabled:bg-gray-800">
+                    <FormInput name="villageId" label="Village" required error={errors.villageId}>
+                         <select disabled={!formData.mandalId}>
                             <option value="">-- Select Village --</option>
                             {filteredVillages.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}
                         </select>
                     </FormInput>
-                     <FormInput name="farmerId" label="Generated Farmer ID" readOnly value={farmerId}>
-                        <input
-                            type="text"
-                            id="farmerId"
-                            name="farmerId"
-                            value={farmerId}
-                            readOnly
-                            className="w-full bg-gray-800/50 border border-gray-600 rounded-md px-3 py-2 text-teal-400 font-mono focus:outline-none"
-                        />
-                    </FormInput>
+                     <FormInput name="farmerId" label="Generated Farmer ID" readOnly value={farmerId} type="text"/>
                 </fieldset>
 
                 <fieldset className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <legend className="text-lg font-semibold text-teal-400 w-full col-span-full border-b border-gray-700 pb-2 mb-2">Personal Information</legend>
-                    <FormInput name="fullName" label="Full Name" required />
-                    <FormInput name="fatherName" label="Father's Name" required />
-                    <FormInput name="mobile" label="Mobile Number" required type="tel">
-                        <input
-                            type="tel"
-                            id="mobile"
-                            name="mobile"
-                            value={formData.mobile || ''}
-                            onChange={handleChange}
-                            required
-                            maxLength={10}
-                            className={`w-full bg-gray-700 border ${errors.mobile ? 'border-red-500 focus:ring-red-500' : 'border-gray-600 focus:ring-teal-500'} rounded-md px-3 py-2 text-white focus:outline-none focus:ring-1`}
-                        />
-                        {errors.mobile && <p className="text-red-400 text-xs mt-1">{errors.mobile}</p>}
-                    </FormInput>
-                    <FormInput name="aadhaar" label="Aadhaar Number" required />
-                    <FormInput name="dob" label="Date of Birth" required type="date" />
-                    <FormInput name="gender" label="Gender">
-                         <select id="gender" name="gender" value={formData.gender || ''} onChange={handleChange} className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-1 focus:ring-teal-500">
+                    <FormInput name="fullName" label="Full Name" required error={errors.fullName} />
+                    <FormInput name="fatherName" label="Father's Name" required error={errors.fatherName} />
+                    <FormInput name="mobile" label="Mobile Number" required type="tel" error={errors.mobile} />
+                    <FormInput name="aadhaar" label="Aadhaar Number" required error={errors.aadhaar} />
+                    <FormInput name="dob" label="Date of Birth" required type="date" error={errors.dob} />
+                    <FormInput name="gender" label="Gender" error={errors.gender}>
+                         <select>
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
                             <option value="Other">Other</option>
                         </select>
                     </FormInput>
-                    <FormInput name="caste" label="Caste">
-                         <select id="caste" name="caste" value={formData.caste || ''} onChange={handleChange} className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-1 focus:ring-teal-500">
+                    <FormInput name="caste" label="Caste" required error={errors.caste}>
+                         <select>
+                            <option value="">-- Select Caste --</option>
                             <option value="BC">BC</option><option value="OC">OC</option><option value="SC">SC</option><option value="ST">ST</option>
                         </select>
                     </FormInput>
@@ -496,33 +597,34 @@ const AddFarmer: React.FC<AddFarmerProps> = ({ onAddFarmer, onCancel, allFarmers
                             )}
                         </div>
                         <div className="flex flex-col gap-4">
-                            <input type="file" accept="image/*" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
+                            <input type="file" accept="image/jpeg,image/png,image/gif" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
                             <button type="button" onClick={handleUploadClick} className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md flex items-center justify-center gap-2">
                                 <ArrowUpTrayIcon className="h-5 w-5"/> Upload Photo
                             </button>
                             <button type="button" onClick={openCamera} className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md flex items-center justify-center gap-2">
                                <CameraIcon className="h-5 w-5"/> Take Photo
                             </button>
-                            <p className="text-xs text-gray-400">Upload or take a recent, clear photo of the farmer.</p>
+                             {photoError && <p className="text-red-400 text-xs">{photoError}</p>}
+                            <p className="text-xs text-gray-400">Upload or take a recent, clear photo of the farmer. (Max 5MB)</p>
                         </div>
                     </div>
                 </fieldset>
 
                  <fieldset className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <legend className="text-lg font-semibold text-teal-400 w-full col-span-full border-b border-gray-700 pb-2 mb-2">Plantation & Land Details</legend>
-                    <FormInput name="surveyNumber" label="Survey Number" required/>
-                    <FormInput name="areaAcres" label="Total Area (in Acres)" required type="number" />
-                    <FormInput name="mlrdPlants" label="MLRD Plants" required type="number" />
-                    <FormInput name="fullCostPlants" label="Full Cost Plants" required type="number" />
+                    <FormInput name="surveyNumber" label="Survey Number" required error={errors.surveyNumber}/>
+                    <FormInput name="areaAcres" label="Total Area (in Acres)" required type="number" error={errors.areaAcres} />
+                    <FormInput name="mlrdPlants" label="MLRD Plants" required type="number" error={errors.mlrdPlants} />
+                    <FormInput name="fullCostPlants" label="Full Cost Plants" required type="number" error={errors.fullCostPlants} />
                     <div>
                         <label className="block text-sm font-medium text-gray-300 mb-1">Total Plants</label>
-                        <input type="text" value={formData.totalPlants || 0} readOnly className="w-full bg-gray-800/50 border border-gray-600 rounded-md px-3 py-2 text-gray-300" />
+                        <input type="text" value={formData.totalPlants || 0} readOnly className="w-full bg-gray-800/50 border border-gray-600 rounded-md px-3 py-2 text-gray-300 cursor-not-allowed" />
                         {plantAreaValidation && (
                             <p className="text-yellow-400 text-xs mt-1">{plantAreaValidation}</p>
                         )}
                     </div>
-                     <FormInput name="plantationType" label="Plantation Type">
-                         <select id="plantationType" name="plantationType" value={formData.plantationType || ''} onChange={handleChange} className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-1 focus:ring-teal-500">
+                     <FormInput name="plantationType" label="Plantation Type" error={errors.plantationType}>
+                         <select>
                             <option>Monocrop</option><option>Intercrop</option>
                         </select>
                     </FormInput>
@@ -530,15 +632,15 @@ const AddFarmer: React.FC<AddFarmerProps> = ({ onAddFarmer, onCancel, allFarmers
 
                 <fieldset className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <legend className="text-lg font-semibold text-teal-400 w-full col-span-full border-b border-gray-700 pb-2 mb-2">Bank Information</legend>
-                    <FormInput name="bankName" label="Bank Name" required />
-                    <FormInput name="bankAccountNumber" label="Account Number" required />
-                    <FormInput name="ifscCode" label="IFSC Code" required />
+                    <FormInput name="bankName" label="Bank Name" required error={errors.bankName} />
+                    <FormInput name="bankAccountNumber" label="Account Number" required error={errors.bankAccountNumber} />
+                    <FormInput name="ifscCode" label="IFSC Code" required error={errors.ifscCode} />
                 </fieldset>
 
                 <fieldset className="grid grid-cols-1 md:grid-cols-3 gap-6">
                      <legend className="text-lg font-semibold text-teal-400 w-full col-span-full border-b border-gray-700 pb-2 mb-2">Assignment</legend>
-                     <FormInput name="assignedAgentId" label="Assign Field Agent" required>
-                         <select id="assignedAgentId" name="assignedAgentId" value={formData.assignedAgentId || ''} onChange={handleChange} required className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-1 focus:ring-teal-500">
+                     <FormInput name="assignedAgentId" label="Assign Field Agent" required error={errors.assignedAgentId}>
+                         <select>
                             <option value="">-- Select Agent --</option>
                             {fieldAgents.map(a => <option key={a.id} value={a.id}>{a.fullName}</option>)}
                         </select>
