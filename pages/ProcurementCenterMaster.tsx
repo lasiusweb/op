@@ -2,7 +2,6 @@ import React, { useState, useMemo, FormEvent } from 'react';
 import type { ProcurementCenter, User, Mandal, District } from '../types';
 import { mockProcurementCenters, mockUsers, mockMandals, mockDistricts } from '../data/mockData';
 import DashboardCard from '../components/DashboardCard';
-// FIX: Revert placeholder icon and use the newly added `BuildingStorefrontIcon`.
 import { PencilIcon, BuildingStorefrontIcon, MapIcon, TableCellsIcon, UserIcon, PhoneIcon } from '../components/Icons';
 
 const Highlight: React.FC<{ text: string; highlight: string }> = ({ text, highlight }) => {
