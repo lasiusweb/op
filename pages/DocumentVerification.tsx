@@ -20,7 +20,7 @@ const DocumentVerification: React.FC = () => {
 
     const farmerMap = useMemo(() => new Map(mockFarmersData.map(f => [f.id, f.fullName])), []);
     const applicationMap = useMemo(() => new Map(mockSubsidyApplications.map(app => [app.id, app])), []);
-    const userMap = useMemo(() => new Map(mockEmployees.map(u => [u.id, u.fullName])), []);
+    const employeeMap = useMemo(() => new Map(mockEmployees.map(u => [u.id, u.fullName])), []);
 
     const groupedDocuments = useMemo(() => {
         const filteredDocs = documents.filter(doc => filterStatus === 'All' || doc.status === filterStatus);
@@ -46,7 +46,7 @@ const DocumentVerification: React.FC = () => {
             ? { 
                 ...doc, 
                 status: newStatus, 
-                verifiedById: 'EMP008', // Assume current user is the reviewer
+                verifiedById: 'EMP008', // Assume current employee is the reviewer
                 verifiedAt: new Date().toISOString().split('T')[0],
                 updatedAt: new Date().toISOString() 
               } 
@@ -68,7 +68,7 @@ const DocumentVerification: React.FC = () => {
                 'Subsidy Type': application.subsidyType,
                 'Document Type': doc.documentType,
                 'Status': doc.status,
-                'Verified By': doc.verifiedById ? userMap.get(doc.verifiedById) : 'N/A',
+                'Verified By': doc.verifiedById ? employeeMap.get(doc.verifiedById) : 'N/A',
                 'Verified At': doc.verifiedAt || 'N/A',
             }))
         );

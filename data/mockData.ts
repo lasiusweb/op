@@ -1,4 +1,4 @@
-import type { Farmer, Task, Employee, LandParcel, Location, ProcurementBatch, Payment, QualityInspection, District, Mandal, Village, ProcurementCenter, Factory, SubsidyApplication, Document, Inspection, Office, HOSanction, PlantationLog, HarvestLog, MicroIrrigationInstallation, NurseryInventoryItem, FactoryInventoryItem, ProcurementCenterInventory, FarmVisitRequest, UserActivity, EmployeeLifecycle, ProfileChangeRequest, LifecycleTask } from '../types';
+import type { Farmer, Task, Employee, LandParcel, Location, ProcurementBatch, Payment, QualityInspection, District, Mandal, Village, ProcurementCenter, Factory, SubsidyApplication, Document, Inspection, Office, HOSanction, PlantationLog, HarvestLog, MicroIrrigationInstallation, NurseryInventoryItem, FactoryInventoryItem, ProcurementCenterInventory, FarmVisitRequest, EmployeeActivity, EmployeeLifecycle, ProfileChangeRequest, LifecycleTask } from '../types';
 
 const now = new Date();
 const pastDate = (days: number) => new Date(now.getTime() - days * 24 * 60 * 60 * 1000).toISOString();
@@ -115,10 +115,10 @@ export const mockTasks: Task[] = [
   { id: 'TSK005', title: 'Onboard New Farmers in Mulugu', description: 'Complete the registration and onboarding process for 10 new farmers.', assignedToId: 'EMP002', dueDate: '2024-08-18', status: 'Pending', priority: 'High', createdAt: pastDate(5), updatedAt: pastDate(5), completedAt: undefined },
 ];
 
-export const mockUserActivity: UserActivity[] = [
+export const mockEmployeeActivity: EmployeeActivity[] = [
   { id: 'ACT001', employeeId: 'EMP001', action: 'Completed Task', details: 'TSK002 - Verify Subsidy Application #S4521', timestamp: pastDate(1), icon: 'task' },
-  { id: 'ACT002', employeeId: 'EMP001', action: 'Updated Farmer Profile', details: 'R. Venkatesh', timestamp: pastDate(3), icon: 'user' },
-  { id: 'ACT003', employeeId: 'EMP002', action: 'Onboarded New Farmers', details: '10 new farmers in Mulugu', timestamp: pastDate(5), icon: 'user' },
+  { id: 'ACT002', employeeId: 'EMP001', action: 'Updated Farmer Profile', details: 'R. Venkatesh', timestamp: pastDate(3), icon: 'employee' },
+  { id: 'ACT003', employeeId: 'EMP002', action: 'Onboarded New Farmers', details: '10 new farmers in Mulugu', timestamp: pastDate(5), icon: 'employee' },
   { id: 'ACT004', employeeId: 'EMP003', action: 'Verified Documents', details: 'SUB002 - Aadhaar Card', timestamp: pastDate(4), icon: 'subsidy' },
   { id: 'ACT005', employeeId: 'EMP005', action: 'Approved Sanction', details: 'SAN001 - High Value Subsidy', timestamp: pastDate(9), icon: 'payment' },
   { id: 'ACT006', employeeId: 'EMP001', action: 'Logged Plantation Activity', details: 'Fertilizing for R. Venkatesh', timestamp: pastDate(20), icon: 'task' },

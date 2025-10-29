@@ -23,10 +23,10 @@ type SortableTaskKeys = 'priority' | 'assignedTo' | 'dueDate';
 
 const TaskModal: React.FC<{
     task: Partial<Task> & { assignedToId?: string };
-    users: Employee[];
+    employees: Employee[];
     onSave: (task: Partial<Task> & { assignedToId?: string }) => void;
     onCancel: () => void;
-}> = ({ task, users, onSave, onCancel }) => {
+}> = ({ task, employees, onSave, onCancel }) => {
     const [formData, setFormData] = useState(task);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -56,8 +56,8 @@ const TaskModal: React.FC<{
                         <div>
                             <label htmlFor="assignedToId" className="block text-sm font-medium text-gray-300">Assigned To</label>
                             <select name="assignedToId" id="assignedToId" value={formData.assignedToId || ''} onChange={handleChange} required className="mt-1 block w-full bg-gray-900 border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm">
-                                <option value="">Select User</option>
-                                {users.map(user => <option key={user.id} value={user.id}>{user.fullName}</option>)}
+                                <option value="">Select Employee</option>
+                                {employees.map(employee => <option key={employee.id} value={employee.id}>{employee.fullName}</option>)}
                             </select>
                         </div>
                         <div>
@@ -98,7 +98,7 @@ const Tasks: React.FC = () => {
     const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
     const contentRef = useRef<HTMLDivElement>(null);
 
-    const usersById = useMemo(() => Object.fromEntries(mockEmployees.map(u => [u.id, u])), []);
+    const employeesById = useMemo(() => Object.fromEntries(mockEmployees.map(u => [u.id, u])), []);
     const farmersById = useMemo(() => Object.fromEntries(mockFarmersData.map(f => [f.id, f])), []);
 
 
@@ -123,7 +123,7 @@ const Tasks: React.FC = () => {
 
     const handleSaveTask = (taskData: Partial<Task> & { assignedToId?: string }) => {
         if (!taskData.assignedToId) {
-            alert('Please select a user to assign the task to.');
+            alert('Please select an employee to assign the task to.');
             return;
         }
 
@@ -185,8 +185,8 @@ const Tasks: React.FC = () => {
                 valA = priorityOrder[a.priority];
                 valB = priorityOrder[b.priority];
             } else if (key === 'assignedTo') {
-                valA = usersById[a.assignedToId]?.fullName || '';
-                valB = usersById[b.assignedToId]?.fullName || '';
+                valA = employeesById[a.assignedToId]?.fullName || '';
+                valB = employeesById[b.assignedToId]?.fullName || '';
             } else {
                  valA = a[key];
                  valB = b[key];
@@ -198,7 +198,7 @@ const Tasks: React.FC = () => {
         });
 
         return sortableItems;
-    }, [tasks, filterPriority, sortConfig, usersById]);
+    }, [tasks, filterPriority, sortConfig, employeesById]);
 
     const handleExportPDF = () => {
         if (contentRef.current) {
@@ -210,7 +210,7 @@ const Tasks: React.FC = () => {
         return sortedAndFilteredTasks.map(task => ({
             'Task ID': task.id,
             'Title': task.title,
-            'Assigned To': usersById[task.assignedToId]?.fullName || 'Unassigned',
+            'Assigned To': employeesById[task.assignedToId]?.fullName || 'Unassigned',
             'Related Farmer': task.relatedFarmerId ? farmersById[task.relatedFarmerId]?.fullName : 'N/A',
             'Due Date': task.dueDate,
             'Priority': task.priority,
@@ -256,7 +256,7 @@ const Tasks: React.FC = () => {
        {isModalOpen && currentTask && (
             <TaskModal
                 task={currentTask}
-                users={mockEmployees}
+                employees={mockEmployees}
                 onSave={handleSaveTask}
                 onCancel={handleCloseModal}
             />
@@ -319,7 +319,7 @@ const Tasks: React.FC = () => {
                         </div>
                     </td>
                     <td className="px-6 py-4 text-white" title={task.description}>{task.title}</td>
-                    <td className="px-6 py-4">{usersById[task.assignedToId]?.fullName || 'Unassigned'}</td>
+                    <td className="px-6 py-4">{employeesById[task.assignedToId]?.fullName || 'Unassigned'}</td>
                     <td className="px-6 py-4">
                     <div className="flex items-center gap-2" title={isDueSoon ? "This task is due within 3 days." : ""}>
                         {isDueSoon && <ClockIcon className="h-5 w-5 text-yellow-400 flex-shrink-0" />}

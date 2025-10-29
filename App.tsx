@@ -66,8 +66,8 @@ import UpcomingRetirements from './pages/UpcomingRetirements';
 import ProfileChangeRequests from './pages/ProfileChangeRequests';
 
 
-import type { Employee, Farmer, LandParcel, NurseryInventoryItem, PlantationLog as PlantationLogType, FarmVisitRequest, UserActivity, Task, ProfileChangeRequest } from './types';
-import { mockEmployees, mockTasks, mockFarmersData, mockLandParcels, mockNurseryInventory, mockSubsidyApplications, mockProcurementBatches, mockPlantationLogs, mockFarmVisitRequests, mockUserActivity, mockProfileChangeRequests } from './data/mockData';
+import type { Employee, Farmer, LandParcel, NurseryInventoryItem, PlantationLog as PlantationLogType, FarmVisitRequest, EmployeeActivity, Task, ProfileChangeRequest } from './types';
+import { mockEmployees, mockTasks, mockFarmersData, mockLandParcels, mockNurseryInventory, mockSubsidyApplications, mockProcurementBatches, mockPlantationLogs, mockFarmVisitRequests, mockEmployeeActivity, mockProfileChangeRequests } from './data/mockData';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState('dashboard');
@@ -79,7 +79,7 @@ const App: React.FC = () => {
   const [nurseryInventory, setNurseryInventory] = useState<NurseryInventoryItem[]>(mockNurseryInventory);
   const [plantationLogs, setPlantationLogs] = useState<PlantationLogType[]>(mockPlantationLogs);
   const [farmVisitRequests, setFarmVisitRequests] = useState<FarmVisitRequest[]>(mockFarmVisitRequests);
-  const [userActivity, setUserActivity] = useState<UserActivity[]>(mockUserActivity);
+  const [employeeActivity, setEmployeeActivity] = useState<EmployeeActivity[]>(mockEmployeeActivity);
   const [profileChangeRequests, setProfileChangeRequests] = useState<ProfileChangeRequest[]>(mockProfileChangeRequests);
   const [currentEmployee, setCurrentEmployee] = useState<Employee>(employees[1]); // Default to a non-admin
   const [viewingEmployeeId, setViewingEmployeeId] = useState<string | null>(null);
@@ -377,12 +377,12 @@ const App: React.FC = () => {
             return null;
           }
           return <Profile 
-              viewingUser={viewingEmployee} 
-              currentUser={currentEmployee}
-              allUsers={employees}
+              viewingEmployee={viewingEmployee} 
+              currentEmployee={currentEmployee}
+              allEmployees={employees}
               allTasks={tasks}
-              allActivity={userActivity}
-              onUpdateUser={handleUpdateEmployee}
+              allActivity={employeeActivity}
+              onUpdateEmployee={handleUpdateEmployee}
               onUpdateTask={handleUpdateTask}
            />;
       }

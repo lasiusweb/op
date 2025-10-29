@@ -436,11 +436,11 @@ export interface ProcurementCenterInventory {
     updatedAt: string;
 }
 
-export interface UserActivity {
+export interface EmployeeActivity {
   id: string;
   employeeId: string;
   action: string;
   timestamp: string;
   details?: string;
-  icon: 'task' | 'user' | 'subsidy' | 'payment';
+  icon: 'task' | 'employee' | 'subsidy' | 'payment';
 }

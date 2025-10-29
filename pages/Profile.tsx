@@ -1,16 +1,16 @@
 import React, { useState, useRef, useMemo } from 'react';
-import type { Employee, Task, TaskStatus, TaskPriority, UserActivity } from '../types';
+import type { Employee, Task, TaskStatus, TaskPriority, EmployeeActivity } from '../types';
 import DashboardCard from '../components/DashboardCard';
 import { UserCircleIcon, CameraIcon, MailIcon, PhoneIcon, PencilIcon, BriefcaseIcon, MapPinIcon, CalendarDaysIcon, CheckCircleIcon, CubeIcon, BanknotesIcon } from '../components/Icons';
 
 // --- PROPS ---
 interface ProfileProps {
-    viewingUser: Employee;
-    currentUser: Employee;
-    allUsers: Employee[];
+    viewingEmployee: Employee;
+    currentEmployee: Employee;
+    allEmployees: Employee[];
     allTasks: Task[];
-    allActivity: UserActivity[];
-    onUpdateUser: (updatedUser: Employee) => void;
+    allActivity: EmployeeActivity[];
+    onUpdateEmployee: (updatedEmployee: Employee) => void;
     onUpdateTask: (updatedTask: Task) => void;
 }
 
@@ -40,12 +40,12 @@ const EditableInput: React.FC<{ label: string; name: keyof Employee; value: any;
     </div>
 );
 
-const ProfilePhoto: React.FC<{ user: Employee | null; isEditing: boolean; onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void }> = ({ user, isEditing, onFileChange }) => {
+const ProfilePhoto: React.FC<{ employee: Employee | null; isEditing: boolean; onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void }> = ({ employee, isEditing, onFileChange }) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     return (
         <div className="relative w-40 h-40 mx-auto">
-            {user?.profilePhotoUrl ? (
-                <img src={user.profilePhotoUrl} alt="Profile" className="w-40 h-40 rounded-full object-cover border-4 border-gray-700" />
+            {employee?.profilePhotoUrl ? (
+                <img src={employee.profilePhotoUrl} alt="Profile" className="w-40 h-40 rounded-full object-cover border-4 border-gray-700" />
             ) : (
                 <div className="w-40 h-40 rounded-full bg-gray-700/50 flex items-center justify-center border-4 border-gray-700">
                     <UserCircleIcon className="w-32 h-32 text-gray-600" />
@@ -76,60 +76,60 @@ const priorityStyles: { [key in TaskPriority]: string } = {
     'Low': 'bg-green-500/20 text-green-300', 'Medium': 'bg-yellow-500/20 text-yellow-300', 'High': 'bg-red-500/20 text-red-300',
 };
 
-const activityIconMap: { [key in UserActivity['icon']]: React.ReactNode } = {
+const activityIconMap: { [key in EmployeeActivity['icon']]: React.ReactNode } = {
     task: <CheckCircleIcon className="h-5 w-5 text-green-400"/>,
-    user: <UserCircleIcon className="h-5 w-5 text-blue-400"/>,
+    employee: <UserCircleIcon className="h-5 w-5 text-blue-400"/>,
     subsidy: <CubeIcon className="h-5 w-5 text-purple-400"/>,
     payment: <BanknotesIcon className="h-5 w-5 text-yellow-400"/>,
 };
 
 // --- MAIN COMPONENT ---
-const Profile: React.FC<ProfileProps> = ({ viewingUser, currentUser, allUsers, allTasks, allActivity, onUpdateUser, onUpdateTask }) => {
+const Profile: React.FC<ProfileProps> = ({ viewingEmployee, currentEmployee, allEmployees, allTasks, allActivity, onUpdateEmployee, onUpdateTask }) => {
     const [isEditing, setIsEditing] = useState(false);
-    const [editableUserData, setEditableUserData] = useState<Employee | null>(null);
+    const [editableEmployeeData, setEditableEmployeeData] = useState<Employee | null>(null);
     const [activeTab, setActiveTab] = useState<'details' | 'tasks' | 'activity'>('details');
     const [completedTasks, setCompletedTasks] = useState<Set<string>>(new Set());
 
-    const canEdit = currentUser.id === viewingUser.id;
+    const canEdit = currentEmployee.id === viewingEmployee.id;
 
     const managerName = useMemo(() => {
-        if (!viewingUser.reportingManagerId) return 'N/A';
-        const manager = allUsers.find(u => u.id === viewingUser.reportingManagerId);
+        if (!viewingEmployee.reportingManagerId) return 'N/A';
+        const manager = allEmployees.find(u => u.id === viewingEmployee.reportingManagerId);
         return manager?.fullName || 'Unknown Manager';
-    }, [viewingUser, allUsers]);
+    }, [viewingEmployee, allEmployees]);
 
-    const assignedTasks = useMemo(() => allTasks.filter(task => task.assignedToId === viewingUser.id), [allTasks, viewingUser]);
-    const userActivity = useMemo(() => allActivity.filter(act => act.employeeId === viewingUser.id).sort((a,b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()), [allActivity, viewingUser]);
+    const assignedTasks = useMemo(() => allTasks.filter(task => task.assignedToId === viewingEmployee.id), [allTasks, viewingEmployee]);
+    const employeeActivity = useMemo(() => allActivity.filter(act => act.employeeId === viewingEmployee.id).sort((a,b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()), [allActivity, viewingEmployee]);
 
     const handleEditClick = () => {
-        setEditableUserData({ ...viewingUser });
+        setEditableEmployeeData({ ...viewingEmployee });
         setIsEditing(true);
     };
 
     const handleCancelClick = () => {
-        setEditableUserData(null);
+        setEditableEmployeeData(null);
         setIsEditing(false);
     };
     
     const handleSaveClick = () => {
-        if (editableUserData) {
-            onUpdateUser({ ...editableUserData, updatedAt: new Date().toISOString()});
+        if (editableEmployeeData) {
+            onUpdateEmployee({ ...editableEmployeeData, updatedAt: new Date().toISOString()});
         }
         setIsEditing(false);
     };
     
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!editableUserData) return;
+        if (!editableEmployeeData) return;
         const { name, value } = e.target;
-        setEditableUserData({ ...editableUserData, [name]: value });
+        setEditableEmployeeData({ ...editableEmployeeData, [name]: value });
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0] && editableUserData) {
+        if (e.target.files && e.target.files[0] && editableEmployeeData) {
             const file = e.target.files[0];
             const reader = new FileReader();
             reader.onloadend = () => {
-                setEditableUserData({ ...editableUserData, profilePhotoUrl: reader.result as string });
+                setEditableEmployeeData({ ...editableEmployeeData, profilePhotoUrl: reader.result as string });
             };
             reader.readAsDataURL(file);
         }
@@ -159,18 +159,18 @@ const Profile: React.FC<ProfileProps> = ({ viewingUser, currentUser, allUsers, a
         switch (activeTab) {
             case 'details': return (
                 <div className="space-y-6">
-                    {isEditing && editableUserData ? (
+                    {isEditing && editableEmployeeData ? (
                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                             <EditableInput label="Email" name="email" value={editableUserData.email} onChange={handleInputChange} />
-                             <EditableInput label="Mobile" name="mobile" value={editableUserData.mobile} onChange={handleInputChange} />
-                             <EditableInput label="Region" name="region" value={editableUserData.region} onChange={handleInputChange} />
+                             <EditableInput label="Email" name="email" value={editableEmployeeData.email} onChange={handleInputChange} />
+                             <EditableInput label="Mobile" name="mobile" value={editableEmployeeData.mobile} onChange={handleInputChange} />
+                             <EditableInput label="Region" name="region" value={editableEmployeeData.region} onChange={handleInputChange} />
                          </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <DetailItem icon={<MailIcon />} label="Email Address" value={viewingUser.email} />
-                            <DetailItem icon={<PhoneIcon />} label="Mobile Number" value={viewingUser.mobile} />
-                            <DetailItem icon={<MapPinIcon />} label="Region" value={viewingUser.region} />
-                            <DetailItem icon={<CalendarDaysIcon />} label="Member Since" value={new Date(viewingUser.createdAt).toLocaleDateString()} />
+                            <DetailItem icon={<MailIcon />} label="Email Address" value={viewingEmployee.email} />
+                            <DetailItem icon={<PhoneIcon />} label="Mobile Number" value={viewingEmployee.mobile} />
+                            <DetailItem icon={<MapPinIcon />} label="Region" value={viewingEmployee.region} />
+                            <DetailItem icon={<CalendarDaysIcon />} label="Member Since" value={new Date(viewingEmployee.createdAt).toLocaleDateString()} />
                         </div>
                     )}
                 </div>
@@ -235,7 +235,7 @@ const Profile: React.FC<ProfileProps> = ({ viewingUser, currentUser, allUsers, a
             );
             case 'activity': return (
                 <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
-                    {userActivity.length > 0 ? userActivity.map(act => (
+                    {employeeActivity.length > 0 ? employeeActivity.map(act => (
                         <div key={act.id} className="flex items-start gap-4 p-3 bg-gray-900/40 rounded-lg">
                            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center mt-1">
                                 {activityIconMap[act.icon]}
@@ -261,17 +261,17 @@ const Profile: React.FC<ProfileProps> = ({ viewingUser, currentUser, allUsers, a
             <div className="lg:col-span-1">
                 <DashboardCard title="">
                     <div className="flex flex-col items-center text-center -mt-4">
-                        <ProfilePhoto user={isEditing ? editableUserData : viewingUser} isEditing={isEditing} onFileChange={handleFileChange} />
+                        <ProfilePhoto employee={isEditing ? editableEmployeeData : viewingEmployee} isEditing={isEditing} onFileChange={handleFileChange} />
                         
-                        {isEditing && editableUserData ? (
-                           <div className="w-full mt-4"><EditableInput label="Full Name" name="fullName" value={editableUserData.fullName} onChange={handleInputChange} /></div>
+                        {isEditing && editableEmployeeData ? (
+                           <div className="w-full mt-4"><EditableInput label="Full Name" name="fullName" value={editableEmployeeData.fullName} onChange={handleInputChange} /></div>
                         ) : (
-                           <h2 className="text-2xl font-bold text-white mt-4">{viewingUser.fullName}</h2>
+                           <h2 className="text-2xl font-bold text-white mt-4">{viewingEmployee.fullName}</h2>
                         )}
 
-                        <p className="text-teal-400 font-medium mt-1">{viewingUser.role}</p>
-                        <span className={`mt-3 px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full ${viewingUser.status === 'Active' ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'}`}>
-                            {viewingUser.status}
+                        <p className="text-teal-400 font-medium mt-1">{viewingEmployee.role}</p>
+                        <span className={`mt-3 px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full ${viewingEmployee.status === 'Active' ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'}`}>
+                            {viewingEmployee.status}
                         </span>
 
                         <div className="w-full border-t border-gray-700 my-6"></div>

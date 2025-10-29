@@ -21,7 +21,7 @@ const FinancialSanctions: React.FC = () => {
     const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
     const contentRef = useRef<HTMLDivElement>(null);
 
-    const userMap = useMemo(() => new Map(mockEmployees.map(u => [u.id, u.fullName])), []);
+    const employeeMap = useMemo(() => new Map(mockEmployees.map(u => [u.id, u.fullName])), []);
 
     const handleUpdateStatus = (sanctionId: string, newStatus: HOSanctionStatus) => {
         setSanctions(sanctions.map(s => 
@@ -29,7 +29,7 @@ const FinancialSanctions: React.FC = () => {
             ? { 
                 ...s, 
                 status: newStatus, 
-                reviewedById: 'EMP005', // Assume current user is Admin
+                reviewedById: 'EMP005', // Assume admin is reviewing
                 updatedAt: new Date().toISOString() 
               } 
             : s
@@ -38,16 +38,17 @@ const FinancialSanctions: React.FC = () => {
     
     const filteredSanctions = useMemo(() => {
         return sanctions.filter(s => {
+            const submittedBy = employeeMap.get(s.submittedById);
             const searchMatch = s.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 s.relatedEntityId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                userMap.get(s.submittedById)?.toLowerCase().includes(searchTerm.toLowerCase());
+                (submittedBy && submittedBy.toLowerCase().includes(searchTerm.toLowerCase()));
             
             const statusMatch = filterStatus === 'All' || s.status === filterStatus;
             const typeMatch = filterType === 'All' || s.sanctionType === filterType;
 
             return searchMatch && statusMatch && typeMatch;
         });
-    }, [sanctions, searchTerm, filterStatus, filterType, userMap]);
+    }, [sanctions, searchTerm, filterStatus, filterType, employeeMap]);
 
     const handleToggleRow = (id: string) => {
         setExpandedRowId(prevId => (prevId === id ? null : id));
@@ -66,8 +67,8 @@ const FinancialSanctions: React.FC = () => {
             'Related Entity ID': s.relatedEntityId,
             'Amount (₹)': s.amount,
             'Status': s.status,
-            'Submitted By': userMap.get(s.submittedById) || s.submittedById,
-            'Reviewed By': s.reviewedById ? userMap.get(s.reviewedById) : 'N/A',
+            'Submitted By': employeeMap.get(s.submittedById) || s.submittedById,
+            'Reviewed By': s.reviewedById ? employeeMap.get(s.reviewedById) : 'N/A',
             'Notes': s.notes || '',
         }));
     };
@@ -124,56 +125,58 @@ const FinancialSanctions: React.FC = () => {
                             <th scope="col" className="px-6 py-3">Related Entity</th>
                             <th scope="col" className="px-6 py-3 text-right">Amount (₹)</th>
                             <th scope="col" className="px-6 py-3">Status</th>
-                            <th scope="col" className="px-6 py-3">Submitted By</th>
                             <th scope="col" className="px-6 py-3">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredSanctions.map((s) => (
-                           <React.Fragment key={s.id}>
+                        {filteredSanctions.map(s => (
+                            <React.Fragment key={s.id}>
                                 <tr className="border-b border-gray-700 bg-gray-800/50 hover:bg-gray-700/50">
-                                    <td className="px-6 py-4 font-medium text-white whitespace-nowrap">{s.id}</td>
+                                    <td className="px-6 py-4 font-medium text-white">{s.id}</td>
                                     <td className="px-6 py-4">{s.sanctionType}</td>
                                     <td className="px-6 py-4 font-mono">{s.relatedEntityId}</td>
-                                    <td className="px-6 py-4 text-right font-mono text-white">{s.amount.toLocaleString('en-IN')}</td>
+                                    <td className="px-6 py-4 text-right font-mono">{s.amount.toLocaleString('en-IN')}</td>
                                     <td className="px-6 py-4">
                                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusStyles[s.status]}`}>
                                             {s.status}
                                         </span>
                                     </td>
-                                    <td className="px-6 py-4">{userMap.get(s.submittedById) || s.submittedById}</td>
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-2">
-                                            <button onClick={() => handleToggleRow(s.id)} className="font-medium text-teal-400 hover:text-teal-300">
-                                                 {expandedRowId === s.id ? <ChevronUpIcon /> : <ChevronDownIcon />}
+                                            <button onClick={() => handleToggleRow(s.id)} className="p-1 rounded-full text-gray-400 hover:bg-gray-700">
+                                                {expandedRowId === s.id ? <ChevronUpIcon /> : <ChevronDownIcon />}
                                             </button>
-                                            <button onClick={() => handleUpdateStatus(s.id, 'Approved')} title="Approve" className="text-green-400 hover:text-green-300 disabled:opacity-50 disabled:cursor-not-allowed" disabled={s.status === 'Approved'}>
-                                                <CheckCircleIcon />
-                                            </button>
-                                            <button onClick={() => handleUpdateStatus(s.id, 'Rejected')} title="Reject" className="text-red-400 hover:text-red-300 disabled:opacity-50 disabled:cursor-not-allowed" disabled={s.status === 'Rejected'}>
-                                                <XCircleIcon />
-                                            </button>
-                                             <button onClick={() => handleUpdateStatus(s.id, 'Query Raised')} title="Raise Query" className="text-blue-400 hover:text-blue-300 disabled:opacity-50 disabled:cursor-not-allowed" disabled={s.status === 'Query Raised'}>
-                                                <QuestionMarkCircleIcon />
-                                            </button>
+                                            {s.status === 'Pending Approval' && (
+                                                <>
+                                                    <button onClick={() => handleUpdateStatus(s.id, 'Approved')} title="Approve" className="p-1 rounded-full text-green-400 hover:bg-green-500/20"><CheckCircleIcon className="h-5 w-5"/></button>
+                                                    <button onClick={() => handleUpdateStatus(s.id, 'Rejected')} title="Reject" className="p-1 rounded-full text-red-400 hover:bg-red-500/20"><XCircleIcon className="h-5 w-5"/></button>
+                                                    <button onClick={() => handleUpdateStatus(s.id, 'Query Raised')} title="Raise Query" className="p-1 rounded-full text-blue-400 hover:bg-blue-500/20"><QuestionMarkCircleIcon className="h-5 w-5"/></button>
+                                                </>
+                                            )}
                                         </div>
                                     </td>
                                 </tr>
                                 {expandedRowId === s.id && (
-                                     <tr className="bg-gray-900/50">
-                                        <td colSpan={7} className="p-4">
-                                            <div className="bg-gray-800/50 p-4 rounded-lg space-y-2">
-                                                <p><span className="font-semibold text-gray-400">Reviewed By:</span> <span className="text-white">{s.reviewedById ? userMap.get(s.reviewedById) : 'N/A'}</span></p>
-                                                <p><span className="font-semibold text-gray-400">Submitted On:</span> <span className="text-white">{s.createdAt.split('T')[0]}</span></p>
-                                                <p><span className="font-semibold text-gray-400">Last Updated:</span> <span className="text-white">{s.updatedAt.split('T')[0]}</span></p>
-                                                <p className="font-semibold text-gray-400">Notes:</p>
-                                                <p className="text-white italic bg-gray-900/40 p-2 rounded-md">{s.notes || 'No notes for this sanction.'}</p>
+                                    <tr className="bg-gray-900/50">
+                                        <td colSpan={6} className="p-4">
+                                            <div className="bg-gray-800/50 p-4 rounded-lg grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                                                <div><strong className="text-gray-400 block">Submitted By:</strong> {employeeMap.get(s.submittedById)}</div>
+                                                <div><strong className="text-gray-400 block">Submitted At:</strong> {new Date(s.createdAt).toLocaleString()}</div>
+                                                <div><strong className="text-gray-400 block">Reviewed By:</strong> {s.reviewedById ? employeeMap.get(s.reviewedById) : 'N/A'}</div>
+                                                <div className="md:col-span-3"><strong className="text-gray-400 block">Notes:</strong><p className="pl-2 italic text-gray-300">{s.notes || 'No notes available.'}</p></div>
                                             </div>
                                         </td>
                                     </tr>
                                 )}
                             </React.Fragment>
                         ))}
+                         {filteredSanctions.length === 0 && (
+                            <tr>
+                                <td colSpan={6} className="text-center py-16 text-gray-500">
+                                    No sanctions match the current filters.
+                                </td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
             </div>
