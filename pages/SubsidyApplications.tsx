@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useRef } from 'react';
-import type { SubsidyApplication, Farmer, SubsidyApplicationStatus, Document, User } from '../types';
-import { mockSubsidyApplications, mockFarmersData, mockDocuments, mockUsers } from '../data/mockData';
+import type { SubsidyApplication, Farmer, SubsidyApplicationStatus, Document, Employee } from '../types';
+import { mockSubsidyApplications, mockFarmersData, mockDocuments, mockEmployees } from '../data/mockData';
 import DashboardCard from '../components/DashboardCard';
 import { PencilIcon, DocumentTextIcon, ChevronDownIcon, ChevronUpIcon } from '../components/Icons';
 import { exportToCSV, exportToExcel } from '../services/exportService';
@@ -28,7 +28,7 @@ const SubsidyApplications: React.FC = () => {
     const contentRef = useRef<HTMLDivElement>(null);
 
     const farmerMap = useMemo(() => new Map(mockFarmersData.map(f => [f.id, f])), []);
-    const userMap = useMemo(() => new Map(mockUsers.map(u => [u.id, u.fullName])), []);
+    const userMap = useMemo(() => new Map(mockEmployees.map(u => [u.id, u.fullName])), []);
     const documentsByAppId = useMemo(() => {
         return mockDocuments.reduce((acc, doc) => {
             (acc[doc.subsidyApplicationId] = acc[doc.subsidyApplicationId] || []).push(doc);

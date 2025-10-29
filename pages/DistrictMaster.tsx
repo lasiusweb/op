@@ -39,7 +39,8 @@ const DistrictModal: React.FC<{
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value, type } = e.target;
         const isNumberField = type === 'number';
-        setFormData(prev => ({ ...prev, [name]: isNumberField ? (value ? parseInt(value) : '') : value }));
+        // FIX: Correctly handle number parsing to avoid saving an empty string for a number field.
+        setFormData(prev => ({ ...prev, [name]: isNumberField ? (value ? parseInt(value, 10) : undefined) : value }));
     };
 
     const handleSubmit = (e: FormEvent) => {

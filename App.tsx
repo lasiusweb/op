@@ -60,10 +60,14 @@ import ManageAssignEquipmentTemplate from './pages/ManageAssignEquipmentTemplate
 import VisitTemplateReport from './pages/VisitTemplateReport';
 import AverageMeetingMonthly from './pages/AverageMeetingMonthly';
 import HourlyVisitReport from './pages/HourlyVisitReport';
+import EmployeeHierarchy from './pages/EmployeeHierarchy';
+import EmployeeLifecycle from './pages/EmployeeLifecycle';
+import UpcomingRetirements from './pages/UpcomingRetirements';
+import ProfileChangeRequests from './pages/ProfileChangeRequests';
 
 
-import type { Employee, Farmer, LandParcel, NurseryInventoryItem, PlantationLog as PlantationLogType, FarmVisitRequest, UserActivity, Task } from './types';
-import { mockEmployees, mockTasks, mockFarmersData, mockLandParcels, mockNurseryInventory, mockSubsidyApplications, mockProcurementBatches, mockPlantationLogs, mockFarmVisitRequests, mockUserActivity } from './data/mockData';
+import type { Employee, Farmer, LandParcel, NurseryInventoryItem, PlantationLog as PlantationLogType, FarmVisitRequest, UserActivity, Task, ProfileChangeRequest } from './types';
+import { mockEmployees, mockTasks, mockFarmersData, mockLandParcels, mockNurseryInventory, mockSubsidyApplications, mockProcurementBatches, mockPlantationLogs, mockFarmVisitRequests, mockUserActivity, mockProfileChangeRequests } from './data/mockData';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState('dashboard');
@@ -76,6 +80,7 @@ const App: React.FC = () => {
   const [plantationLogs, setPlantationLogs] = useState<PlantationLogType[]>(mockPlantationLogs);
   const [farmVisitRequests, setFarmVisitRequests] = useState<FarmVisitRequest[]>(mockFarmVisitRequests);
   const [userActivity, setUserActivity] = useState<UserActivity[]>(mockUserActivity);
+  const [profileChangeRequests, setProfileChangeRequests] = useState<ProfileChangeRequest[]>(mockProfileChangeRequests);
   const [currentEmployee, setCurrentEmployee] = useState<Employee>(employees[1]); // Default to a non-admin
   const [viewingEmployeeId, setViewingEmployeeId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -124,6 +129,10 @@ const App: React.FC = () => {
       farmers: 'Farmer Management',
       addFarmer: 'Add New Farmer',
       employees: 'Employee Management',
+      employeeHierarchy: 'Organizational Chart',
+      employeeLifecycle: 'Employee Lifecycle',
+      profileChangeRequests: 'Profile Change Requests',
+      upcomingRetirements: 'Upcoming Retirements',
       generalTasks: 'General Task Management',
       fieldAgentTasks: 'Field Agent Task Board',
       profile: 'Employee Profile',
@@ -200,6 +209,13 @@ const App: React.FC = () => {
     handleSetCurrentPage('employees');
   };
 
+  const handleProfileChangeRequestUpdate = (updatedRequest: ProfileChangeRequest, changes: Partial<Employee>) => {
+    setProfileChangeRequests(prev => prev.map(req => req.id === updatedRequest.id ? updatedRequest : req));
+    if(updatedRequest.status === 'Approved') {
+        setEmployees(prev => prev.map(emp => emp.id === updatedRequest.employeeId ? { ...emp, ...changes } : emp));
+    }
+  };
+
   const handleUpdateTask = (updatedTask: Task) => {
     setTasks(prevTasks => prevTasks.map(t => t.id === updatedTask.id ? updatedTask : t));
   };
@@ -240,6 +256,14 @@ const App: React.FC = () => {
                     allVisitRequests={farmVisitRequests}
                     onViewVisits={handleViewEmployeeVisits}
                  />;
+      case 'employeeHierarchy':
+          return <EmployeeHierarchy allEmployees={employees} onViewProfile={handleViewProfile} />;
+      case 'employeeLifecycle':
+          return <EmployeeLifecycle onViewProfile={handleViewProfile} />;
+      case 'upcomingRetirements':
+          return <UpcomingRetirements allEmployees={employees} />;
+      case 'profileChangeRequests':
+          return <ProfileChangeRequests requests={profileChangeRequests} employees={employees} onUpdateRequest={handleProfileChangeRequestUpdate} />;
       case 'generalTasks':
           return <Tasks />;
       case 'fieldAgentTasks':

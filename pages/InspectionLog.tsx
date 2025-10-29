@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useRef } from 'react';
-import type { Inspection, Farmer, SubsidyApplication, User, InspectionStatus, InspectionOutcome } from '../types';
-import { mockInspections, mockFarmersData, mockSubsidyApplications, mockUsers, mockLandParcels } from '../data/mockData';
+import type { Inspection, Farmer, SubsidyApplication, Employee, InspectionStatus, InspectionOutcome } from '../types';
+import { mockInspections, mockFarmersData, mockSubsidyApplications, mockEmployees, mockLandParcels } from '../data/mockData';
 import DashboardCard from '../components/DashboardCard';
 import { PencilIcon, MagnifyingGlassIcon } from '../components/Icons';
 import { exportToCSV, exportToExcel } from '../services/exportService';
@@ -27,7 +27,7 @@ const InspectionLog: React.FC = () => {
     const farmerMap = useMemo(() => new Map(mockFarmersData.map(f => [f.id, f.fullName])), []);
     const applicationMap = useMemo(() => new Map(mockSubsidyApplications.map(app => [app.id, app])), []);
     const landParcelMap = useMemo(() => new Map(mockLandParcels.map(lp => [lp.id, lp])), []);
-    const userMap = useMemo(() => new Map(mockUsers.map(u => [u.id, u.fullName])), []);
+    const userMap = useMemo(() => new Map(mockEmployees.map(u => [u.id, u.fullName])), []);
 
     const getRelatedEntityInfo = (inspection: Inspection) => {
         if (inspection.relatedEntityType === 'SubsidyApplication') {

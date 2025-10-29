@@ -1,6 +1,6 @@
 import React, { useState, useMemo, FormEvent, useRef } from 'react';
-import type { HarvestLog, HarvestQualityGrade, Farmer, LandParcel, User } from '../types';
-import { mockHarvestLogs, mockFarmersData, mockLandParcels, mockUsers } from '../data/mockData';
+import type { HarvestLog, HarvestQualityGrade, Farmer, LandParcel, Employee } from '../types';
+import { mockHarvestLogs, mockFarmersData, mockLandParcels, mockEmployees } from '../data/mockData';
 import DashboardCard from '../components/DashboardCard';
 import { ReceiptPercentIcon, PencilIcon } from '../components/Icons';
 import { exportToCSV, exportToExcel } from '../services/exportService';
@@ -12,7 +12,7 @@ const HarvestLogModal: React.FC<{
     log: Partial<HarvestLog>;
     farmers: Farmer[];
     landParcels: LandParcel[];
-    users: User[];
+    users: Employee[];
     onSave: (log: Partial<HarvestLog>) => void;
     onCancel: () => void;
 }> = ({ log, farmers, landParcels, users, onSave, onCancel }) => {
@@ -100,7 +100,7 @@ const HarvestLog: React.FC = () => {
 
     const farmerMap = useMemo(() => new Map(mockFarmersData.map(f => [f.id, f.fullName])), []);
     const landParcelMap = useMemo(() => new Map(mockLandParcels.map(p => [p.id, p.surveyNumber])), []);
-    const userMap = useMemo(() => new Map(mockUsers.map(u => [u.id, u.fullName])), []);
+    const userMap = useMemo(() => new Map(mockEmployees.map(u => [u.id, u.fullName])), []);
 
     const handleOpenModal = (log?: HarvestLog) => {
         const today = new Date().toISOString().split('T')[0];
@@ -175,7 +175,7 @@ const HarvestLog: React.FC = () => {
                     log={currentLog} 
                     farmers={mockFarmersData} 
                     landParcels={mockLandParcels}
-                    users={mockUsers}
+                    users={mockEmployees}
                     onSave={handleSaveLog} 
                     onCancel={handleCloseModal} 
                 />

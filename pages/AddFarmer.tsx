@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import type { Farmer, LandParcel, District, Mandal, Village, User } from '../types';
-import { mockDistricts, mockMandals, mockVillages, mockUsers } from '../data/mockData';
+import type { Farmer, LandParcel, District, Mandal, Village, Employee } from '../types';
+import { mockDistricts, mockMandals, mockVillages, mockEmployees } from '../data/mockData';
 import DashboardCard from '../components/DashboardCard';
 import { UserCircleIcon, CameraIcon, ArrowUpTrayIcon, ExclamationCircleIcon } from '../components/Icons';
 import Cropper from 'react-easy-crop';
@@ -125,7 +125,7 @@ const AddFarmer: React.FC<AddFarmerProps> = ({ onAddFarmer, onCancel, allFarmers
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
     const TOTAL_STEPS = 6;
-    const fieldAgents = useMemo(() => mockUsers.filter(u => u.role === 'Field Agent'), []);
+    const fieldAgents = useMemo(() => mockEmployees.filter(u => u.role === 'Field Agent'), []);
 
     // Handle location dropdown filtering
     useEffect(() => {
@@ -665,7 +665,7 @@ const AddFarmer: React.FC<AddFarmerProps> = ({ onAddFarmer, onCancel, allFarmers
                                 <p><strong className="text-gray-400 block">Survey No:</strong> {formData.surveyNumber}</p>
                                 <p><strong className="text-gray-400 block">Area:</strong> {formData.areaAcres} Acres</p>
                                 <p><strong className="text-gray-400 block">Total Plants:</strong> {formData.totalPlants}</p>
-                                <p><strong className="text-gray-400 block">Assigned Agent:</strong> {mockUsers.find(u => u.id === formData.assignedAgentId)?.fullName}</p>
+                                <p><strong className="text-gray-400 block">Assigned Agent:</strong> {mockEmployees.find(u => u.id === formData.assignedAgentId)?.fullName}</p>
                             </div>
                              {Object.keys(errors).length > 0 && (
                                 <div className="bg-red-900/30 border border-red-500/50 text-red-300 px-4 py-3 rounded-lg text-sm">

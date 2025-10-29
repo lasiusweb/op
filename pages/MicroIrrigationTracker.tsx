@@ -1,6 +1,6 @@
 import React, { useState, useMemo, FormEvent, useRef } from 'react';
-import type { MicroIrrigationInstallation, IrrigationInstallationStatus, Farmer, LandParcel, User, SubsidyApplication } from '../types';
-import { mockMicroIrrigationInstallations, mockFarmersData, mockLandParcels, mockUsers, mockSubsidyApplications } from '../data/mockData';
+import type { MicroIrrigationInstallation, IrrigationInstallationStatus, Farmer, LandParcel, Employee, SubsidyApplication } from '../types';
+import { mockMicroIrrigationInstallations, mockFarmersData, mockLandParcels, mockEmployees, mockSubsidyApplications } from '../data/mockData';
 import DashboardCard from '../components/DashboardCard';
 import { WrenchScrewdriverIcon, PencilIcon } from '../components/Icons';
 import { exportToCSV, exportToExcel } from '../services/exportService';
@@ -18,7 +18,7 @@ const MicroIrrigationModal: React.FC<{
     installation: Partial<MicroIrrigationInstallation>;
     farmers: Farmer[];
     landParcels: LandParcel[];
-    users: User[];
+    users: Employee[];
     applications: SubsidyApplication[];
     onSave: (data: Partial<MicroIrrigationInstallation>) => void;
     onCancel: () => void;
@@ -108,7 +108,7 @@ const MicroIrrigationTracker: React.FC = () => {
     const contentRef = useRef<HTMLDivElement>(null);
 
     const farmerMap = useMemo(() => new Map(mockFarmersData.map(f => [f.id, f.fullName])), []);
-    const userMap = useMemo(() => new Map(mockUsers.map(u => [u.id, u.fullName])), []);
+    const userMap = useMemo(() => new Map(mockEmployees.map(u => [u.id, u.fullName])), []);
 
     const handleOpenModal = (item?: MicroIrrigationInstallation) => {
         setCurrent(item || { status: 'Pending Installation' });
@@ -182,7 +182,7 @@ const MicroIrrigationTracker: React.FC = () => {
                     installation={current}
                     farmers={mockFarmersData}
                     landParcels={mockLandParcels}
-                    users={mockUsers}
+                    users={mockEmployees}
                     applications={mockSubsidyApplications}
                     onSave={handleSave}
                     onCancel={handleCloseModal}

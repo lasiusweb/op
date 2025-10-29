@@ -1,6 +1,6 @@
 import React, { useState, useMemo, FormEvent, useEffect } from 'react';
-import type { FarmVisitRequest, Farmer, LandParcel, User, FarmVisitRequestStatus, FarmVisitUrgency } from '../types';
-import { mockUsers, mockFarmersData, mockLandParcels } from '../data/mockData';
+import type { FarmVisitRequest, Farmer, LandParcel, Employee, FarmVisitRequestStatus, FarmVisitUrgency } from '../types';
+import { mockEmployees, mockFarmersData, mockLandParcels } from '../data/mockData';
 import DashboardCard from '../components/DashboardCard';
 import { PencilIcon, ClipboardDocumentListIcon, ChevronDownIcon, ChevronUpIcon } from '../components/Icons';
 
@@ -29,7 +29,7 @@ const VisitModal: React.FC<{
     
     const farmers = mockFarmersData;
     const landParcels = useMemo(() => mockLandParcels.filter(lp => lp.farmerId === formData.farmerId), [formData.farmerId]);
-    const fieldAgents = useMemo(() => mockUsers.filter(u => u.role === 'Field Agent'), []);
+    const fieldAgents = useMemo(() => mockEmployees.filter(u => u.role === 'Field Agent'), []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -94,8 +94,8 @@ const ManageVisits: React.FC<ManageVisitsProps> = ({ allVisitRequests, onAddRequ
 
     const farmerMap = useMemo(() => new Map(mockFarmersData.map(f => [f.id, f.fullName])), []);
     const landParcelMap = useMemo(() => new Map(mockLandParcels.map(p => [p.id, p.surveyNumber])), []);
-    const userMap = useMemo(() => new Map(mockUsers.map(u => [u.id, u.fullName])), []);
-    const fieldAgents = useMemo(() => mockUsers.filter(u => u.role === 'Field Agent'), []);
+    const userMap = useMemo(() => new Map(mockEmployees.map(u => [u.id, u.fullName])), []);
+    const fieldAgents = useMemo(() => mockEmployees.filter(u => u.role === 'Field Agent'), []);
     const initialAgentName = useMemo(() => {
         if (!filterAgentId) return null;
         return userMap.get(filterAgentId) || null;

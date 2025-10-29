@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useRef } from 'react';
-import type { Document, Farmer, SubsidyApplication, DocumentStatus, User } from '../types';
-import { mockDocuments, mockFarmersData, mockSubsidyApplications, mockUsers } from '../data/mockData';
+import type { Document, Farmer, SubsidyApplication, DocumentStatus, Employee } from '../types';
+import { mockDocuments, mockFarmersData, mockSubsidyApplications, mockEmployees } from '../data/mockData';
 import DashboardCard from '../components/DashboardCard';
 import { ClipboardDocumentCheckIcon, ChevronDownIcon, ChevronUpIcon } from '../components/Icons';
 import { exportToCSV, exportToExcel } from '../services/exportService';
@@ -20,7 +20,7 @@ const DocumentVerification: React.FC = () => {
 
     const farmerMap = useMemo(() => new Map(mockFarmersData.map(f => [f.id, f.fullName])), []);
     const applicationMap = useMemo(() => new Map(mockSubsidyApplications.map(app => [app.id, app])), []);
-    const userMap = useMemo(() => new Map(mockUsers.map(u => [u.id, u.fullName])), []);
+    const userMap = useMemo(() => new Map(mockEmployees.map(u => [u.id, u.fullName])), []);
 
     const groupedDocuments = useMemo(() => {
         const filteredDocs = documents.filter(doc => filterStatus === 'All' || doc.status === filterStatus);
@@ -46,7 +46,7 @@ const DocumentVerification: React.FC = () => {
             ? { 
                 ...doc, 
                 status: newStatus, 
-                verifiedById: 'USR003', // Assume current user is the reviewer
+                verifiedById: 'EMP008', // Assume current user is the reviewer
                 verifiedAt: new Date().toISOString().split('T')[0],
                 updatedAt: new Date().toISOString() 
               } 

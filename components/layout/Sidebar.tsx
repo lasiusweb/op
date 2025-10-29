@@ -19,8 +19,15 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage, isSideba
 
   const coreManagementPagesInfo = [
     { name: 'Farmer Management', page: 'farmers', icon: <PeopleIcon className="h-5 w-5 mr-3"/> },
-    { name: 'Employee Management', page: 'employees', icon: <UserGroupIcon className="h-5 w-5 mr-3"/> },
     { name: 'Partner & Vendor Mgmt', page: 'vendorManagement', icon: <BriefcaseIcon className="h-5 w-5 mr-3"/> },
+  ];
+
+  const employeeHubPagesInfo = [
+      { name: 'Employee List', page: 'employees' },
+      { name: 'Org Chart', page: 'employeeHierarchy' },
+      { name: 'On/Offboarding', page: 'employeeLifecycle' },
+      { name: 'Change Requests', page: 'profileChangeRequests' },
+      { name: 'Retirements', page: 'upcomingRetirements' },
   ];
 
   const taskManagementPagesInfo = [
@@ -99,6 +106,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage, isSideba
 
   const [isDashboardsOpen, setIsDashboardsOpen] = useState(dashboardsAndReportsPagesInfo.some(p => p.page === currentPage));
   const [isCoreManagementOpen, setIsCoreManagementOpen] = useState(coreManagementPagesInfo.some(p => p.page === currentPage));
+  const [isEmployeeHubOpen, setIsEmployeeHubOpen] = useState(employeeHubPagesInfo.some(p => p.page === currentPage));
   const [isTaskManagementOpen, setIsTaskManagementOpen] = useState(taskManagementPagesInfo.some(p => p.page === currentPage));
   const [isFarmerServicesOpen, setIsFarmerServicesOpen] = useState(farmerServicesPagesInfo.some(p => p.page === currentPage));
   const [isVisitManagementOpen, setIsVisitManagementOpen] = useState(visitManagementPagesInfo.some(p => p.page === currentPage));
@@ -168,6 +176,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage, isSideba
         <ul className="space-y-1">
             {renderCollapsibleMenu("Dashboards & Reports", <Squares2X2Icon className="h-5 w-5 mr-3" />, isDashboardsOpen, setIsDashboardsOpen, dashboardsAndReportsPagesInfo)}
             {renderCollapsibleMenu("Core Management", <UserGroupIcon className="h-5 w-5 mr-3" />, isCoreManagementOpen, setIsCoreManagementOpen, coreManagementPagesInfo)}
+            {renderCollapsibleMenu("Employee Hub", <BriefcaseIcon className="h-5 w-5 mr-3" />, isEmployeeHubOpen, setIsEmployeeHubOpen, employeeHubPagesInfo)}
             {renderCollapsibleMenu("Task Management", <ClipboardListIcon className="h-5 w-5 mr-3" />, isTaskManagementOpen, setIsTaskManagementOpen, taskManagementPagesInfo)}
             {renderCollapsibleMenu("Farmer Services", <PeopleIcon className="h-5 w-5 mr-3" />, isFarmerServicesOpen, setIsFarmerServicesOpen, farmerServicesPagesInfo)}
             {renderCollapsibleMenu("Visit Management", <VisitIcon className="h-5 w-5 mr-3" />, isVisitManagementOpen, setIsVisitManagementOpen, visitManagementPagesInfo)}
@@ -179,7 +188,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage, isSideba
         </ul>
       </nav>
       <div className="mt-auto text-center text-gray-500 text-xs">
-        <p>Version 1.2.0</p>
+        <p>Version 1.3.0</p>
       </div>
     </aside>
   );

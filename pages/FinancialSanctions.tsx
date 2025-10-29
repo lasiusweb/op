@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useRef } from 'react';
-import type { HOSanction, HOSanctionStatus, HOSanctionType, User } from '../types';
-import { mockHOSanctions, mockUsers } from '../data/mockData';
+import type { HOSanction, HOSanctionStatus, HOSanctionType, Employee } from '../types';
+import { mockHOSanctions, mockEmployees } from '../data/mockData';
 import DashboardCard from '../components/DashboardCard';
 import { BanknotesIcon, CheckCircleIcon, XCircleIcon, QuestionMarkCircleIcon, ChevronDownIcon, ChevronUpIcon } from '../components/Icons';
 import { exportToCSV, exportToExcel } from '../services/exportService';
@@ -21,7 +21,7 @@ const FinancialSanctions: React.FC = () => {
     const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
     const contentRef = useRef<HTMLDivElement>(null);
 
-    const userMap = useMemo(() => new Map(mockUsers.map(u => [u.id, u.fullName])), []);
+    const userMap = useMemo(() => new Map(mockEmployees.map(u => [u.id, u.fullName])), []);
 
     const handleUpdateStatus = (sanctionId: string, newStatus: HOSanctionStatus) => {
         setSanctions(sanctions.map(s => 
@@ -29,7 +29,7 @@ const FinancialSanctions: React.FC = () => {
             ? { 
                 ...s, 
                 status: newStatus, 
-                reviewedById: 'USR005', // Assume current user is Admin
+                reviewedById: 'EMP005', // Assume current user is Admin
                 updatedAt: new Date().toISOString() 
               } 
             : s

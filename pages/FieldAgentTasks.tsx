@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useRef } from 'react';
-import type { Task, TaskStatus, TaskPriority, User, Farmer } from '../types';
-import { mockTasks, mockUsers, mockFarmersData } from '../data/mockData';
+import type { Task, TaskStatus, TaskPriority, Employee, Farmer } from '../types';
+import { mockTasks, mockEmployees, mockFarmersData } from '../data/mockData';
 import DashboardCard from '../components/DashboardCard';
 import { MapPinIcon, TableCellsIcon, MapIcon, ClockIcon } from '../components/Icons';
 import { exportToCSV, exportToExcel } from '../services/exportService';
@@ -15,14 +15,14 @@ const priorityStyles: { [key in TaskPriority]: string } = {
 };
 
 const FieldAgentTasks: React.FC = () => {
-    const [tasks] = useState<Task[]>(mockTasks.filter(t => mockUsers.find(u => u.id === t.assignedToId)?.role === 'Field Agent'));
+    const [tasks] = useState<Task[]>(mockTasks.filter(t => mockEmployees.find(u => u.id === t.assignedToId)?.role === 'Field Agent'));
     const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
     const [filterStatus, setFilterStatus] = useState<TaskStatus | 'All'>('All');
     const [filterPriority, setFilterPriority] = useState<TaskPriority | 'All'>('All');
     const [selectedTaskId, setSelectedTaskId] = useState<string | null>(tasks.find(t => t.latitude && t.longitude)?.id || null);
     const contentRef = useRef<HTMLDivElement>(null);
 
-    const usersById = useMemo(() => new Map(mockUsers.map(u => [u.id, u])), []);
+    const usersById = useMemo(() => new Map(mockEmployees.map(u => [u.id, u])), []);
     const farmersById = useMemo(() => new Map(mockFarmersData.map(f => [f.id, f])), []);
 
     const filteredTasks = useMemo(() => {

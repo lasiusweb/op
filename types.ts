@@ -1,3 +1,4 @@
+import type { Crop } from "react-easy-crop";
 
 
 export interface DistrictVolume {
@@ -30,10 +31,45 @@ export interface Employee {
   mobile: string;
   region: string;
   status: 'Active' | 'Inactive';
-  reportingManagerId?: string; // Changed from reportingManager
+  reportingManagerId?: string;
   profilePhotoUrl?: string;
-  createdAt: string; // Added
-  updatedAt: string; // Added
+  createdAt: string;
+  updatedAt: string;
+  joiningDate: string;
+  dob: string; 
+  resignationDate?: string;
+  lastWorkingDate?: string;
+}
+
+export type LifecycleTaskStatus = 'Pending' | 'Completed' | 'Not Applicable';
+
+export interface LifecycleTask {
+    id: string;
+    description: string;
+    status: LifecycleTaskStatus;
+    responsible: 'HR' | 'IT' | 'Manager';
+}
+
+export interface EmployeeLifecycle {
+    employeeId: string;
+    processType: 'Onboarding' | 'Offboarding';
+    status: 'In Progress' | 'Completed';
+    startDate: string;
+    completionDate?: string;
+    tasks: LifecycleTask[];
+}
+
+
+export interface ProfileChangeRequest {
+    id: string;
+    employeeId: string;
+    requestedById: string; // Could be the employee themselves or HR
+    requestDate: string;
+    status: 'Pending' | 'Approved' | 'Rejected';
+    requestedChanges: Partial<Pick<Employee, 'fullName' | 'mobile' | 'email' | 'region'>>;
+    reviewNotes?: string;
+    reviewedById?: string;
+    reviewedAt?: string;
 }
 
 export interface Farmer {

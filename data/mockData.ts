@@ -1,17 +1,102 @@
-import type { Farmer, Task, Employee, LandParcel, Location, ProcurementBatch, Payment, QualityInspection, District, Mandal, Village, ProcurementCenter, Factory, SubsidyApplication, Document, Inspection, Office, HOSanction, PlantationLog, HarvestLog, MicroIrrigationInstallation, NurseryInventoryItem, FactoryInventoryItem, ProcurementCenterInventory, FarmVisitRequest, UserActivity } from '../types';
+import type { Farmer, Task, Employee, LandParcel, Location, ProcurementBatch, Payment, QualityInspection, District, Mandal, Village, ProcurementCenter, Factory, SubsidyApplication, Document, Inspection, Office, HOSanction, PlantationLog, HarvestLog, MicroIrrigationInstallation, NurseryInventoryItem, FactoryInventoryItem, ProcurementCenterInventory, FarmVisitRequest, UserActivity, EmployeeLifecycle, ProfileChangeRequest, LifecycleTask } from '../types';
 
 const now = new Date();
 const pastDate = (days: number) => new Date(now.getTime() - days * 24 * 60 * 60 * 1000).toISOString();
 const futureDate = (days: number) => new Date(now.getTime() + days * 24 * 60 * 60 * 1000).toISOString();
 
 export const mockEmployees: Employee[] = [
-    { id: 'EMP001', fullName: 'Anil Kumar', role: 'Field Agent', email: 'anil.k@example.com', mobile: '9123456780', region: 'Warangal', status: 'Active', reportingManagerId: 'EMP002', profilePhotoUrl: 'https://i.pravatar.cc/150?u=EMP001', createdAt: pastDate(30), updatedAt: pastDate(2) },
-    { id: 'EMP002', fullName: 'Sunita Sharma', role: 'Mandal Coordinator', email: 'sunita.s@example.com', mobile: '9123456781', region: 'Warangal', status: 'Active', reportingManagerId: 'EMP005', profilePhotoUrl: 'https://i.pravatar.cc/150?u=EMP002', createdAt: pastDate(100), updatedAt: pastDate(10) },
-    { id: 'EMP003', fullName: 'Vijay Singh', role: 'Reviewer', email: 'vijay.s@example.com', mobile: '9123456782', region: 'Mulugu', status: 'Active', reportingManagerId: 'EMP005', profilePhotoUrl: 'https://i.pravatar.cc/150?u=EMP003', createdAt: pastDate(80), updatedAt: pastDate(5) },
-    { id: 'EMP004', fullName: 'Priya Patel', role: 'Accountant', email: 'priya.p@example.com', mobile: '9123456783', region: 'Head Office', status: 'Inactive', reportingManagerId: 'EMP005', profilePhotoUrl: 'https://i.pravatar.cc/150?u=EMP004', createdAt: pastDate(120), updatedAt: pastDate(20) },
-    { id: 'EMP005', fullName: 'Rajesh Gupta', role: 'Admin', email: 'rajesh.g@example.com', mobile: '9123456784', region: 'Head Office', status: 'Active', profilePhotoUrl: 'https://i.pravatar.cc/150?u=EMP005', createdAt: pastDate(200), updatedAt: pastDate(1) },
-    { id: 'EMP006', fullName: 'Kavita Rao', role: 'Procurement Center Manager', email: 'kavita.r@example.com', mobile: '9123456785', region: 'Hanmakonda', status: 'Active', reportingManagerId: 'EMP005', profilePhotoUrl: 'https://i.pravatar.cc/150?u=EMP006', createdAt: pastDate(90), updatedAt: pastDate(8) },
-    { id: 'EMP007', fullName: 'Manoj Reddy', role: 'Factory Manager', email: 'manoj.r@example.com', mobile: '9123456786', region: 'Mulugu', status: 'Active', reportingManagerId: 'EMP005', profilePhotoUrl: 'https://i.pravatar.cc/150?u=EMP007', createdAt: pastDate(110), updatedAt: pastDate(12) },
+    { id: 'EMP001', fullName: 'Anil Kumar', role: 'Field Agent', email: 'anil.k@example.com', mobile: '9123456780', region: 'Warangal', status: 'Active', reportingManagerId: 'EMP002', profilePhotoUrl: 'https://i.pravatar.cc/150?u=EMP001', createdAt: pastDate(30), updatedAt: pastDate(2), joiningDate: pastDate(30), dob: '1995-08-15' },
+    { id: 'EMP002', fullName: 'Sunita Sharma', role: 'Mandal Coordinator', email: 'sunita.s@example.com', mobile: '9123456781', region: 'Warangal', status: 'Active', reportingManagerId: 'EMP005', profilePhotoUrl: 'https://i.pravatar.cc/150?u=EMP002', createdAt: pastDate(100), updatedAt: pastDate(10), joiningDate: pastDate(100), dob: '1988-05-20' },
+    { id: 'EMP003', fullName: 'Vijay Singh', role: 'Field Agent', email: 'vijay.s@example.com', mobile: '9123456782', region: 'Mulugu', status: 'Active', reportingManagerId: 'EMP002', profilePhotoUrl: 'https://i.pravatar.cc/150?u=EMP003', createdAt: pastDate(80), updatedAt: pastDate(5), joiningDate: pastDate(80), dob: '1992-11-30' },
+    { id: 'EMP004', fullName: 'Priya Patel', role: 'Accountant', email: 'priya.p@example.com', mobile: '9123456783', region: 'Head Office', status: 'Inactive', reportingManagerId: 'EMP005', profilePhotoUrl: 'https://i.pravatar.cc/150?u=EMP004', createdAt: pastDate(120), updatedAt: pastDate(20), joiningDate: pastDate(120), dob: '1990-02-10', resignationDate: pastDate(25), lastWorkingDate: pastDate(20) },
+    { id: 'EMP005', fullName: 'Rajesh Gupta', role: 'Admin', email: 'rajesh.g@example.com', mobile: '9123456784', region: 'Head Office', status: 'Active', profilePhotoUrl: 'https://i.pravatar.cc/150?u=EMP005', createdAt: pastDate(200), updatedAt: pastDate(1), joiningDate: pastDate(200), dob: '1974-01-01' },
+    { id: 'EMP006', fullName: 'Kavita Rao', role: 'Procurement Center Manager', email: 'kavita.r@example.com', mobile: '9123456785', region: 'Hanmakonda', status: 'Active', reportingManagerId: 'EMP005', profilePhotoUrl: 'https://i.pravatar.cc/150?u=EMP006', createdAt: pastDate(90), updatedAt: pastDate(8), joiningDate: pastDate(90), dob: '1985-07-22' },
+    { id: 'EMP007', fullName: 'Manoj Reddy', role: 'Factory Manager', email: 'manoj.r@example.com', mobile: '9123456786', region: 'Mulugu', status: 'Active', reportingManagerId: 'EMP005', profilePhotoUrl: 'https://i.pravatar.cc/150?u=EMP007', createdAt: pastDate(110), updatedAt: pastDate(12), joiningDate: pastDate(110), dob: '1982-03-12' },
+    { id: 'EMP008', fullName: 'Meena Kumari', role: 'Reviewer', email: 'meena.k@example.com', mobile: '9123456787', region: 'Head Office', status: 'Active', reportingManagerId: 'EMP005', profilePhotoUrl: 'https://i.pravatar.cc/150?u=EMP008', createdAt: pastDate(60), updatedAt: pastDate(6), joiningDate: pastDate(60), dob: '1965-10-10' },
+];
+
+const onboardingTasks: LifecycleTask[] = [
+    { id: 'OBT01', description: 'Background Verification', status: 'Pending', responsible: 'HR' },
+    { id: 'OBT02', description: 'Issue Offer Letter', status: 'Pending', responsible: 'HR' },
+    { id: 'OBT03', description: 'Create Official Email ID', status: 'Pending', responsible: 'IT' },
+    { id: 'OBT04', description: 'Assign Laptop/Hardware', status: 'Pending', responsible: 'IT' },
+    { id: 'OBT05', description: 'Schedule Team Introduction', status: 'Pending', responsible: 'Manager' },
+];
+
+const offboardingTasks: LifecycleTask[] = [
+    { id: 'OFFBT01', description: 'Conduct Exit Interview', status: 'Pending', responsible: 'HR' },
+    { id: 'OFFBT02', description: 'Deactivate Email & System Access', status: 'Pending', responsible: 'IT' },
+    { id: 'OFFBT03', description: 'Collect Company Assets (Laptop, ID)', status: 'Pending', responsible: 'IT' },
+    { id: 'OFFBT04', description: 'Process Final Settlement', status: 'Pending', responsible: 'HR' },
+];
+
+export const mockEmployeeLifecycleData: EmployeeLifecycle[] = [
+    { 
+        employeeId: 'EMP001', 
+        processType: 'Onboarding', 
+        status: 'Completed', 
+        startDate: pastDate(30),
+        completionDate: pastDate(25),
+        tasks: onboardingTasks.map(t => ({...t, status: 'Completed'}))
+    },
+    { 
+        employeeId: 'EMP004', 
+        processType: 'Offboarding', 
+        status: 'In Progress', 
+        startDate: pastDate(25),
+        tasks: [
+            {...offboardingTasks[0], status: 'Completed'},
+            {...offboardingTasks[1], status: 'Completed'},
+            {...offboardingTasks[2], status: 'Pending'},
+            {...offboardingTasks[3], status: 'Pending'},
+        ]
+    },
+    { 
+        employeeId: 'EMP008', 
+        processType: 'Onboarding', 
+        status: 'In Progress', 
+        startDate: pastDate(60),
+        tasks: [
+            {...onboardingTasks[0], status: 'Completed'},
+            {...onboardingTasks[1], status: 'Completed'},
+            {...onboardingTasks[2], status: 'Completed'},
+            {...onboardingTasks[3], status: 'Pending'},
+            {...onboardingTasks[4], status: 'Pending'},
+        ]
+    }
+];
+
+export const mockProfileChangeRequests: ProfileChangeRequest[] = [
+    {
+        id: 'PCR001',
+        employeeId: 'EMP001',
+        requestedById: 'EMP001',
+        requestDate: pastDate(5),
+        status: 'Pending',
+        requestedChanges: { mobile: '9988776655' }
+    },
+    {
+        id: 'PCR002',
+        employeeId: 'EMP003',
+        requestedById: 'EMP005',
+        requestDate: pastDate(10),
+        status: 'Approved',
+        requestedChanges: { region: 'Warangal' },
+        reviewedById: 'EMP005',
+        reviewedAt: pastDate(8),
+        reviewNotes: 'Approved based on transfer order.'
+    },
+    {
+        id: 'PCR003',
+        employeeId: 'EMP006',
+        requestedById: 'EMP006',
+        requestDate: pastDate(3),
+        status: 'Rejected',
+        requestedChanges: { fullName: 'Kavita Rao Sharma' },
+        reviewedById: 'EMP005',
+        reviewedAt: pastDate(1),
+        reviewNotes: 'Name change requires legal documentation proof.'
+    }
 ];
 
 export const mockFarmersData: Farmer[] = [

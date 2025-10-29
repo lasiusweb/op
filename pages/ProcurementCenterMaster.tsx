@@ -4,7 +4,7 @@ import type { ProcurementCenter, Employee, Mandal, District } from '../types';
 import { mockProcurementCenters, mockEmployees, mockMandals, mockDistricts } from '../data/mockData';
 import DashboardCard from '../components/DashboardCard';
 // FIX: Replace missing `BuildingStorefrontIcon` with `HomeModernIcon`.
-import { PencilIcon, BuildingStorefrontIcon, MapIcon, TableCellsIcon, UserIcon, PhoneIcon } from '../components/Icons';
+import { PencilIcon, HomeModernIcon, MapIcon, TableCellsIcon, UserIcon, PhoneIcon } from '../components/Icons';
 import { exportToCSV, exportToExcel } from '../services/exportService';
 import { exportElementAsPDF } from '../services/pdfService';
 
@@ -45,9 +45,9 @@ const ProcurementCenterModal: React.FC<{
     const districtMap = useMemo(() => new Map(districts.map(d => [d.id, d.name])), [districts]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
-        const isNumberField = ['latitude', 'longitude'].includes(name);
-        setFormData(prev => ({ ...prev, [name]: isNumberField ? parseFloat(value) : value }));
+        const { name, value, type } = e.target;
+        const isNumberField = type === 'number';
+        setFormData(prev => ({ ...prev, [name]: isNumberField ? (value ? parseFloat(value) : undefined) : value }));
     };
 
     const handleSubmit = (e: FormEvent) => {
@@ -95,11 +95,11 @@ const ProcurementCenterModal: React.FC<{
                         </div>
                         <div>
                             <label htmlFor="latitude" className="block text-sm font-medium text-gray-300">Latitude</label>
-                            <input type="number" step="any" name="latitude" id="latitude" value={formData.latitude || ''} onChange={handleChange} className="mt-1 block w-full bg-gray-900 border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm" />
+                            <input type="number" step="any" name="latitude" id="latitude" value={formData.latitude ?? ''} onChange={handleChange} className="mt-1 block w-full bg-gray-900 border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm" />
                         </div>
                         <div>
                             <label htmlFor="longitude" className="block text-sm font-medium text-gray-300">Longitude</label>
-                            <input type="number" step="any" name="longitude" id="longitude" value={formData.longitude || ''} onChange={handleChange} className="mt-1 block w-full bg-gray-900 border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm" />
+                            <input type="number" step="any" name="longitude" id="longitude" value={formData.longitude ?? ''} onChange={handleChange} className="mt-1 block w-full bg-gray-900 border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm" />
                         </div>
                          <div className="md:col-span-2">
                             <label htmlFor="status" className="block text-sm font-medium text-gray-300">Status</label>
@@ -327,7 +327,7 @@ const ProcurementCenterMaster: React.FC = () => {
                         style={{ opacity: selectedCenter ? 1 : 0 }}
                     >
                         <h3 className="font-bold text-lg text-white mb-3 border-b border-gray-700 pb-2 flex items-center gap-2">
-                            <BuildingStorefrontIcon className="h-5 w-5"/> 
+                            <HomeModernIcon className="h-5 w-5"/> 
                             {selectedCenter.name}
                         </h3>
                         <div className="space-y-3 text-sm">
@@ -360,7 +360,7 @@ const ProcurementCenterMaster: React.FC = () => {
     );
 
     return (
-        <DashboardCard title="Procurement Center Master" icon={<BuildingStorefrontIcon />} exportOptions={exportOptions}>
+        <DashboardCard title="Procurement Center Master" icon={<HomeModernIcon />} exportOptions={exportOptions}>
             {isModalOpen && currentCenter && (
                 <ProcurementCenterModal center={currentCenter} users={mockEmployees} mandals={mockMandals} districts={mockDistricts} onSave={handleSaveCenter} onCancel={handleCloseModal} />
             )}

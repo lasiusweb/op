@@ -84,6 +84,9 @@ const Employees: React.FC<EmployeesProps> = ({ currentEmployee, allEmployees, se
                 reportingManagerId: item.reportingManagerId || undefined,
                 createdAt: now,
                 updatedAt: now,
+                // FIX: Add missing properties to satisfy the Employee type.
+                joiningDate: now,
+                dob: '1990-01-01', // A sensible default.
             };
         });
         setAllEmployees(prev => [...prev, ...processedEmployees]);
