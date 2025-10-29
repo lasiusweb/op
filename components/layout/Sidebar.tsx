@@ -66,7 +66,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage, isSideba
   
   const farmAndProcurementOpsPagesInfo = [
       { name: 'Procurement Batches', page: 'procurementBatches', icon: <CubeIcon className="h-5 w-5 mr-3"/> },
-      { name: 'Plantation Log', page: 'plantationLog', icon: <DocumentChartBarIcon className="h-5 w-5 mr-3"/> },
+      { name: 'Cultivation Log', page: 'cultivationLog', icon: <DocumentChartBarIcon className="h-5 w-5 mr-3"/> },
       { name: 'Harvest Log', page: 'harvestLog', icon: <ReceiptPercentIcon className="h-5 w-5 mr-3"/> },
       { name: 'Irrigation Tracker', page: 'microIrrigationTracker', icon: <WrenchScrewdriverIcon className="h-5 w-5 mr-3"/> },
       { name: 'Oil Extraction', page: 'oilExtraction', icon: <BeakerIcon className="h-5 w-5 mr-3"/> },

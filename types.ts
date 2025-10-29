@@ -339,13 +339,13 @@ export interface HOSanction {
   updatedAt: string;
 }
 
-export type PlantationActivityType = 'Planting' | 'Fertilizing' | 'Pest Control' | 'Weeding' | 'Pruning' | 'Harvesting' | 'Soil Testing';
+export type CultivationActivityType = 'Planting' | 'Fertilizing' | 'Pest Control' | 'Weeding' | 'Pruning' | 'Harvesting' | 'Soil Testing';
 
-export interface PlantationLog {
+export interface CultivationLog {
   id: string;
   farmerId: string;
   landParcelId: string;
-  activityType: PlantationActivityType;
+  activityType: CultivationActivityType;
   activityDate: string;
   materialsUsed?: string;
   quantity?: number;

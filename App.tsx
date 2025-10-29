@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import Sidebar from './components/layout/Sidebar';
 import Header from './components/layout/Header';
@@ -19,7 +20,7 @@ import SubsidyApplications from './pages/SubsidyApplications';
 import DocumentVerification from './pages/DocumentVerification';
 import InspectionLog from './pages/InspectionLog';
 import FinancialSanctions from './pages/FinancialSanctions';
-import PlantationLog from './pages/PlantationLog';
+import CultivationLog from './pages/CultivationLog';
 import HarvestLog from './pages/HarvestLog';
 import MicroIrrigationTracker from './pages/MicroIrrigationTracker';
 import FieldAgentTasks from './pages/FieldAgentTasks';
@@ -67,8 +68,9 @@ import UpcomingRetirements from './pages/UpcomingRetirements';
 import ProfileChangeRequests from './pages/ProfileChangeRequests';
 
 
-import type { Employee, Farmer, LandParcel, NurseryInventoryItem, PlantationLog as PlantationLogType, FarmVisitRequest, EmployeeActivity, Task, ProfileChangeRequest, FarmerProfileChangeRequest } from './types';
-import { mockEmployees, mockTasks, mockFarmersData, mockLandParcels, mockNurseryInventory, mockSubsidyApplications, mockProcurementBatches, mockPlantationLogs, mockFarmVisitRequests, mockEmployeeActivity, mockProfileChangeRequests, mockPayments, mockDocuments, mockCropInsurancePolicies, mockFarmerProfileChangeRequests } from './data/mockData';
+import type { Employee, Farmer, LandParcel, NurseryInventoryItem, CultivationLog as CultivationLogType, FarmVisitRequest, EmployeeActivity, Task, ProfileChangeRequest, FarmerProfileChangeRequest } from './types';
+// FIX: Corrected imports for mock data. The previous import was a single line that was failing because the exports were missing. Now that the exports are added in mockData.ts, these imports should work.
+import { mockEmployees, mockTasks, mockFarmersData, mockLandParcels, mockNurseryInventory, mockSubsidyApplications, mockProcurementBatches, mockCultivationLogs, mockFarmVisitRequests, mockEmployeeActivity, mockProfileChangeRequests, mockPayments, mockDocuments, mockCropInsurancePolicies, mockFarmerProfileChangeRequests } from './data/mockData';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState('dashboard');
@@ -78,7 +80,7 @@ const App: React.FC = () => {
   const [farmers, setFarmers] = useState<Farmer[]>(mockFarmersData);
   const [landParcels, setLandParcels] = useState<LandParcel[]>(mockLandParcels);
   const [nurseryInventory, setNurseryInventory] = useState<NurseryInventoryItem[]>(mockNurseryInventory);
-  const [plantationLogs, setPlantationLogs] = useState<PlantationLogType[]>(mockPlantationLogs);
+  const [cultivationLogs, setCultivationLogs] = useState<CultivationLogType[]>(mockCultivationLogs);
   const [farmVisitRequests, setFarmVisitRequests] = useState<FarmVisitRequest[]>(mockFarmVisitRequests);
   const [employeeActivity, setEmployeeActivity] = useState<EmployeeActivity[]>(mockEmployeeActivity);
   const [profileChangeRequests, setProfileChangeRequests] = useState<ProfileChangeRequest[]>(mockProfileChangeRequests);
@@ -152,7 +154,7 @@ const App: React.FC = () => {
       inspections: 'Inspection Log',
       procurementBatches: 'Procurement Batch Management',
       financialSanctions: 'Financial Sanctions',
-      plantationLog: 'Plantation Log',
+      cultivationLog: 'Cultivation Log',
       harvestLog: 'Harvest Log',
       microIrrigationTracker: 'Micro-Irrigation Tracker',
       nurseryInventory: 'Nursery Inventory',
@@ -234,8 +236,8 @@ const App: React.FC = () => {
     handleSetCurrentPage('employees');
   };
 
-  const handleAddPlantationLog = (newLog: PlantationLogType) => {
-    setPlantationLogs(prev => [newLog, ...prev]);
+  const handleAddCultivationLog = (newLog: CultivationLogType) => {
+    setCultivationLogs(prev => [newLog, ...prev]);
   };
 
   const handleAddFarmVisitRequest = (newRequest: FarmVisitRequest) => {
@@ -315,8 +317,8 @@ const App: React.FC = () => {
             return <InspectionLog />;
         case 'financialSanctions':
             return <FinancialSanctions />;
-        case 'plantationLog':
-            return <PlantationLog />;
+        case 'cultivationLog':
+            return <CultivationLog />;
         case 'harvestLog':
             return <HarvestLog />;
         case 'microIrrigationTracker':
@@ -356,9 +358,9 @@ const App: React.FC = () => {
           allPayments={mockPayments}
           allDocuments={mockDocuments}
           allCropInsurancePolicies={mockCropInsurancePolicies}
-          plantationLogs={plantationLogs}
+          cultivationLogs={cultivationLogs}
           farmVisitRequests={farmVisitRequests}
-          onAddLog={handleAddPlantationLog}
+          onAddLog={handleAddCultivationLog}
           onAddVisitRequest={handleAddFarmVisitRequest}
           onAddProfileChangeRequest={handleAddFarmerProfileChangeRequest}
           setCurrentPage={handleSetCurrentPage}
