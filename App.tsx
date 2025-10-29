@@ -67,8 +67,8 @@ import UpcomingRetirements from './pages/UpcomingRetirements';
 import ProfileChangeRequests from './pages/ProfileChangeRequests';
 
 
-import type { Employee, Farmer, LandParcel, NurseryInventoryItem, PlantationLog as PlantationLogType, FarmVisitRequest, EmployeeActivity, Task, ProfileChangeRequest } from './types';
-import { mockEmployees, mockTasks, mockFarmersData, mockLandParcels, mockNurseryInventory, mockSubsidyApplications, mockProcurementBatches, mockPlantationLogs, mockFarmVisitRequests, mockEmployeeActivity, mockProfileChangeRequests } from './data/mockData';
+import type { Employee, Farmer, LandParcel, NurseryInventoryItem, PlantationLog as PlantationLogType, FarmVisitRequest, EmployeeActivity, Task, ProfileChangeRequest, FarmerProfileChangeRequest } from './types';
+import { mockEmployees, mockTasks, mockFarmersData, mockLandParcels, mockNurseryInventory, mockSubsidyApplications, mockProcurementBatches, mockPlantationLogs, mockFarmVisitRequests, mockEmployeeActivity, mockProfileChangeRequests, mockPayments, mockDocuments, mockCropInsurancePolicies, mockFarmerProfileChangeRequests } from './data/mockData';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState('dashboard');
@@ -82,6 +82,7 @@ const App: React.FC = () => {
   const [farmVisitRequests, setFarmVisitRequests] = useState<FarmVisitRequest[]>(mockFarmVisitRequests);
   const [employeeActivity, setEmployeeActivity] = useState<EmployeeActivity[]>(mockEmployeeActivity);
   const [profileChangeRequests, setProfileChangeRequests] = useState<ProfileChangeRequest[]>(mockProfileChangeRequests);
+  const [farmerProfileChangeRequests, setFarmerProfileChangeRequests] = useState<FarmerProfileChangeRequest[]>(mockFarmerProfileChangeRequests);
   const [currentEmployee, setCurrentEmployee] = useState<Employee>(employees[1]); // Default to a non-admin
   const [viewingEmployeeId, setViewingEmployeeId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -240,6 +241,10 @@ const App: React.FC = () => {
   const handleAddFarmVisitRequest = (newRequest: FarmVisitRequest) => {
     setFarmVisitRequests(prev => [newRequest, ...prev]);
   };
+  
+  const handleAddFarmerProfileChangeRequest = (newRequest: FarmerProfileChangeRequest) => {
+      setFarmerProfileChangeRequests(prev => [newRequest, ...prev]);
+  };
 
   const handleUpdateFarmVisitRequest = (updatedRequest: FarmVisitRequest) => {
       setFarmVisitRequests(prev => prev.map(r => r.id === updatedRequest.id ? updatedRequest : r));
@@ -348,10 +353,14 @@ const App: React.FC = () => {
           allLandParcels={landParcels}
           allSubsidyApps={mockSubsidyApplications} 
           allProcurementBatches={mockProcurementBatches}
+          allPayments={mockPayments}
+          allDocuments={mockDocuments}
+          allCropInsurancePolicies={mockCropInsurancePolicies}
           plantationLogs={plantationLogs}
           farmVisitRequests={farmVisitRequests}
           onAddLog={handleAddPlantationLog}
           onAddVisitRequest={handleAddFarmVisitRequest}
+          onAddProfileChangeRequest={handleAddFarmerProfileChangeRequest}
           setCurrentPage={handleSetCurrentPage}
         />;
       case 'cropInsurance':

@@ -413,6 +413,30 @@ export interface FarmVisitRequest {
     updatedAt: string;
 }
 
+// NEW - Farmer Profile Update Request
+export interface FarmerProfileChangeRequest {
+    id: string;
+    farmerId: string;
+    requestDate: string;
+    status: 'Pending' | 'Approved' | 'Rejected';
+    requestedChanges: Partial<Pick<Farmer, 'mobile' | 'bankName' | 'bankAccountNumber' | 'ifscCode'>>;
+    reviewNotes?: string;
+}
+
+// NEW - Crop Insurance Policy
+export interface CropInsurancePolicy {
+    id: string;
+    farmerId: string;
+    policyNumber: string;
+    insurer: string;
+    coverageType: 'Yield-Based' | 'Weather-Based';
+    sumInsured: number;
+    premium: number;
+    startDate: string;
+    endDate: string;
+    status: 'Active' | 'Expired' | 'Claimed';
+}
+
 
 // Inventory Types
 export type NurseryItemType = 'Seedling' | 'Fertilizer' | 'Pesticide' | 'Tool';
