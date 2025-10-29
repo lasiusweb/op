@@ -1,4 +1,3 @@
-import type { Crop } from "react-easy-crop";
 
 
 export interface DistrictVolume {

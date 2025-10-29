@@ -109,7 +109,8 @@ const VillageMaster: React.FC = () => {
     const handleSaveVillage = (villageData: Partial<Village>) => {
         const now = new Date().toISOString();
         if (villageData.id) { // Edit
-            setVillages(villages.map(v => v.id === villageData.id ? ({ ...v, ...villageData, updatedAt: now } as Village) : v));
+// FIX: The `status` property was being inferred as a generic `string` from the form, causing a type mismatch. It's now explicitly cast to the correct `'Active' | 'Inactive'` type.
+            setVillages(villages.map(v => v.id === villageData.id ? ({ ...v, ...villageData, status: villageData.status as 'Active' | 'Inactive', updatedAt: now }) : v));
         } else { // Add
             const newVillage: Village = {
                 id: `VILL${Date.now()}`,
