@@ -19,7 +19,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage, isSideba
 
   const coreManagementPagesInfo = [
     { name: 'Farmer Management', page: 'farmers', icon: <PeopleIcon className="h-5 w-5 mr-3"/> },
-    { name: 'User Management', page: 'users', icon: <UserGroupIcon className="h-5 w-5 mr-3"/> },
+    { name: 'Employee Management', page: 'employees', icon: <UserGroupIcon className="h-5 w-5 mr-3"/> },
     { name: 'Partner & Vendor Mgmt', page: 'vendorManagement', icon: <BriefcaseIcon className="h-5 w-5 mr-3"/> },
   ];
 

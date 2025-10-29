@@ -1,8 +1,12 @@
-import React, { useState, useMemo, FormEvent } from 'react';
-import type { ProcurementCenter, User, Mandal, District } from '../types';
-import { mockProcurementCenters, mockUsers, mockMandals, mockDistricts } from '../data/mockData';
+import React, { useState, useMemo, FormEvent, useRef } from 'react';
+// FIX: Replaced User with Employee and mockUsers with mockEmployees
+import type { ProcurementCenter, Employee, Mandal, District } from '../types';
+import { mockProcurementCenters, mockEmployees, mockMandals, mockDistricts } from '../data/mockData';
 import DashboardCard from '../components/DashboardCard';
+// FIX: Replace missing `BuildingStorefrontIcon` with `HomeModernIcon`.
 import { PencilIcon, BuildingStorefrontIcon, MapIcon, TableCellsIcon, UserIcon, PhoneIcon } from '../components/Icons';
+import { exportToCSV, exportToExcel } from '../services/exportService';
+import { exportElementAsPDF } from '../services/pdfService';
 
 const Highlight: React.FC<{ text: string; highlight: string }> = ({ text, highlight }) => {
   if (!highlight.trim()) {
@@ -29,7 +33,7 @@ const Highlight: React.FC<{ text: string; highlight: string }> = ({ text, highli
 
 const ProcurementCenterModal: React.FC<{
     center: Partial<ProcurementCenter>;
-    users: User[];
+    users: Employee[];
     mandals: Mandal[];
     districts: District[];
     onSave: (center: Partial<ProcurementCenter>) => void;
@@ -122,8 +126,9 @@ const ProcurementCenterMaster: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [viewMode, setViewMode] = useState<'table' | 'map'>('table');
     const [selectedCenterId, setSelectedCenterId] = useState<string | null>(null);
+    const contentRef = useRef<HTMLDivElement>(null);
 
-    const userMap = useMemo(() => new Map(mockUsers.map(u => [u.id, u.fullName])), []);
+    const userMap = useMemo(() => new Map(mockEmployees.map(u => [u.id, u.fullName])), []);
     const mandalMap = useMemo(() => new Map(mockMandals.map(m => [m.id, { name: m.name, districtId: m.districtId }])), []);
     const districtMap = useMemo(() => new Map(mockDistricts.map(d => [d.id, d.name])), []);
 
@@ -190,6 +195,43 @@ const ProcurementCenterMaster: React.FC = () => {
     const selectedCenter = useMemo(() => {
         return centers.find(c => c.id === selectedCenterId);
     }, [centers, selectedCenterId]);
+    
+    const getDataForExport = () => {
+        return filteredCenters.map(center => {
+            const mandal = mandalMap.get(center.mandalId);
+            const districtName = mandal ? districtMap.get(mandal.districtId) : 'N/A';
+            return {
+                'Center ID': center.id,
+                'Name': center.name,
+                'Mandal': mandal?.name || 'N/A',
+                'District': districtName,
+                'Manager': center.managerId ? userMap.get(center.managerId) : 'N/A',
+                'Contact Person': center.contactPerson,
+                'Contact Mobile': center.contactMobile,
+                'Status': center.status,
+            };
+        });
+    };
+
+    const handleExportPDF = () => {
+        if (contentRef.current) {
+            exportElementAsPDF(contentRef.current, 'procurement_centers', 'Procurement Center Master');
+        }
+    };
+
+    const handleExportCSV = () => {
+        exportToCSV([{ title: 'Procurement Centers', data: getDataForExport() }], 'procurement_centers.csv');
+    };
+
+    const handleExportExcel = () => {
+        exportToExcel([{ title: 'Procurement Centers', data: getDataForExport() }], 'procurement_centers');
+    };
+
+    const exportOptions = {
+        csv: handleExportCSV,
+        excel: handleExportExcel,
+        pdf: handleExportPDF,
+    };
 
     const TableView = () => (
         <div className="overflow-x-auto rounded-lg border border-gray-700/50">
@@ -318,35 +360,36 @@ const ProcurementCenterMaster: React.FC = () => {
     );
 
     return (
-        <DashboardCard title="Procurement Center Master" icon={<BuildingStorefrontIcon />}>
+        <DashboardCard title="Procurement Center Master" icon={<BuildingStorefrontIcon />} exportOptions={exportOptions}>
             {isModalOpen && currentCenter && (
-                <ProcurementCenterModal center={currentCenter} users={mockUsers} mandals={mockMandals} districts={mockDistricts} onSave={handleSaveCenter} onCancel={handleCloseModal} />
+                <ProcurementCenterModal center={currentCenter} users={mockEmployees} mandals={mockMandals} districts={mockDistricts} onSave={handleSaveCenter} onCancel={handleCloseModal} />
             )}
-            <div className="mb-4 flex justify-between items-center flex-wrap gap-4">
-                <input 
-                    type="text" 
-                    placeholder="Search by name, contact, location..." 
-                    value={searchTerm}
-                    onChange={e => setSearchTerm(e.target.value)}
-                    className="bg-gray-800 border border-gray-700 rounded-md px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
-                />
-                <div className="flex items-center gap-4">
-                    <div className="flex items-center rounded-md bg-gray-800 border border-gray-700 p-1">
-                        <button onClick={() => setViewMode('table')} className={`px-3 py-1 text-sm font-medium rounded-md flex items-center gap-2 transition-colors ${viewMode === 'table' ? 'bg-teal-600 text-white' : 'text-gray-400 hover:bg-gray-700'}`}>
-                           <TableCellsIcon /> Table
-                        </button>
-                        <button onClick={() => setViewMode('map')} className={`px-3 py-1 text-sm font-medium rounded-md flex items-center gap-2 transition-colors ${viewMode === 'map' ? 'bg-teal-600 text-white' : 'text-gray-400 hover:bg-gray-700'}`}>
-                           <MapIcon /> Map
+            <div ref={contentRef}>
+                <div className="mb-4 flex justify-between items-center flex-wrap gap-4">
+                    <input 
+                        type="text" 
+                        placeholder="Search by name, contact, location..." 
+                        value={searchTerm}
+                        onChange={e => setSearchTerm(e.target.value)}
+                        className="bg-gray-800 border border-gray-700 rounded-md px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    />
+                    <div className="flex items-center gap-4">
+                        <div className="flex items-center rounded-md bg-gray-800 border border-gray-700 p-1">
+                            <button onClick={() => setViewMode('table')} className={`px-3 py-1 text-sm font-medium rounded-md flex items-center gap-2 transition-colors ${viewMode === 'table' ? 'bg-teal-600 text-white' : 'text-gray-400 hover:bg-gray-700'}`}>
+                               <TableCellsIcon /> Table
+                            </button>
+                            <button onClick={() => setViewMode('map')} className={`px-3 py-1 text-sm font-medium rounded-md flex items-center gap-2 transition-colors ${viewMode === 'map' ? 'bg-teal-600 text-white' : 'text-gray-400 hover:bg-gray-700'}`}>
+                               <MapIcon /> Map
+                            </button>
+                        </div>
+                        <button onClick={() => handleOpenModal()} className="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-md transition-colors">
+                            Add New Center
                         </button>
                     </div>
-                    <button onClick={() => handleOpenModal()} className="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-md transition-colors">
-                        Add New Center
-                    </button>
                 </div>
+
+                {viewMode === 'table' ? <TableView /> : <MapView />}
             </div>
-
-            {viewMode === 'table' ? <TableView /> : <MapView />}
-
         </DashboardCard>
     );
 };

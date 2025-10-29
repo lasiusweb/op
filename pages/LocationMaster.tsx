@@ -1,9 +1,12 @@
-import React, { useState, useMemo, FormEvent } from 'react';
-import type { Location, User, Mandal, District } from '../types';
-import { mockLocations, mockUsers, mockMandals, mockDistricts } from '../data/mockData';
+import React, { useState, useMemo, FormEvent, useRef } from 'react';
+// FIX: Replaced User with Employee and mockUsers with mockEmployees
+import type { Location, Employee, Mandal, District } from '../types';
+import { mockLocations, mockEmployees, mockMandals, mockDistricts } from '../data/mockData';
 import DashboardCard from '../components/DashboardCard';
 // FIX: Revert placeholder icon and use the newly added `BuildingOfficeIcon`.
 import { PencilIcon, BuildingOfficeIcon, MapIcon, TableCellsIcon } from '../components/Icons';
+import { exportToCSV, exportToExcel } from '../services/exportService';
+import { exportElementAsPDF } from '../services/pdfService';
 
 const Highlight: React.FC<{ text: string; highlight: string }> = ({ text, highlight }) => {
   if (!highlight.trim()) {
@@ -30,7 +33,7 @@ const Highlight: React.FC<{ text: string; highlight: string }> = ({ text, highli
 
 const LocationModal: React.FC<{
     location: Partial<Location>;
-    users: User[];
+    users: Employee[];
     mandals: Mandal[];
     districts: District[];
     onSave: (location: Partial<Location>) => void;
@@ -117,8 +120,9 @@ const LocationMaster: React.FC = () => {
     const [filterType, setFilterType] = useState<Location['type'] | 'All'>('All');
     const [viewMode, setViewMode] = useState<'table' | 'map'>('table');
     const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
+    const contentRef = useRef<HTMLDivElement>(null);
 
-    const userMap = useMemo(() => new Map(mockUsers.map(u => [u.id, u.fullName])), []);
+    const userMap = useMemo(() => new Map(mockEmployees.map(u => [u.id, u.fullName])), []);
 
     const handleOpenModal = (location?: Location) => {
         setCurrentLocation(location || { type: 'Procurement Center' });
@@ -177,6 +181,37 @@ const LocationMaster: React.FC = () => {
     const selectedLocation = useMemo(() => {
         return locations.find(l => l.id === selectedLocationId);
     }, [locations, selectedLocationId]);
+    
+    const getDataForExport = () => {
+        return filteredLocations.map(location => ({
+            'Location ID': location.id,
+            'Name': location.name,
+            'Type': location.type,
+            'Mandal': location.mandal,
+            'District': location.district,
+            'Manager': location.managerId ? userMap.get(location.managerId) : 'N/A',
+        }));
+    };
+
+    const handleExportPDF = () => {
+        if (contentRef.current) {
+            exportElementAsPDF(contentRef.current, 'location_master', 'Location Master');
+        }
+    };
+
+    const handleExportCSV = () => {
+        exportToCSV([{ title: 'Locations', data: getDataForExport() }], 'location_master.csv');
+    };
+
+    const handleExportExcel = () => {
+        exportToExcel([{ title: 'Locations', data: getDataForExport() }], 'location_master');
+    };
+
+    const exportOptions = {
+        csv: handleExportCSV,
+        excel: handleExportExcel,
+        pdf: handleExportPDF,
+    };
 
     const TableView = () => (
         <div className="overflow-x-auto rounded-lg border border-gray-700/50">
@@ -253,9 +288,9 @@ const LocationMaster: React.FC = () => {
     );
 
     return (
-        <DashboardCard title="Location Master (Procurement Centers, Factories, etc.)" icon={<BuildingOfficeIcon />}>
+        <DashboardCard title="Location Master (Procurement Centers, Factories, etc.)" icon={<BuildingOfficeIcon />} exportOptions={exportOptions} contentRef={contentRef}>
             {isModalOpen && currentLocation && (
-                <LocationModal location={currentLocation} users={mockUsers} mandals={mockMandals} districts={mockDistricts} onSave={handleSaveLocation} onCancel={handleCloseModal} />
+                <LocationModal location={currentLocation} users={mockEmployees} mandals={mockMandals} districts={mockDistricts} onSave={handleSaveLocation} onCancel={handleCloseModal} />
             )}
             <div className="mb-4 flex justify-between items-center flex-wrap gap-4">
                 <div className="flex items-center gap-4 flex-wrap">

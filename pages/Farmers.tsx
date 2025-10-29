@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import type { Farmer, User } from '../types';
+import type { Farmer, Employee } from '../types';
 import DashboardCard from '../components/DashboardCard';
 import { ChevronDownIcon, ChevronUpIcon, PencilIcon, UserCircleIcon, TrashIcon, ArrowUpIcon, ArrowDownIcon, ChevronUpDownIcon, SparklesIcon, LightBulbIcon, ArrowUpTrayIcon } from '../components/Icons';
-import { mockLandParcels, mockUsers } from '../data/mockData';
+import { mockLandParcels, mockEmployees } from '../data/mockData';
 import { getGeminiInsights } from '../services/geminiService';
 import { exportToCSV, exportToExcel } from '../services/exportService';
 import { exportElementAsPDF } from '../services/pdfService';
@@ -86,7 +86,8 @@ const farmerTemplateHeaders = [
 ];
 
 
-const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, setAllFarmers, loading }) => {
+// FIX: Changed from default to named export
+export const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, setAllFarmers, loading }) => {
     const [expandedRow, setExpandedRow] = useState<string | null>(null);
     const [editingFarmerId, setEditingFarmerId] = useState<string | null>(null);
     const [editableFarmerData, setEditableFarmerData] = useState<Farmer | null>(null);
@@ -110,8 +111,8 @@ const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, setAllFar
     const fileInputRef = useRef<HTMLInputElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
 
-    const userMap = useMemo(() => new Map(mockUsers.map(u => [u.id, u.fullName])), []);
-    const fieldAgents: User[] = useMemo(() => mockUsers.filter(u => u.role === 'Field Agent'), []);
+    const employeeMap = useMemo(() => new Map(mockEmployees.map(u => [u.id, u.fullName])), []);
+    const fieldAgents: Employee[] = useMemo(() => mockEmployees.filter(u => u.role === 'Field Agent'), []);
 
     const landParcelCounts = useMemo(() => {
         const counts: { [farmerId: string]: number } = {};
@@ -147,7 +148,7 @@ const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, setAllFar
                     f.village, 
                     f.mandal, 
                     f.district,
-                    userMap.get(f.assignedAgentId) || ''
+                    employeeMap.get(f.assignedAgentId) || ''
                 ].join(' ').toLowerCase();
                 return searchWords.every(word => searchableText.includes(word));
             });
@@ -170,8 +171,8 @@ const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, setAllFar
                         valB = `${b.village}, ${b.district}`;
                         break;
                     case 'assignedAgent':
-                        valA = userMap.get(a.assignedAgentId);
-                        valB = userMap.get(b.assignedAgentId);
+                        valA = employeeMap.get(a.assignedAgentId);
+                        valB = employeeMap.get(b.assignedAgentId);
                         break;
                     default:
                         valA = a[key as keyof Farmer];
@@ -204,7 +205,7 @@ const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, setAllFar
         }
 
         return filterableItems;
-    }, [allFarmers, filterDistrict, filterStatus, searchTerm, sortConfig, landParcelCounts, userMap]);
+    }, [allFarmers, filterDistrict, filterStatus, searchTerm, sortConfig, landParcelCounts, employeeMap]);
     
     const requestSort = (key: SortableFarmerKeys) => {
         let direction: 'ascending' | 'descending' = 'ascending';
@@ -258,7 +259,7 @@ const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, setAllFar
 
     const handleBulkReassign = (agentId: string) => {
         if (!agentId) return;
-        const agentName = userMap.get(agentId) || 'the selected agent';
+        const agentName = employeeMap.get(agentId) || 'the selected agent';
         if (window.confirm(`Are you sure you want to reassign ${selectedFarmerIds.length} farmer(s) to ${agentName}?`)) {
             setAllFarmers(prev =>
                 prev.map(f =>
@@ -343,7 +344,7 @@ const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, setAllFar
             accountVerified: f.accountVerified,
             photoUploaded: f.photoUploaded,
             landParcelCount: landParcelCounts[f.id] || 0,
-            assignedAgent: userMap.get(f.assignedAgentId) || 'Unassigned'
+            assignedAgent: employeeMap.get(f.assignedAgentId) || 'Unassigned'
         }));
 
         const prompt = `
@@ -360,7 +361,7 @@ const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, setAllFar
         const result = await getGeminiInsights(prompt);
         setSuggestions(result);
         setIsLoadingSuggestions(false);
-    }, [sortedAndFilteredFarmers, landParcelCounts, userMap]);
+    }, [sortedAndFilteredFarmers, landParcelCounts, employeeMap]);
 
 
     const handleToggleRow = (farmerId: string) => {
@@ -447,7 +448,7 @@ const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, setAllFar
             'Village': f.village,
             'Mandal': f.mandal,
             'District': f.district,
-            'Assigned Agent': userMap.get(f.assignedAgentId) || 'Unassigned',
+            'Assigned Agent': employeeMap.get(f.assignedAgentId) || 'Unassigned',
             'Land Parcels': landParcelCounts[f.id] || 0,
             'Status': f.status,
             'Account Verified': f.accountVerified,
@@ -580,269 +581,4 @@ const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, setAllFar
       </div>
       {(isLoadingSuggestions || suggestions) && (
         <div className="mb-6 p-4 bg-gray-900/50 rounded-lg border border-cyan-500/20">
-            <h3 className="text-lg font-medium text-gray-300 mb-2 flex items-center gap-2">
-                <LightBulbIcon className="h-5 w-5" />
-                Actionable Suggestions
-            </h3>
-            {isLoadingSuggestions && (
-                <div className="flex justify-center items-center space-x-2 py-4">
-                    <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></div>
-                    <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-                    <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" style={{ animationDelay: '0.4s' }}></div>
-                </div>
-            )}
-            {suggestions && (
-                <div className="text-gray-300 text-sm whitespace-pre-wrap prose prose-invert prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: suggestions.replace(/\*/g, '•') }} />
-            )}
-        </div>
-        )}
-      
-      <BulkActionsBar />
-
-      {loading ? (
-        <TableSkeleton rows={10} />
-      ) : (
-        <div className="overflow-x-auto rounded-lg border border-gray-700/50">
-            <table className="w-full text-sm text-left text-gray-400">
-            <thead className="text-xs text-gray-300 uppercase bg-gray-800">
-                <tr>
-                <th scope="col" className="p-4">
-                        <div className="flex items-center">
-                            <input 
-                                id="checkbox-all" 
-                                type="checkbox" 
-                                className="w-4 h-4 text-teal-600 bg-gray-700 border-gray-600 rounded focus:ring-teal-500"
-                                checked={isAllSelected}
-                                ref={checkboxRef}
-                                onChange={handleSelectAll}
-                            />
-                            <label htmlFor="checkbox-all" className="sr-only">checkbox</label>
-                        </div>
-                    </th>
-                <SortableHeader label="Farmer ID" sortKey="id" />
-                <SortableHeader label="Full Name" sortKey="fullName" />
-                <SortableHeader label="Mobile" sortKey="mobile" />
-                <SortableHeader label="Location" sortKey="location" />
-                <SortableHeader label="Assigned Agent" sortKey="assignedAgent" />
-                <SortableHeader label="Parcels" sortKey="landParcelCount" />
-                <SortableHeader label="Status" sortKey="status" />
-                <th scope="col" className="px-6 py-3">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {sortedAndFilteredFarmers.map((farmer) => (
-                <React.Fragment key={farmer.id}>
-                    <tr className={`border-b border-gray-700 ${selectedFarmerIds.includes(farmer.id) ? 'bg-teal-900/50' : 'bg-gray-800/50 hover:bg-gray-700/50'}`}>
-                        <td className="w-4 p-4">
-                            <div className="flex items-center">
-                                <input 
-                                    id={`checkbox-${farmer.id}`}
-                                    type="checkbox" 
-                                    className="w-4 h-4 text-teal-600 bg-gray-700 border-gray-600 rounded focus:ring-teal-500"
-                                    checked={selectedFarmerIds.includes(farmer.id)}
-                                    onChange={() => handleSelectOne(farmer.id)}
-                                    onClick={(e) => e.stopPropagation()}
-                                />
-                                <label htmlFor={`checkbox-${farmer.id}`} className="sr-only">checkbox</label>
-                            </div>
-                        </td>
-                        <td className="px-6 py-4 font-medium text-white whitespace-nowrap">{farmer.id}</td>
-                        <td className="px-6 py-4 text-white">{farmer.fullName}</td>
-                        <td className="px-6 py-4">{farmer.mobile}</td>
-                        <td className="px-6 py-4">{`${farmer.village}, ${farmer.district}`}</td>
-                        <td className="px-6 py-4">{userMap.get(farmer.assignedAgentId) || <span className="text-gray-500">Unassigned</span>}</td>
-                        <td className="px-6 py-4 text-center">{landParcelCounts[farmer.id] || 0}</td>
-                        <td className="px-6 py-4">
-                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            farmer.status === 'Active' ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'
-                        }`}>
-                            {farmer.status}
-                        </span>
-                        </td>
-                        <td className="px-6 py-4">
-                            <div className="flex items-center gap-4">
-                                <button 
-                                    onClick={() => handleToggleRow(farmer.id)}
-                                    className="font-medium text-teal-400 hover:text-teal-300 flex items-center gap-1"
-                                    aria-label={expandedRow === farmer.id ? 'Hide Details' : 'Show Details'}
-                                >
-                                    <span>Details</span>
-                                    {expandedRow === farmer.id ? <ChevronUpIcon /> : <ChevronDownIcon />}
-                                </button>
-                                <button
-                                    onClick={() => handleEditClick(farmer)}
-                                    className="font-medium text-blue-400 hover:text-blue-300"
-                                    aria-label={`Edit farmer ${farmer.fullName}`}
-                                >
-                                    <PencilIcon />
-                                </button>
-                                 <button
-                                    onClick={() => handleDeleteClick(farmer)}
-                                    className="font-medium text-red-400 hover:text-red-300"
-                                    aria-label={`Delete farmer ${farmer.fullName}`}
-                                >
-                                    <TrashIcon />
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    {expandedRow === farmer.id && (
-                        <tr className="bg-gray-900/50">
-                            <td colSpan={9} className="p-4 transition-all duration-300 ease-in-out">
-                               <div className="bg-gray-800/50 p-6 rounded-lg space-y-6">
-                                {editingFarmerId === farmer.id && editableFarmerData ? (
-                                    <>
-                                     <div className="flex items-start gap-6">
-                                         <div className="flex-shrink-0">
-                                              <h3 className="text-sm font-semibold text-teal-400 mb-3">Profile Photo</h3>
-                                             {editableFarmerData.photoUrl ? (
-                                                <img src={editableFarmerData.photoUrl} alt="Farmer" className="h-24 w-24 rounded-full object-cover" />
-                                            ) : (
-                                                <div className="h-24 w-24 rounded-full bg-gray-700 flex items-center justify-center">
-                                                    <UserCircleIcon className="h-16 w-16 text-gray-500" />
-                                                </div>
-                                            )}
-                                            <input type="file" accept="image/*" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
-                                            <button onClick={() => fileInputRef.current?.click()} className="mt-2 w-full text-center text-xs bg-gray-700 hover:bg-gray-600 text-white font-semibold py-1 px-2 rounded-md transition-colors">
-                                                Upload Photo
-                                            </button>
-                                        </div>
-                                        <div className="flex-grow">
-                                            <h3 className="text-sm font-semibold text-teal-400 mb-3">Edit Personal & Location Information</h3>
-                                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                                 <EditableInput label="Full Name" name="fullName" value={editableFarmerData.fullName} onChange={handleInputChange} />
-                                                 <EditableInput label="Father's Name" name="fatherName" value={editableFarmerData.fatherName} onChange={handleInputChange} />
-                                                 <EditableInput label="Date of Birth" name="dob" type="date" value={editableFarmerData.dob} onChange={handleInputChange} />
-                                                 <EditableInput label="Gender" name="gender" type="select" options={['Male', 'Female', 'Other'].map(o => ({ value: o, label: o }))} value={editableFarmerData.gender} onChange={handleInputChange} />
-                                                 <EditableInput label="Mobile" name="mobile" value={editableFarmerData.mobile} onChange={handleInputChange} />
-                                                 <EditableInput label="Village" name="village" value={editableFarmerData.village} onChange={handleInputChange} />
-                                                 <EditableInput label="Mandal" name="mandal" value={editableFarmerData.mandal} onChange={handleInputChange} />
-                                                 <EditableInput label="District" name="district" value={editableFarmerData.district} onChange={handleInputChange} />
-                                                 <EditableInput label="Assigned Agent" name="assignedAgentId" type="select" options={fieldAgents.map(a => ({ value: a.id, label: a.fullName }))} value={editableFarmerData.assignedAgentId} onChange={handleInputChange} />
-                                             </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div>
-                                        <h3 className="text-sm font-semibold text-teal-400 mb-3">Edit Bank & Farming Details</h3>
-                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                            <EditableInput label="Bank Name" name="bankName" value={editableFarmerData.bankName} onChange={handleInputChange} />
-                                            <EditableInput label="Account Number" name="bankAccountNumber" value={editableFarmerData.bankAccountNumber} onChange={handleInputChange} />
-                                            <EditableInput label="IFSC Code" name="ifscCode" value={editableFarmerData.ifscCode} onChange={handleInputChange} />
-                                            <EditableInput label="Crop Type" name="cropType" value={editableFarmerData.cropType} onChange={handleInputChange} />
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <h3 className="text-sm font-semibold text-teal-400 mb-3">Edit Status & Verification</h3>
-                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
-                                            <EditableInput label="Status" name="status" type="select" options={['Active', 'Inactive'].map(o => ({ value: o, label: o }))} value={editableFarmerData.status} onChange={handleInputChange} />
-                                            <div className="flex items-center pt-5">
-                                                <input id="accountVerified" name="accountVerified" type="checkbox" checked={editableFarmerData.accountVerified} onChange={handleInputChange} className="h-4 w-4 rounded border-gray-600 bg-gray-900 text-teal-600 focus:ring-teal-500" />
-                                                <label htmlFor="accountVerified" className="ml-2 block text-sm text-gray-300">Account Verified</label>
-                                            </div>
-                                            <div className="flex items-center pt-5">
-                                                <input id="photoUploaded" name="photoUploaded" type="checkbox" checked={editableFarmerData.photoUploaded} onChange={handleInputChange} className="h-4 w-4 rounded border-gray-600 bg-gray-900 text-teal-600 focus:ring-teal-500" />
-                                                <label htmlFor="photoUploaded" className="ml-2 block text-sm text-gray-300">Photo Uploaded</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <h3 className="text-sm font-semibold text-teal-400 mb-3">Edit Remarks</h3>
-                                        <textarea id="remarks" name="remarks" value={editableFarmerData.remarks || ''} onChange={handleInputChange} rows={3} className="w-full mt-1 bg-gray-900 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-1 focus:ring-teal-500" placeholder="Enter remarks here..." />
-                                    </div>
-                                    <div className="flex justify-end gap-4 mt-4">
-                                        <button onClick={handleCancelClick} className="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-md transition-colors">Cancel</button>
-                                        <button onClick={handleSaveClick} className="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-md transition-colors">Save Changes</button>
-                                    </div>
-                                </>
-                            ) : (
-                               <div className="flex flex-col gap-8">
-                                    <div className="flex gap-8">
-                                        <div className="flex-shrink-0">
-                                            {farmer.photoUrl ? (
-                                                <img src={farmer.photoUrl} alt={farmer.fullName} className="h-32 w-32 rounded-full object-cover border-4 border-gray-700" />
-                                            ) : (
-                                                 <div className="h-32 w-32 rounded-full bg-gray-700/50 flex items-center justify-center border-4 border-gray-700">
-                                                    <UserCircleIcon className="h-24 w-24 text-gray-600" />
-                                                </div>
-                                            )}
-                                        </div>
-                                        <div className="flex-grow grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-8">
-                                            <div className="space-y-4">
-                                                <h3 className="text-sm font-semibold text-teal-400 border-b border-gray-700 pb-2">Personal Information</h3>
-                                                <DetailItem label="Full Name" value={farmer.fullName} />
-                                                <DetailItem label="Father's Name" value={farmer.fatherName} />
-                                                <DetailItem label="Date of Birth" value={farmer.dob} />
-                                                <DetailItem label="Gender" value={farmer.gender} />
-                                                <DetailItem label="Aadhaar" value={farmer.aadhaar} />
-                                                <DetailItem label="Mobile" value={farmer.mobile} />
-                                            </div>
-                                            <div className="space-y-4">
-                                                <h3 className="text-sm font-semibold text-teal-400 border-b border-gray-700 pb-2">Location & Farming</h3>
-                                                <DetailItem label="Village" value={farmer.village} />
-                                                <DetailItem label="Mandal" value={farmer.mandal} />
-                                                <DetailItem label="District" value={farmer.district} />
-                                                <DetailItem label="Crop Type" value={farmer.cropType} />
-                                                <DetailItem label="Assigned Agent" value={userMap.get(farmer.assignedAgentId) || 'Unassigned'} />
-                                            </div>
-                                            <div className="space-y-4">
-                                                <h3 className="text-sm font-semibold text-teal-400 border-b border-gray-700 pb-2">Bank & Verification</h3>
-                                                <DetailItem label="Bank Name" value={farmer.bankName} />
-                                                <DetailItem label="Account Number" value={farmer.bankAccountNumber} />
-                                                <DetailItem label="IFSC Code" value={farmer.ifscCode} />
-                                                <div>
-                                                    <p className="text-xs text-gray-400 uppercase tracking-wider">Active Status</p>
-                                                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${ farmer.status === 'Active' ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300' }`}>{farmer.status}</span>
-                                                </div>
-                                                <div>
-                                                    <p className="text-xs text-gray-400 uppercase tracking-wider">Account Verified</p>
-                                                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${ farmer.accountVerified ? 'bg-green-500/20 text-green-300' : 'bg-yellow-500/20 text-yellow-300' }`}>{farmer.accountVerified ? 'Verified' : 'Pending'}</span>
-                                                </div>
-                                                <div>
-                                                    <p className="text-xs text-gray-400 uppercase tracking-wider">Photo Uploaded</p>
-                                                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${ farmer.photoUploaded ? 'bg-green-500/20 text-green-300' : 'bg-yellow-500/20 text-yellow-300' }`}>{farmer.photoUploaded ? 'Yes' : 'No'}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                   </div>
-                                   <div>
-                                        <div className="md:col-span-2 lg:col-span-3">
-                                           <h3 className="text-sm font-semibold text-teal-400 border-b border-gray-700 pb-2 mb-3">Land Parcels ({landParcelCounts[farmer.id] || 0})</h3>
-                                           <div className="space-y-2 max-h-40 overflow-y-auto">
-                                                {mockLandParcels.filter(lp => lp.farmerId === farmer.id).map(parcel => (
-                                                    <div key={parcel.id} className="p-3 bg-gray-700/30 rounded-md grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                                                        <div><span className="text-gray-400">Survey No:</span> <span className="text-white font-medium">{parcel.surveyNumber}</span></div>
-                                                         <div><span className="text-gray-400">Area:</span> <span className="text-white font-medium">{parcel.areaAcres} Acres</span></div>
-                                                         <div><span className="text-gray-400">Irrigation:</span> <span className="text-white font-medium">{parcel.irrigationSource}</span></div>
-                                                          <div><span className="text-gray-400">Status:</span> <span className="text-white font-medium">{parcel.status}</span></div>
-                                                    </div>
-                                                ))}
-                                                {(landParcelCounts[farmer.id] || 0) === 0 && <p className="text-gray-400 text-center">No land parcels on record.</p>}
-                                           </div>
-                                       </div>
-
-                                       {farmer.remarks && (
-                                           <div className="mt-4">
-                                               <h3 className="text-sm font-semibold text-teal-400 mb-2">Remarks</h3>
-                                               <p className="font-medium text-gray-300 italic bg-gray-900/40 p-3 rounded-md">{farmer.remarks}</p>
-                                           </div>
-                                       )}
-                                   </div>
-                               </div>
-                               )}
-                               </div>
-                            </td>
-                        </tr>
-                    )}
-                </React.Fragment>
-                ))}
-            </tbody>
-            </table>
-        </div>
-      )}
-    </DashboardCard>
-    </>
-  );
-};
-
-export default Farmers;
+            <h3 className="text-lg font-medium text-gray-300 mb-2 flex items-center

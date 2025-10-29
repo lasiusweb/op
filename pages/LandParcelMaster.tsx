@@ -1,8 +1,10 @@
-import React, { useState, useMemo, FormEvent } from 'react';
+import React, { useState, useMemo, FormEvent, useRef } from 'react';
 import type { LandParcel, Farmer } from '../types';
 import { mockLandParcels, mockFarmersData } from '../data/mockData';
 import DashboardCard from '../components/DashboardCard';
 import { PencilIcon } from '../components/Icons';
+import { exportToCSV, exportToExcel } from '../services/exportService';
+import { exportElementAsPDF } from '../services/pdfService';
 
 const Highlight: React.FC<{ text: string; highlight: string }> = ({ text, highlight }) => {
   if (!highlight.trim()) {
@@ -102,6 +104,7 @@ const LandParcelMaster: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentParcel, setCurrentParcel] = useState<Partial<LandParcel> | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const contentRef = useRef<HTMLDivElement>(null);
 
     const farmerMap = useMemo(() => new Map(mockFarmersData.map(f => [f.id, f.fullName])), []);
 
@@ -153,8 +156,41 @@ const LandParcelMaster: React.FC = () => {
         });
     }, [parcels, searchTerm, farmerMap]);
 
+    const handleExportPDF = () => {
+        if (contentRef.current) {
+            exportElementAsPDF(contentRef.current, 'land_parcel_master', 'Land Parcel Master');
+        }
+    };
+
+    const getDataForExport = () => {
+        return filteredParcels.map(p => ({
+            'Parcel ID': p.id,
+            'Farmer': farmerMap.get(p.farmerId) || 'N/A',
+            'Survey #': p.surveyNumber,
+            'Area (Acres)': p.areaAcres,
+            'Soil Type': p.soilType,
+            'Irrigation': p.irrigationSource,
+            'Status': p.status,
+        }));
+    };
+
+    const handleExportCSV = () => {
+        exportToCSV([{ title: 'Land Parcels', data: getDataForExport() }], 'land_parcel_master.csv');
+    };
+
+    const handleExportExcel = () => {
+        exportToExcel([{ title: 'Land Parcels', data: getDataForExport() }], 'land_parcel_master');
+    };
+
+    const exportOptions = {
+        csv: handleExportCSV,
+        excel: handleExportExcel,
+        pdf: handleExportPDF,
+    };
+
+
     return (
-        <DashboardCard title="Land Parcel Master">
+        <DashboardCard title="Land Parcel Master" exportOptions={exportOptions} contentRef={contentRef}>
             {isModalOpen && currentParcel && (
                 <LandParcelModal parcel={currentParcel} farmers={mockFarmersData} onSave={handleSaveParcel} onCancel={handleCloseModal} />
             )}

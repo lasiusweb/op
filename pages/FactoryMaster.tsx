@@ -1,8 +1,11 @@
-import React, { useState, useMemo, FormEvent } from 'react';
-import type { Factory, User, Mandal, District } from '../types';
-import { mockFactories, mockUsers, mockMandals, mockDistricts } from '../data/mockData';
+import React, { useState, useMemo, FormEvent, useRef } from 'react';
+// FIX: Replaced User with Employee and mockUsers with mockEmployees
+import type { Factory, Employee, Mandal, District } from '../types';
+import { mockFactories, mockEmployees, mockMandals, mockDistricts } from '../data/mockData';
 import DashboardCard from '../components/DashboardCard';
 import { PencilIcon, BuildingOfficeIcon } from '../components/Icons';
+import { exportToCSV, exportToExcel } from '../services/exportService';
+import { exportElementAsPDF } from '../services/pdfService';
 
 const Highlight: React.FC<{ text: string; highlight: string }> = ({ text, highlight }) => {
   if (!highlight.trim()) {
@@ -29,7 +32,7 @@ const Highlight: React.FC<{ text: string; highlight: string }> = ({ text, highli
 
 const FactoryModal: React.FC<{
     factory: Partial<Factory>;
-    users: User[];
+    users: Employee[];
     mandals: Mandal[];
     districts: District[];
     onSave: (factory: Partial<Factory>) => void;
@@ -120,8 +123,9 @@ const FactoryMaster: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentFactory, setCurrentFactory] = useState<Partial<Factory> | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const contentRef = useRef<HTMLDivElement>(null);
 
-    const userMap = useMemo(() => new Map(mockUsers.map(u => [u.id, u.fullName])), []);
+    const userMap = useMemo(() => new Map(mockEmployees.map(u => [u.id, u.fullName])), []);
     const mandalMap = useMemo(() => new Map(mockMandals.map(m => [m.id, { name: m.name, districtId: m.districtId }])), []);
     const districtMap = useMemo(() => new Map(mockDistricts.map(d => [d.id, d.name])), []);
 
@@ -183,12 +187,49 @@ const FactoryMaster: React.FC = () => {
             return searchWords.every(word => searchableText.includes(word));
         });
     }, [factories, searchTerm, mandalMap, districtMap, userMap]);
+    
+    const getDataForExport = () => {
+        return filteredFactories.map(factory => {
+            const mandal = mandalMap.get(factory.mandalId);
+            const districtName = mandal ? districtMap.get(mandal.districtId) : 'N/A';
+            return {
+                'Factory ID': factory.id,
+                'Name': factory.name,
+                'Mandal': mandal?.name || 'N/A',
+                'District': districtName,
+                'Manager': factory.managerId ? userMap.get(factory.managerId) : 'N/A',
+                'Capacity (Tons/Day)': factory.capacityTonsPerDay,
+                'Contact Mobile': factory.contactMobile,
+                'Status': factory.status,
+            };
+        });
+    };
+
+    const handleExportPDF = () => {
+        if (contentRef.current) {
+            exportElementAsPDF(contentRef.current, 'factory_master', 'Factory Master');
+        }
+    };
+
+    const handleExportCSV = () => {
+        exportToCSV([{ title: 'Factories', data: getDataForExport() }], 'factory_master.csv');
+    };
+
+    const handleExportExcel = () => {
+        exportToExcel([{ title: 'Factories', data: getDataForExport() }], 'factory_master');
+    };
+
+    const exportOptions = {
+        csv: handleExportCSV,
+        excel: handleExportExcel,
+        pdf: handleExportPDF,
+    };
 
 
     return (
-        <DashboardCard title="Factory Master" icon={<BuildingOfficeIcon />}>
+        <DashboardCard title="Factory Master" icon={<BuildingOfficeIcon />} exportOptions={exportOptions} contentRef={contentRef}>
             {isModalOpen && currentFactory && (
-                <FactoryModal factory={currentFactory} users={mockUsers} mandals={mockMandals} districts={mockDistricts} onSave={handleSaveFactory} onCancel={handleCloseModal} />
+                <FactoryModal factory={currentFactory} users={mockEmployees} mandals={mockMandals} districts={mockDistricts} onSave={handleSaveFactory} onCancel={handleCloseModal} />
             )}
             <div className="mb-4 flex justify-between items-center flex-wrap gap-4">
                 <input 

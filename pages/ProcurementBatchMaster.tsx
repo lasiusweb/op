@@ -1,9 +1,10 @@
-
-import React, { useState, useMemo, FormEvent, useEffect } from 'react';
+import React, { useState, useMemo, FormEvent, useEffect, useRef } from 'react';
 import type { ProcurementBatch, Farmer, Location, Payment } from '../types';
 import { mockProcurementBatches, mockFarmersData, mockLocations, mockPayments } from '../data/mockData';
 import DashboardCard from '../components/DashboardCard';
 import { PencilIcon, ScaleIcon, CreditCardIcon } from '../components/Icons';
+import { exportToCSV, exportToExcel } from '../services/exportService';
+import { exportElementAsPDF } from '../services/pdfService';
 
 const AddPaymentModal: React.FC<{
     batch: ProcurementBatch;
@@ -194,6 +195,7 @@ const ProcurementBatchMaster: React.FC = () => {
     const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
     const [isAddPaymentModalOpen, setIsAddPaymentModalOpen] = useState(false);
     const [selectedBatchForPayments, setSelectedBatchForPayments] = useState<ProcurementBatch | null>(null);
+    const contentRef = useRef<HTMLDivElement>(null);
 
     const farmerMap = useMemo(() => new Map(mockFarmersData.map(f => [f.id, f.fullName])), []);
     const locationMap = useMemo(() => new Map(mockLocations.map(l => [l.id, l.name])), []);
@@ -376,8 +378,44 @@ const ProcurementBatchMaster: React.FC = () => {
         'Partial': 'bg-blue-500/20 text-blue-300',
     };
 
+    const getDataForExport = () => {
+        return filteredBatches.map(batch => ({
+            'Batch ID': batch.id,
+            'Farmer': farmerMap.get(batch.farmerId) || 'N/A',
+            'Center': locationMap.get(batch.procurementCenterId) || 'N/A',
+            'Weight (Kg)': batch.weightKg,
+            'Quality Grade': batch.qualityGrade,
+            'Oil Content (%)': batch.oilContentPercentage,
+            'Procurement Date': batch.procurementDate,
+            'Price / Kg (₹)': batch.pricePerKg,
+            'Total Amount (₹)': batch.totalAmount,
+            'Payment Status': batch.paymentStatus,
+            'Status': batch.status,
+        }));
+    };
+
+    const handleExportPDF = () => {
+        if (contentRef.current) {
+            exportElementAsPDF(contentRef.current, 'procurement_batches', 'Procurement Batch Management');
+        }
+    };
+
+    const handleExportCSV = () => {
+        exportToCSV([{ title: 'Procurement Batches', data: getDataForExport() }], 'procurement_batches.csv');
+    };
+
+    const handleExportExcel = () => {
+        exportToExcel([{ title: 'Procurement Batches', data: getDataForExport() }], 'procurement_batches');
+    };
+
+    const exportOptions = {
+        csv: handleExportCSV,
+        excel: handleExportExcel,
+        pdf: handleExportPDF,
+    };
+
     return (
-        <DashboardCard title="Procurement Batch Management" icon={<ScaleIcon />}>
+        <DashboardCard title="Procurement Batch Management" icon={<ScaleIcon />} exportOptions={exportOptions} contentRef={contentRef}>
             {isModalOpen && currentBatch && (
                 <ProcurementBatchModal batch={currentBatch} farmers={mockFarmersData} locations={mockLocations} onSave={handleSaveBatch} onCancel={handleCloseModal} />
             )}

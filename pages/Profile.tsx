@@ -1,16 +1,16 @@
 import React, { useState, useRef, useMemo } from 'react';
-import type { User, Task, TaskStatus, TaskPriority, UserActivity } from '../types';
+import type { Employee, Task, TaskStatus, TaskPriority, UserActivity } from '../types';
 import DashboardCard from '../components/DashboardCard';
 import { UserCircleIcon, CameraIcon, MailIcon, PhoneIcon, PencilIcon, BriefcaseIcon, MapPinIcon, CalendarDaysIcon, CheckCircleIcon, CubeIcon, BanknotesIcon } from '../components/Icons';
 
 // --- PROPS ---
 interface ProfileProps {
-    viewingUser: User;
-    currentUser: User;
-    allUsers: User[];
+    viewingUser: Employee;
+    currentUser: Employee;
+    allUsers: Employee[];
     allTasks: Task[];
     allActivity: UserActivity[];
-    onUpdateUser: (updatedUser: User) => void;
+    onUpdateUser: (updatedUser: Employee) => void;
     onUpdateTask: (updatedTask: Task) => void;
 }
 
@@ -26,7 +26,7 @@ const DetailItem: React.FC<{ icon?: React.ReactNode; label: string; value?: stri
     </div>
 );
 
-const EditableInput: React.FC<{ label: string; name: keyof User; value: any; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; }> = ({ label, name, value, onChange }) => (
+const EditableInput: React.FC<{ label: string; name: keyof Employee; value: any; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; }> = ({ label, name, value, onChange }) => (
     <div>
         <label htmlFor={name} className="block text-xs text-gray-400 uppercase tracking-wider mb-1">{label}</label>
         <input
@@ -40,7 +40,7 @@ const EditableInput: React.FC<{ label: string; name: keyof User; value: any; onC
     </div>
 );
 
-const ProfilePhoto: React.FC<{ user: User | null; isEditing: boolean; onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void }> = ({ user, isEditing, onFileChange }) => {
+const ProfilePhoto: React.FC<{ user: Employee | null; isEditing: boolean; onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void }> = ({ user, isEditing, onFileChange }) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     return (
         <div className="relative w-40 h-40 mx-auto">
@@ -86,7 +86,7 @@ const activityIconMap: { [key in UserActivity['icon']]: React.ReactNode } = {
 // --- MAIN COMPONENT ---
 const Profile: React.FC<ProfileProps> = ({ viewingUser, currentUser, allUsers, allTasks, allActivity, onUpdateUser, onUpdateTask }) => {
     const [isEditing, setIsEditing] = useState(false);
-    const [editableUserData, setEditableUserData] = useState<User | null>(null);
+    const [editableUserData, setEditableUserData] = useState<Employee | null>(null);
     const [activeTab, setActiveTab] = useState<'details' | 'tasks' | 'activity'>('details');
     const [completedTasks, setCompletedTasks] = useState<Set<string>>(new Set());
 
@@ -99,7 +99,7 @@ const Profile: React.FC<ProfileProps> = ({ viewingUser, currentUser, allUsers, a
     }, [viewingUser, allUsers]);
 
     const assignedTasks = useMemo(() => allTasks.filter(task => task.assignedToId === viewingUser.id), [allTasks, viewingUser]);
-    const userActivity = useMemo(() => allActivity.filter(act => act.userId === viewingUser.id).sort((a,b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()), [allActivity, viewingUser]);
+    const userActivity = useMemo(() => allActivity.filter(act => act.employeeId === viewingUser.id).sort((a,b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()), [allActivity, viewingUser]);
 
     const handleEditClick = () => {
         setEditableUserData({ ...viewingUser });
@@ -230,7 +230,7 @@ const Profile: React.FC<ProfileProps> = ({ viewingUser, currentUser, allUsers, a
                                 })}
                             </tbody>
                         </table>
-                    ) : <p className="text-gray-400 text-center py-4">No tasks assigned to this user.</p>}
+                    ) : <p className="text-gray-400 text-center py-4">No tasks assigned to this employee.</p>}
                 </div>
             );
             case 'activity': return (

@@ -1,34 +1,34 @@
 import React, { useRef, useState, useMemo } from 'react';
-import type { User, UserRole, FarmVisitRequest } from '../types';
+import type { Employee, EmployeeRole, FarmVisitRequest } from '../types';
 import DashboardCard from '../components/DashboardCard';
 import { exportToCSV, exportToExcel } from '../services/exportService';
 import { exportElementAsPDF } from '../services/pdfService';
 import { ArrowUpTrayIcon } from '../components/Icons';
 import BulkImportModal from '../components/BulkImportModal';
 
-interface UsersProps {
-  currentUser: User;
-  allUsers: User[];
+interface EmployeesProps {
+  currentEmployee: Employee;
+  allEmployees: Employee[];
   allVisitRequests: FarmVisitRequest[];
-  setAllUsers: React.Dispatch<React.SetStateAction<User[]>>;
-  onViewProfile: (userId: string) => void;
-  onViewVisits: (userId: string) => void;
+  setAllEmployees: React.Dispatch<React.SetStateAction<Employee[]>>;
+  onViewProfile: (employeeId: string) => void;
+  onViewVisits: (employeeId: string) => void;
 }
 
-const userTemplateHeaders = [
+const employeeTemplateHeaders = [
     "fullName", "role", "email", "mobile", "region", "status", "reportingManagerId"
 ];
-const validRoles: UserRole[] = ['Admin', 'Field Agent', 'Reviewer', 'Accountant', 'Mandal Coordinator', 'Procurement Center Manager', 'Factory Manager'];
+const validRoles: EmployeeRole[] = ['Admin', 'Field Agent', 'Reviewer', 'Accountant', 'Mandal Coordinator', 'Procurement Center Manager', 'Factory Manager'];
 
-const Users: React.FC<UsersProps> = ({ currentUser, allUsers, setAllUsers, onViewProfile, allVisitRequests, onViewVisits }) => {
-  const isAdmin = currentUser.role === 'Admin';
+const Employees: React.FC<EmployeesProps> = ({ currentEmployee, allEmployees, setAllEmployees, onViewProfile, allVisitRequests, onViewVisits }) => {
+  const isAdmin = currentEmployee.role === 'Admin';
   const contentRef = useRef<HTMLDivElement>(null);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   
   const visitCounts = useMemo(() => {
-    const counts: { [userId: string]: number } = {};
-    for (const user of allUsers) {
-        counts[user.id] = 0;
+    const counts: { [employeeId: string]: number } = {};
+    for (const employee of allEmployees) {
+        counts[employee.id] = 0;
     }
     for (const visit of allVisitRequests) {
         if (visit.assignedAgentId && (visit.status === 'Pending' || visit.status === 'Scheduled')) {
@@ -38,43 +38,43 @@ const Users: React.FC<UsersProps> = ({ currentUser, allUsers, setAllUsers, onVie
         }
     }
     return counts;
-  }, [allUsers, allVisitRequests]);
+  }, [allEmployees, allVisitRequests]);
 
 
   const handleExportPDF = () => {
     if (contentRef.current) {
-        exportElementAsPDF(contentRef.current, 'users_list', 'User & Role Management');
+        exportElementAsPDF(contentRef.current, 'employees_list', 'Employee & Role Management');
     }
   };
 
   const getDataForExport = () => {
-    return allUsers.map(user => ({
-        'User ID': user.id,
-        'Full Name': user.fullName,
-        'Role': user.role,
-        'Region': user.region,
-        'Active Visits': visitCounts[user.id] || 0,
-        'Status': user.status,
-        'Email': user.email,
-        'Mobile': user.mobile,
+    return allEmployees.map(employee => ({
+        'Employee ID': employee.id,
+        'Full Name': employee.fullName,
+        'Role': employee.role,
+        'Region': employee.region,
+        'Active Visits': visitCounts[employee.id] || 0,
+        'Status': employee.status,
+        'Email': employee.email,
+        'Mobile': employee.mobile,
     }));
   };
 
   const handleExportCSV = () => {
-      exportToCSV([{ title: 'Users', data: getDataForExport() }], 'users_list.csv');
+      exportToCSV([{ title: 'Employees', data: getDataForExport() }], 'employees_list.csv');
   };
 
   const handleExportExcel = () => {
-      exportToExcel([{ title: 'Users', data: getDataForExport() }], 'users_list');
+      exportToExcel([{ title: 'Employees', data: getDataForExport() }], 'employees_list');
   };
 
-    const handleImport = (newUsersData: any[]) => {
+    const handleImport = (newEmployeesData: any[]) => {
         const now = new Date().toISOString();
-        const processedUsers: User[] = newUsersData.map((item, index) => {
+        const processedEmployees: Employee[] = newEmployeesData.map((item, index) => {
             const role = validRoles.includes(item.role) ? item.role : 'Field Agent';
             const status = ['Active', 'Inactive'].includes(item.status) ? item.status : 'Active';
             return {
-                id: `USR-IMP-${Date.now() + index}`,
+                id: `EMP-IMP-${Date.now() + index}`,
                 fullName: item.fullName || 'Unnamed',
                 role: role,
                 email: item.email || '',
@@ -86,8 +86,8 @@ const Users: React.FC<UsersProps> = ({ currentUser, allUsers, setAllUsers, onVie
                 updatedAt: now,
             };
         });
-        setAllUsers(prev => [...prev, ...processedUsers]);
-        alert(`${processedUsers.length} new users imported successfully!`);
+        setAllEmployees(prev => [...prev, ...processedEmployees]);
+        alert(`${processedEmployees.length} new employees imported successfully!`);
         setIsImportModalOpen(false);
     };
 
@@ -103,14 +103,14 @@ const Users: React.FC<UsersProps> = ({ currentUser, allUsers, setAllUsers, onVie
         isOpen={isImportModalOpen}
         onClose={() => setIsImportModalOpen(false)}
         onImport={handleImport}
-        templateHeaders={userTemplateHeaders}
-        entityName="Users"
+        templateHeaders={employeeTemplateHeaders}
+        entityName="Employees"
     />
-    <DashboardCard title="User & Role Management" exportOptions={exportOptions} contentRef={contentRef}>
+    <DashboardCard title="Employee & Role Management" exportOptions={exportOptions} contentRef={contentRef}>
        <div className="mb-4 flex justify-between items-center">
         <input 
           type="text" 
-          placeholder="Search users..." 
+          placeholder="Search employees..." 
           className="bg-gray-800 border border-gray-700 rounded-md px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
         />
         {isAdmin && (
@@ -120,10 +120,10 @@ const Users: React.FC<UsersProps> = ({ currentUser, allUsers, setAllUsers, onVie
                     className="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-md transition-colors flex items-center gap-2"
                 >
                     <ArrowUpTrayIcon className="h-5 w-5" />
-                    Import Users
+                    Import Employees
                 </button>
                 <button className="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-md transition-colors">
-                  Add New User
+                  Add New Employee
                 </button>
             </div>
         )}
@@ -132,7 +132,7 @@ const Users: React.FC<UsersProps> = ({ currentUser, allUsers, setAllUsers, onVie
         <table className="w-full text-sm text-left text-gray-400">
           <thead className="text-xs text-gray-300 uppercase bg-gray-800">
             <tr>
-              <th scope="col" className="px-6 py-3">User ID</th>
+              <th scope="col" className="px-6 py-3">Employee ID</th>
               <th scope="col" className="px-6 py-3">Full Name</th>
               <th scope="col" className="px-6 py-3">Role</th>
               <th scope="col" className="px-6 py-3">Region</th>
@@ -144,37 +144,37 @@ const Users: React.FC<UsersProps> = ({ currentUser, allUsers, setAllUsers, onVie
             </tr>
           </thead>
           <tbody>
-            {allUsers.map((user) => (
-              <tr key={user.id} className="border-b border-gray-700 bg-gray-800/50 hover:bg-gray-700/50">
-                <td className="px-6 py-4 font-medium text-white whitespace-nowrap">{user.id}</td>
+            {allEmployees.map((employee) => (
+              <tr key={employee.id} className="border-b border-gray-700 bg-gray-800/50 hover:bg-gray-700/50">
+                <td className="px-6 py-4 font-medium text-white whitespace-nowrap">{employee.id}</td>
                 <td className="px-6 py-4 text-white">
-                    <button onClick={() => onViewProfile(user.id)} className="hover:underline text-teal-400 hover:text-teal-300 font-semibold">
-                      {user.fullName}
+                    <button onClick={() => onViewProfile(employee.id)} className="hover:underline text-teal-400 hover:text-teal-300 font-semibold">
+                      {employee.fullName}
                     </button>
                 </td>
-                <td className="px-6 py-4">{user.role}</td>
-                <td className="px-6 py-4">{user.region}</td>
+                <td className="px-6 py-4">{employee.role}</td>
+                <td className="px-6 py-4">{employee.region}</td>
                 <td className="px-6 py-4">
-                  {user.role === 'Field Agent' && (
+                  {employee.role === 'Field Agent' && (
                     <button
-                        onClick={() => onViewVisits(user.id)}
+                        onClick={() => onViewVisits(employee.id)}
                         className={`px-3 py-1 text-xs font-semibold rounded-full transition-colors ${
-                            visitCounts[user.id] > 0
+                            visitCounts[employee.id] > 0
                             ? 'bg-teal-500/20 text-teal-300 hover:bg-teal-500/40'
                             : 'bg-gray-700/50 text-gray-400 cursor-default'
                         }`}
-                        disabled={visitCounts[user.id] === 0}
-                        aria-label={`View ${visitCounts[user.id]} visits for ${user.fullName}`}
+                        disabled={visitCounts[employee.id] === 0}
+                        aria-label={`View ${visitCounts[employee.id]} visits for ${employee.fullName}`}
                     >
-                      {visitCounts[user.id]}
+                      {visitCounts[employee.id]}
                     </button>
                   )}
                 </td>
                 <td className="px-6 py-4">
                   <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                    user.status === 'Active' ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'
+                    employee.status === 'Active' ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'
                   }`}>
-                    {user.status}
+                    {employee.status}
                   </span>
                 </td>
                 {isAdmin && (
@@ -192,4 +192,4 @@ const Users: React.FC<UsersProps> = ({ currentUser, allUsers, setAllUsers, onVie
   );
 };
 
-export default Users;
+export default Employees;

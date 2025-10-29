@@ -1,8 +1,9 @@
 import React, { useState, FormEvent, useMemo, useRef } from 'react';
-import type { Task, User, TaskStatus, TaskPriority, Farmer } from '../types';
+// FIX: Replaced User with Employee and mockUsers with mockEmployees
+import type { Task, Employee, TaskStatus, TaskPriority, Farmer } from '../types';
 import DashboardCard from '../components/DashboardCard';
 import { PencilIcon, TrashIcon, ArrowUpIcon, ArrowDownIcon, ClockIcon, ChevronDownIcon, ChevronUpIcon, ChevronUpDownIcon } from '../components/Icons';
-import { mockTasks, mockUsers, mockFarmersData } from '../data/mockData';
+import { mockTasks, mockEmployees, mockFarmersData } from '../data/mockData';
 import { exportToCSV, exportToExcel } from '../services/exportService';
 import { exportElementAsPDF } from '../services/pdfService';
 
@@ -23,7 +24,7 @@ type SortableTaskKeys = 'priority' | 'assignedTo' | 'dueDate';
 
 const TaskModal: React.FC<{
     task: Partial<Task> & { assignedToId?: string };
-    users: User[];
+    users: Employee[];
     onSave: (task: Partial<Task> & { assignedToId?: string }) => void;
     onCancel: () => void;
 }> = ({ task, users, onSave, onCancel }) => {
@@ -98,7 +99,7 @@ const Tasks: React.FC = () => {
     const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
     const contentRef = useRef<HTMLDivElement>(null);
 
-    const usersById = useMemo(() => Object.fromEntries(mockUsers.map(u => [u.id, u])), []);
+    const usersById = useMemo(() => Object.fromEntries(mockEmployees.map(u => [u.id, u])), []);
     const farmersById = useMemo(() => Object.fromEntries(mockFarmersData.map(f => [f.id, f])), []);
 
 
@@ -256,7 +257,7 @@ const Tasks: React.FC = () => {
        {isModalOpen && currentTask && (
             <TaskModal
                 task={currentTask}
-                users={mockUsers}
+                users={mockEmployees}
                 onSave={handleSaveTask}
                 onCancel={handleCloseModal}
             />

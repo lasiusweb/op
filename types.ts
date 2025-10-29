@@ -20,12 +20,12 @@ export interface PaymentStatus {
 
 // New types based on schema
 
-export type UserRole = 'Admin' | 'Field Agent' | 'Reviewer' | 'Accountant' | 'Mandal Coordinator' | 'Procurement Center Manager' | 'Factory Manager';
+export type EmployeeRole = 'Admin' | 'Field Agent' | 'Reviewer' | 'Accountant' | 'Mandal Coordinator' | 'Procurement Center Manager' | 'Factory Manager';
 
-export interface User {
+export interface Employee {
   id: string;
   fullName: string;
-  role: UserRole;
+  role: EmployeeRole;
   email: string;
   mobile: string;
   region: string;
@@ -68,7 +68,7 @@ export interface Task {
   id: string;
   title: string;
   description: string;
-  assignedToId: string; // Changed from assignedTo: User
+  assignedToId: string; // Refers to Employee.id
   relatedFarmerId?: string; // Added
   dueDate: string;
   status: TaskStatus;
@@ -276,8 +276,8 @@ export interface HOSanction {
   relatedEntityId: string; // e.g., SUB001 or PB003
   amount: number;
   status: HOSanctionStatus;
-  submittedById: string; // User ID
-  reviewedById?: string; // User ID
+  submittedById: string; // Employee ID
+  reviewedById?: string; // Employee ID
   notes?: string;
   createdAt: string;
   updatedAt: string;
@@ -296,7 +296,7 @@ export interface PlantationLog {
   unit?: string;
   cost?: number;
   laborCount?: number;
-  performedById: string; // User ID
+  performedById: string; // Employee ID
   notes?: string;
   createdAt: string;
   updatedAt: string;
@@ -310,7 +310,7 @@ export interface HarvestLog {
   harvestDate: string;
   quantityTonnes: number;
   qualityGrade: HarvestQualityGrade;
-  harvestedById: string; // User ID
+  harvestedById: string; // Employee ID
   notes?: string;
   createdAt: string;
   updatedAt: string;
@@ -330,7 +330,7 @@ export interface MicroIrrigationInstallation {
   totalCost: number;
   subsidyAmount: number;
   status: IrrigationInstallationStatus;
-  inspectedById?: string; // User ID
+  inspectedById?: string; // Employee ID
   inspectionDate?: string;
   notes?: string;
   createdAt: string;
@@ -402,7 +402,7 @@ export interface ProcurementCenterInventory {
 
 export interface UserActivity {
   id: string;
-  userId: string;
+  employeeId: string;
   action: string;
   timestamp: string;
   details?: string;

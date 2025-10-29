@@ -2,8 +2,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Sidebar from './components/layout/Sidebar';
 import Header from './components/layout/Header';
 import Dashboard from './pages/Dashboard';
-import Farmers from './pages/Farmers';
-import Users from './pages/Users';
+// FIX: Changed to a named import for Farmers component and fixed path for Employees
+import { Farmers } from './pages/Farmers';
+import Employees from './pages/Users';
 import Tasks from './pages/Tasks';
 import Profile from './pages/Profile';
 import DistrictMaster from './pages/DistrictMaster';
@@ -61,13 +62,13 @@ import AverageMeetingMonthly from './pages/AverageMeetingMonthly';
 import HourlyVisitReport from './pages/HourlyVisitReport';
 
 
-import type { User, Farmer, LandParcel, NurseryInventoryItem, PlantationLog as PlantationLogType, FarmVisitRequest, UserActivity, Task } from './types';
-import { mockUsers, mockTasks, mockFarmersData, mockLandParcels, mockNurseryInventory, mockSubsidyApplications, mockProcurementBatches, mockPlantationLogs, mockFarmVisitRequests, mockUserActivity } from './data/mockData';
+import type { Employee, Farmer, LandParcel, NurseryInventoryItem, PlantationLog as PlantationLogType, FarmVisitRequest, UserActivity, Task } from './types';
+import { mockEmployees, mockTasks, mockFarmersData, mockLandParcels, mockNurseryInventory, mockSubsidyApplications, mockProcurementBatches, mockPlantationLogs, mockFarmVisitRequests, mockUserActivity } from './data/mockData';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 1024);
-  const [users, setUsers] = useState<User[]>(mockUsers);
+  const [employees, setEmployees] = useState<Employee[]>(mockEmployees);
   const [tasks, setTasks] = useState<Task[]>(mockTasks);
   const [farmers, setFarmers] = useState<Farmer[]>(mockFarmersData);
   const [landParcels, setLandParcels] = useState<LandParcel[]>(mockLandParcels);
@@ -75,8 +76,8 @@ const App: React.FC = () => {
   const [plantationLogs, setPlantationLogs] = useState<PlantationLogType[]>(mockPlantationLogs);
   const [farmVisitRequests, setFarmVisitRequests] = useState<FarmVisitRequest[]>(mockFarmVisitRequests);
   const [userActivity, setUserActivity] = useState<UserActivity[]>(mockUserActivity);
-  const [currentUser, setCurrentUser] = useState<User>(users[1]); // Default to a non-admin
-  const [viewingUserId, setViewingUserId] = useState<string | null>(null);
+  const [currentEmployee, setCurrentEmployee] = useState<Employee>(employees[1]); // Default to a non-admin
+  const [viewingEmployeeId, setViewingEmployeeId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [visitFilterAgentId, setVisitFilterAgentId] = useState<string | null>(null);
 
@@ -109,23 +110,23 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (currentPage === 'profile' && viewingUserId) {
-      const userExists = users.some(u => u.id === viewingUserId);
-      if (!userExists) {
-        handleSetCurrentPage('users');
+    if (currentPage === 'profile' && viewingEmployeeId) {
+      const employeeExists = employees.some(u => u.id === viewingEmployeeId);
+      if (!employeeExists) {
+        handleSetCurrentPage('employees');
       }
     }
-  }, [currentPage, viewingUserId, users, handleSetCurrentPage]);
+  }, [currentPage, viewingEmployeeId, employees, handleSetCurrentPage]);
 
 
   const pageTitles: { [key: string]: string } = {
       dashboard: 'Executive Dashboard',
       farmers: 'Farmer Management',
       addFarmer: 'Add New Farmer',
-      users: 'User Management',
+      employees: 'Employee Management',
       generalTasks: 'General Task Management',
       fieldAgentTasks: 'Field Agent Task Board',
-      profile: 'User Profile',
+      profile: 'Employee Profile',
       districtMaster: 'District Master',
       mandalMaster: 'Mandal Master',
       villageMaster: 'Village Master',
@@ -180,25 +181,23 @@ const App: React.FC = () => {
       hourlyVisitReport: "Hourly Visit Report",
   }
 
-  const handleViewProfile = (userId: string) => {
-    setViewingUserId(userId);
+  const handleViewProfile = (employeeId: string) => {
+    setViewingEmployeeId(employeeId);
     handleSetCurrentPage('profile');
   };
   
-  const handleViewUserVisits = (userId: string) => {
-    setVisitFilterAgentId(userId);
+  const handleViewEmployeeVisits = (employeeId: string) => {
+    setVisitFilterAgentId(employeeId);
     handleSetCurrentPage('manageVisits');
   };
 
-  const handleUpdateUser = (updatedUser: User) => {
-    const updatedUsers = users.map(u => u.id === updatedUser.id ? updatedUser : u);
-    setUsers(updatedUsers);
-    // If the current user updated their own profile, update the currentUser state as well
-    if (currentUser.id === updatedUser.id) {
-        setCurrentUser(updatedUser);
+  const handleUpdateEmployee = (updatedEmployee: Employee) => {
+    const updatedEmployees = employees.map(u => u.id === updatedEmployee.id ? updatedEmployee : u);
+    setEmployees(updatedEmployees);
+    if (currentEmployee.id === updatedEmployee.id) {
+        setCurrentEmployee(updatedEmployee);
     }
-    // Go back to the user list after saving
-    handleSetCurrentPage('users');
+    handleSetCurrentPage('employees');
   };
 
   const handleUpdateTask = (updatedTask: Task) => {
@@ -232,14 +231,14 @@ const App: React.FC = () => {
         return <Farmers loading={loading} onAddNewFarmer={() => handleSetCurrentPage('addFarmer')} allFarmers={farmers} setAllFarmers={setFarmers} />;
       case 'addFarmer':
         return <AddFarmer onAddFarmer={handleAddNewFarmer} onCancel={() => handleSetCurrentPage('farmers')} allFarmers={farmers} />;
-      case 'users':
-          return <Users 
-                    currentUser={currentUser} 
-                    allUsers={users} 
-                    setAllUsers={setUsers} 
+      case 'employees':
+          return <Employees
+                    currentEmployee={currentEmployee} 
+                    allEmployees={employees} 
+                    setAllEmployees={setEmployees} 
                     onViewProfile={handleViewProfile} 
                     allVisitRequests={farmVisitRequests}
-                    onViewVisits={handleViewUserVisits}
+                    onViewVisits={handleViewEmployeeVisits}
                  />;
       case 'generalTasks':
           return <Tasks />;
@@ -349,18 +348,17 @@ const App: React.FC = () => {
         case 'averageMeetingMonthly': return <AverageMeetingMonthly />;
         case 'hourlyVisitReport': return <HourlyVisitReport />;
       case 'profile': {
-          const viewingUser = users.find(u => u.id === viewingUserId);
-          if (!viewingUser) {
-            // Render nothing while the useEffect handles the redirect.
+          const viewingEmployee = employees.find(u => u.id === viewingEmployeeId);
+          if (!viewingEmployee) {
             return null;
           }
           return <Profile 
-              viewingUser={viewingUser} 
-              currentUser={currentUser}
-              allUsers={users}
+              viewingUser={viewingEmployee} 
+              currentUser={currentEmployee}
+              allUsers={employees}
               allTasks={tasks}
               allActivity={userActivity}
-              onUpdateUser={handleUpdateUser}
+              onUpdateUser={handleUpdateEmployee}
               onUpdateTask={handleUpdateTask}
            />;
       }
@@ -388,11 +386,11 @@ const App: React.FC = () => {
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header 
             title={pageTitles[currentPage] || 'Dashboard'} 
-            currentUser={currentUser}
-            allUsers={users}
+            currentEmployee={currentEmployee}
+            allEmployees={employees}
             allTasks={tasks}
-            setCurrentUser={setCurrentUser}
-            onViewProfile={() => handleViewProfile(currentUser.id)}
+            setCurrentEmployee={setCurrentEmployee}
+            onViewProfile={() => handleViewProfile(currentEmployee.id)}
             onToggleSidebar={() => setIsSidebarOpen(true)}
         />
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-800/50 p-4 sm:p-6 lg:p-8">

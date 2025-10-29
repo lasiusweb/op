@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import type { User, Task } from '../../types';
+import type { Employee, Task } from '../../types';
 import { UserIcon, Bars3Icon, BellIcon } from '../Icons';
 
 interface HeaderProps {
     title: string;
-    currentUser: User;
-    allUsers: User[];
+    currentEmployee: Employee;
+    allEmployees: Employee[];
     allTasks: Task[];
-    setCurrentUser: (user: User) => void;
+    setCurrentEmployee: (employee: Employee) => void;
     onViewProfile: () => void;
     onToggleSidebar: () => void;
 }
@@ -30,7 +30,7 @@ const getDueDateStatus = (dueDateStr: string): { text: string; className: string
     return { text: `Due in ${daysDiff} day(s)`, className: 'text-yellow-300' };
 };
 
-const Header: React.FC<HeaderProps> = ({ title, currentUser, allUsers, allTasks, setCurrentUser, onViewProfile, onToggleSidebar }) => {
+const Header: React.FC<HeaderProps> = ({ title, currentEmployee, allEmployees, allTasks, setCurrentEmployee, onViewProfile, onToggleSidebar }) => {
     const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
     const [dueTasks, setDueTasks] = useState<Task[]>([]);
     const notificationRef = useRef<HTMLDivElement>(null);
@@ -68,10 +68,10 @@ const Header: React.FC<HeaderProps> = ({ title, currentUser, allUsers, allTasks,
         };
     }, []);
 
-    const handleUserChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedUser = allUsers.find(u => u.id === event.target.value);
-        if (selectedUser) {
-            setCurrentUser(selectedUser);
+    const handleEmployeeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedEmployee = allEmployees.find(u => u.id === event.target.value);
+        if (selectedEmployee) {
+            setCurrentEmployee(selectedEmployee);
         }
     };
     
@@ -110,7 +110,7 @@ const Header: React.FC<HeaderProps> = ({ title, currentUser, allUsers, allTasks,
                                             <li key={task.id}>
                                                 <div className="px-4 py-3 hover:bg-gray-700/50">
                                                     <p className="text-sm font-semibold text-white truncate">{task.title}</p>
-                                                    <p className="text-xs text-gray-400">Assigned to: {allUsers.find(u => u.id === task.assignedToId)?.fullName || 'N/A'}</p>
+                                                    <p className="text-xs text-gray-400">Assigned to: {allEmployees.find(u => u.id === task.assignedToId)?.fullName || 'N/A'}</p>
                                                     <p className={`text-xs font-bold ${dueDateInfo.className}`}>{dueDateInfo.text}</p>
                                                 </div>
                                             </li>
@@ -128,31 +128,31 @@ const Header: React.FC<HeaderProps> = ({ title, currentUser, allUsers, allTasks,
 
                 <button onClick={onViewProfile} className="flex items-center gap-4 group p-2 rounded-lg hover:bg-gray-800/50 transition-colors">
                     <div className="text-right">
-                        <p className="font-semibold text-white text-sm">{currentUser.fullName}</p>
-                        <p className="text-xs text-teal-400 font-medium group-hover:text-teal-300">{currentUser.role}</p>
+                        <p className="font-semibold text-white text-sm">{currentEmployee.fullName}</p>
+                        <p className="text-xs text-teal-400 font-medium group-hover:text-teal-300">{currentEmployee.role}</p>
                     </div>
                     <div className="relative">
-                        {currentUser.profilePhotoUrl ? (
-                            <img src={currentUser.profilePhotoUrl} alt="Profile" className="h-10 w-10 rounded-full object-cover" />
+                        {currentEmployee.profilePhotoUrl ? (
+                            <img src={currentEmployee.profilePhotoUrl} alt="Profile" className="h-10 w-10 rounded-full object-cover" />
                         ) : (
                             <UserIcon className="h-10 w-10 text-gray-400 p-2 bg-gray-700/50 rounded-full" />
                         )}
-                        <span className={`absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full ${currentUser.status === 'Active' ? 'bg-green-400' : 'bg-red-400'} ring-2 ring-gray-800`}></span>
+                        <span className={`absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full ${currentEmployee.status === 'Active' ? 'bg-green-400' : 'bg-red-400'} ring-2 ring-gray-800`}></span>
                     </div>
                 </button>
                 
                 <div className="relative">
-                    <label htmlFor="user-switcher" className="sr-only">Switch User</label>
+                    <label htmlFor="employee-switcher" className="sr-only">Switch Employee</label>
                     <select
-                        id="user-switcher"
-                        value={currentUser.id}
-                        onChange={handleUserChange}
+                        id="employee-switcher"
+                        value={currentEmployee.id}
+                        onChange={handleEmployeeChange}
                         className="bg-gray-800 border border-gray-700 rounded-md py-2 pl-3 pr-8 text-white text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 appearance-none"
-                        aria-label="Switch logged in user"
+                        aria-label="Switch logged in employee"
                     >
-                        {allUsers.map(user => (
-                            <option key={user.id} value={user.id}>
-                                {user.fullName}
+                        {allEmployees.map(employee => (
+                            <option key={employee.id} value={employee.id}>
+                                {employee.fullName}
                             </option>
                         ))}
                     </select>
