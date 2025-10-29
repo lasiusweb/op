@@ -104,6 +104,8 @@ export const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, se
     
     const [selectedFarmerIds, setSelectedFarmerIds] = useState<string[]>([]);
     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+    const [summaries, setSummaries] = useState<{ [farmerId: string]: string }>({});
+    const [loadingSummaries, setLoadingSummaries] = useState<{ [farmerId: string]: boolean }>({});
 
 
     const checkboxRef = useRef<HTMLInputElement>(null);
@@ -362,6 +364,27 @@ export const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, se
         setIsLoadingSuggestions(false);
     }, [sortedAndFilteredFarmers, landParcelCounts, employeeMap]);
 
+    const handleGenerateSummary = useCallback(async (farmer: Farmer) => {
+        setLoadingSummaries(prev => ({ ...prev, [farmer.id]: true }));
+        setSummaries(prev => ({ ...prev, [farmer.id]: '' }));
+        const farmerData = {
+            ...farmer,
+            landParcelCount: landParcelCounts[farmer.id] || 0,
+            parcels: mockLandParcels.filter(lp => lp.farmerId === farmer.id)
+        };
+        const prompt = `
+            Generate a concise profile summary for the following farmer.
+            Highlight their status, number of land parcels, total area, and assigned agent.
+            Keep it to a short paragraph.
+    
+            Data:
+            ${JSON.stringify(farmerData, null, 2)}
+        `;
+        const result = await getGeminiInsights(prompt);
+        setSummaries(prev => ({ ...prev, [farmer.id]: result }));
+        setLoadingSummaries(prev => ({ ...prev, [farmer.id]: false }));
+    }, [landParcelCounts]);
+
 
     const handleToggleRow = (farmerId: string) => {
       setExpandedRow(expandedRow === farmerId ? null : farmerId);
@@ -580,4 +603,31 @@ export const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, se
       </div>
       {(isLoadingSuggestions || suggestions) && (
         <div className="mb-6 p-4 bg-gray-900/50 rounded-lg border border-cyan-500/20">
-            <h3 className="text-lg font-medium text-gray-300 mb-2 flex items-center
+            <h3 className="text-lg font-medium text-gray-300 mb-2 flex items-center gap-2">
+                <LightBulbIcon className="h-5 w-5" />
+                Actionable Suggestions
+            </h3>
+            <button
+                onClick={handleGetSuggestions}
+                disabled={isLoadingSuggestions}
+                className="w-full flex items-center justify-center px-4 py-2 mb-4 text-sm font-semibold text-white bg-cyan-600 rounded-md hover:bg-cyan-700 disabled:bg-gray-500 disabled:cursor-not-allowed transition-colors"
+            >
+                <SparklesIcon className="w-5 h-5 mr-2" />
+                {isLoadingSuggestions ? 'Analyzing Farmers...' : 'Generate Suggestions'}
+            </button>
+            {isLoadingSuggestions && (
+                <div className="flex justify-center items-center space-x-2">
+                    <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></div>
+                    <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                    <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                </div>
+            )}
+            {suggestions && (
+                <div className="text-gray-300 text-sm whitespace-pre-wrap prose prose-invert prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: suggestions.replace(/\*/g, '•') }} />
+            )}
+        </div>
+      )}
+    </DashboardCard>
+    </>
+  );
+};

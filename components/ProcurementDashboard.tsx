@@ -1,11 +1,13 @@
 
-import React, { useRef } from 'react';
+
+import React, { useRef, useState, useCallback } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadialBarChart, RadialBar, Legend } from 'recharts';
 import DashboardCard from './DashboardCard';
-import { CubeIcon } from './Icons';
+import { CubeIcon, LightBulbIcon, SparklesIcon } from './Icons';
 import type { DistrictVolume, FarmerYield } from '../types';
 import { exportToCSV, exportToExcel } from '../services/exportService';
 import { exportElementAsPDF } from '../services/pdfService';
+import { getGeminiInsights } from '../services/geminiService';
 
 interface ProcurementDashboardProps {
   districtData: DistrictVolume[];
@@ -28,6 +30,31 @@ const CustomTooltip = ({ active, payload }: any) => {
 
 const ProcurementDashboard: React.FC<ProcurementDashboardProps> = ({ districtData, farmerData, targetData }) => {
     const contentRef = useRef<HTMLDivElement>(null);
+    const [insights, setInsights] = useState<string>('');
+    const [isLoadingInsights, setIsLoadingInsights] = useState<boolean>(false);
+
+    const handleGetInsights = useCallback(async () => {
+        setIsLoadingInsights(true);
+        setInsights('');
+        const dataSummary = {
+            districtVolume: districtData,
+            topFarmers: farmerData,
+            targetAchievement: targetData,
+        };
+        const prompt = `
+            As an agricultural operations analyst, review the following JSON data about procurement.
+            Provide a brief, 2-3 bullet point summary of the most critical insights.
+            Focus on district performance, top farmer contributions, and progress towards the monthly target.
+            Keep the language concise and actionable.
+
+            Data:
+            ${JSON.stringify(dataSummary, null, 2)}
+        `;
+        const result = await getGeminiInsights(prompt);
+        setInsights(result);
+        setIsLoadingInsights(false);
+    }, [districtData, farmerData, targetData]);
+
 
     const exportDataSections = [
       { title: 'Volume by District (Tons)', data: districtData },
@@ -40,7 +67,12 @@ const ProcurementDashboard: React.FC<ProcurementDashboardProps> = ({ districtDat
     };
 
     const handleExportExcel = () => {
-        exportToExcel(exportDataSections, 'procurement_data');
+        let sectionsForExcel: { title: string; data: Record<string, any>[] }[] = [...exportDataSections];
+        if (insights) {
+            const plainTextInsights = insights.replace(/<[^>]+>/g, '').replace(/•/g, '- ').replace(/\*/g, '- ');
+            sectionsForExcel.push({ title: 'AI Summary', data: [{ Summary: plainTextInsights }] });
+        }
+        exportToExcel(sectionsForExcel, 'procurement_data');
     };
     
     const handleExportPDF = () => {
@@ -126,6 +158,32 @@ const ProcurementDashboard: React.FC<ProcurementDashboardProps> = ({ districtDat
                   ))}
                 </tbody>
               </table>
+            </div>
+        </div>
+        <div className="md:col-span-3 mt-6">
+            <h3 className="text-lg font-medium text-gray-300 mb-2 flex items-center gap-2">
+                <LightBulbIcon className="h-5 w-5" />
+                AI-Powered Summary
+            </h3>
+            <div className="p-4 bg-gray-900/50 rounded-lg border border-cyan-500/20">
+                <button
+                    onClick={handleGetInsights}
+                    disabled={isLoadingInsights}
+                    className="w-full flex items-center justify-center px-4 py-2 mb-4 text-sm font-semibold text-white bg-cyan-600 rounded-md hover:bg-cyan-700 disabled:bg-gray-500 disabled:cursor-not-allowed transition-colors"
+                >
+                    <SparklesIcon className="w-5 h-5 mr-2" />
+                    {isLoadingInsights ? 'Analyzing Procurement...' : 'Generate Insights'}
+                </button>
+                {isLoadingInsights && (
+                    <div className="flex justify-center items-center space-x-2">
+                        <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></div>
+                        <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                        <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                    </div>
+                )}
+                {insights && (
+                    <div className="text-gray-300 text-sm whitespace-pre-wrap prose prose-invert prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: insights.replace(/\*/g, '•') }} />
+                )}
             </div>
         </div>
       </div>

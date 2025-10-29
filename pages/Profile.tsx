@@ -1,7 +1,9 @@
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useRef, useMemo, useCallback } from 'react';
 import type { Employee, Task, TaskStatus, TaskPriority, EmployeeActivity } from '../types';
 import DashboardCard from '../components/DashboardCard';
-import { UserCircleIcon, CameraIcon, MailIcon, PhoneIcon, PencilIcon, BriefcaseIcon, MapPinIcon, CalendarDaysIcon, CheckCircleIcon, CubeIcon, BanknotesIcon } from '../components/Icons';
+import { UserCircleIcon, CameraIcon, MailIcon, PhoneIcon, PencilIcon, BriefcaseIcon, MapPinIcon, CalendarDaysIcon, CheckCircleIcon, CubeIcon, BanknotesIcon, SparklesIcon } from '../components/Icons';
+import { getStrategicInsights } from '../services/geminiService';
+import { marked } from 'marked';
 
 // --- PROPS ---
 interface ProfileProps {
@@ -89,6 +91,8 @@ const Profile: React.FC<ProfileProps> = ({ viewingEmployee, currentEmployee, all
     const [editableEmployeeData, setEditableEmployeeData] = useState<Employee | null>(null);
     const [activeTab, setActiveTab] = useState<'details' | 'tasks' | 'activity'>('details');
     const [completedTasks, setCompletedTasks] = useState<Set<string>>(new Set());
+    const [performanceSummary, setPerformanceSummary] = useState('');
+    const [isLoadingSummary, setIsLoadingSummary] = useState(false);
 
     const canEdit = currentEmployee.id === viewingEmployee.id;
 
@@ -100,6 +104,38 @@ const Profile: React.FC<ProfileProps> = ({ viewingEmployee, currentEmployee, all
 
     const assignedTasks = useMemo(() => allTasks.filter(task => task.assignedToId === viewingEmployee.id), [allTasks, viewingEmployee]);
     const employeeActivity = useMemo(() => allActivity.filter(act => act.employeeId === viewingEmployee.id).sort((a,b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()), [allActivity, viewingEmployee]);
+
+    const handleGenerateSummary = useCallback(async () => {
+        setIsLoadingSummary(true);
+        setPerformanceSummary('');
+    
+        const dataForAnalysis = {
+            employee: {
+                fullName: viewingEmployee.fullName,
+                role: viewingEmployee.role,
+                joiningDate: viewingEmployee.joiningDate
+            },
+            assignedTasks: assignedTasks.map(t => ({ title: t.title, status: t.status, priority: t.priority, dueDate: t.dueDate })),
+            recentActivity: employeeActivity.slice(0, 10).map(a => ({ action: a.action, details: a.details, timestamp: a.timestamp }))
+        };
+    
+        const prompt = `
+            As an HR analyst, provide a concise performance summary for the employee based on the data provided.
+            - Start with a brief overview.
+            - Highlight their task management (e.g., number of completed vs. pending tasks).
+            - Comment on their recent activity.
+            - Conclude with one or two potential development suggestions based on their role and data.
+            Format the response in markdown.
+    
+            Data:
+            ${JSON.stringify(dataForAnalysis, null, 2)}
+        `;
+    
+        const result = await getStrategicInsights(prompt);
+        setPerformanceSummary(result);
+        setIsLoadingSummary(false);
+    }, [viewingEmployee, assignedTasks, employeeActivity]);
+
 
     const handleEditClick = () => {
         setEditableEmployeeData({ ...viewingEmployee });
@@ -258,7 +294,7 @@ const Profile: React.FC<ProfileProps> = ({ viewingEmployee, currentEmployee, all
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-1">
+            <div className="lg:col-span-1 space-y-6">
                 <DashboardCard title="">
                     <div className="flex flex-col items-center text-center -mt-4">
                         <ProfilePhoto employee={isEditing ? editableEmployeeData : viewingEmployee} isEditing={isEditing} onFileChange={handleFileChange} />
@@ -293,6 +329,37 @@ const Profile: React.FC<ProfileProps> = ({ viewingEmployee, currentEmployee, all
                                     </button>
                                 )}
                             </div>
+                        )}
+                    </div>
+                </DashboardCard>
+                 <DashboardCard title="AI Performance Review" icon={<SparklesIcon className="text-yellow-300"/>}>
+                    <div className="flex flex-col h-full">
+                        <p className="text-sm text-gray-400 mb-4">
+                          Generate an AI-powered summary of this employee's recent tasks and activities.
+                        </p>
+
+                        <button
+                          onClick={handleGenerateSummary}
+                          disabled={isLoadingSummary}
+                          className="w-full flex items-center justify-center px-4 py-2 mb-4 text-sm font-semibold text-white bg-cyan-600 rounded-md hover:bg-cyan-700 disabled:bg-gray-500 disabled:cursor-not-allowed transition-colors"
+                        >
+                          <SparklesIcon className="w-5 h-5 mr-2" />
+                          {isLoadingSummary ? 'Analyzing...' : 'Generate Performance Summary'}
+                        </button>
+                        
+                        {isLoadingSummary && (
+                            <div className="flex justify-center items-center space-x-2">
+                                <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></div>
+                                <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                                <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                            </div>
+                        )}
+                        
+                        {performanceSummary && (
+                            <div 
+                                className="mt-4 prose prose-sm prose-invert max-w-none text-gray-300" 
+                                dangerouslySetInnerHTML={{ __html: marked.parse(performanceSummary) }} 
+                            />
                         )}
                     </div>
                 </DashboardCard>

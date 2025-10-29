@@ -64,8 +64,7 @@ const FinancialDashboard: React.FC<FinancialDashboardProps> = ({ paymentData, ag
     };
 
     const handleExportExcel = () => {
-        // FIX: Correctly type `sectionsForExcel` to allow for a custom `Summary` property when exporting to Excel.
-        let sectionsForExcel: { title: string; data: any[] }[] = [...exportDataSections];
+        let sectionsForExcel: { title: string; data: Record<string, any>[] }[] = [...exportDataSections];
         if (insights) {
             const plainTextInsights = insights.replace(/<[^>]+>/g, '').replace(/•/g, '- ').replace(/\*/g, '- ');
             sectionsForExcel.push({ title: 'AI Summary', data: [{ Summary: plainTextInsights }] });

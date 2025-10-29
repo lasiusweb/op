@@ -1,10 +1,11 @@
-import React, { useState, FormEvent, useMemo, useRef } from 'react';
+import React, { useState, FormEvent, useMemo, useRef, useCallback } from 'react';
 import type { Task, Employee, TaskStatus, TaskPriority, Farmer } from '../types';
 import DashboardCard from '../components/DashboardCard';
-import { PencilIcon, TrashIcon, ArrowUpIcon, ArrowDownIcon, ClockIcon, ChevronDownIcon, ChevronUpIcon, ChevronUpDownIcon } from '../components/Icons';
+import { PencilIcon, TrashIcon, ArrowUpIcon, ArrowDownIcon, ClockIcon, ChevronDownIcon, ChevronUpIcon, ChevronUpDownIcon, LightBulbIcon, SparklesIcon } from '../components/Icons';
 import { mockTasks, mockEmployees, mockFarmersData } from '../data/mockData';
 import { exportToCSV, exportToExcel } from '../services/exportService';
 import { exportElementAsPDF } from '../services/pdfService';
+import { getGeminiInsights } from '../services/geminiService';
 
 const statusStyles: { [key in TaskStatus]: string } = {
     'Pending': 'bg-yellow-500/20 text-yellow-300',
@@ -96,6 +97,8 @@ const Tasks: React.FC = () => {
     const [filterPriority, setFilterPriority] = useState<TaskPriority | 'All'>('All');
     const [sortConfig, setSortConfig] = useState<{ key: SortableTaskKeys; direction: 'ascending' | 'descending' }>({ key: 'dueDate', direction: 'ascending' });
     const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
+    const [taskAnalysis, setTaskAnalysis] = useState('');
+    const [isLoadingAnalysis, setIsLoadingAnalysis] = useState(false);
     const contentRef = useRef<HTMLDivElement>(null);
 
     const employeesById = useMemo(() => Object.fromEntries(mockEmployees.map(u => [u.id, u])), []);
@@ -199,6 +202,32 @@ const Tasks: React.FC = () => {
 
         return sortableItems;
     }, [tasks, filterPriority, sortConfig, employeesById]);
+
+    const handleAnalyzeTasks = useCallback(async () => {
+        setIsLoadingAnalysis(true);
+        setTaskAnalysis('');
+        
+        const dataToAnalyze = sortedAndFilteredTasks.map(t => ({
+            priority: t.priority,
+            status: t.status,
+            dueDate: t.dueDate,
+            assignedTo: employeesById[t.assignedToId]?.fullName
+        }));
+    
+        const prompt = `
+            Analyze the following list of tasks. Provide a 2-3 bullet point summary highlighting:
+            - The overall distribution of tasks by status (Pending, In Progress, etc.).
+            - Any notable number of high-priority or overdue tasks that require immediate attention.
+            - Any potential workload imbalance based on task assignments.
+    
+            Data sample:
+            ${JSON.stringify(dataToAnalyze.slice(0, 50), null, 2)}
+        `;
+    
+        const result = await getGeminiInsights(prompt);
+        setTaskAnalysis(result);
+        setIsLoadingAnalysis(false);
+    }, [sortedAndFilteredTasks, employeesById]);
 
     const handleExportPDF = () => {
         if (contentRef.current) {
@@ -370,6 +399,32 @@ const Tasks: React.FC = () => {
           </tbody>
         </table>
       </div>
+      <div className="mt-8">
+            <h3 className="text-lg font-medium text-gray-300 mb-2 flex items-center gap-2">
+                <LightBulbIcon className="h-5 w-5" />
+                AI Task Analysis
+            </h3>
+            <div className="p-4 bg-gray-900/50 rounded-lg border border-cyan-500/20">
+                <button
+                    onClick={handleAnalyzeTasks}
+                    disabled={isLoadingAnalysis}
+                    className="w-full flex items-center justify-center px-4 py-2 mb-4 text-sm font-semibold text-white bg-cyan-600 rounded-md hover:bg-cyan-700 disabled:bg-gray-500 disabled:cursor-not-allowed transition-colors"
+                >
+                    <SparklesIcon className="w-5 h-5 mr-2" />
+                    {isLoadingAnalysis ? 'Analyzing Tasks...' : 'Generate Analysis'}
+                </button>
+                {isLoadingAnalysis && (
+                    <div className="flex justify-center items-center space-x-2">
+                        <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></div>
+                        <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                        <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                    </div>
+                )}
+                {taskAnalysis && (
+                    <div className="text-gray-300 text-sm whitespace-pre-wrap prose prose-invert prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: taskAnalysis.replace(/\*/g, '•') }} />
+                )}
+            </div>
+        </div>
     </DashboardCard>
   );
 };
