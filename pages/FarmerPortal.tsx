@@ -32,7 +32,8 @@ import {
     SunIcon,
     PencilIcon,
     FolderIcon,
-    XMarkIcon
+    XMarkIcon,
+    ArrowDownTrayIcon
 } from '../components/Icons';
 
 // --- PROPS INTERFACE ---
@@ -227,7 +228,7 @@ const FinancialLedgerCard: React.FC<{ subsidies: SubsidyApplication[], procureme
         const paymentDebits = payments.map(p => ({
             id: p.id, date: p.paymentDate, description: `Payment Received (Txn: ${p.transactionId})`, amount: p.amount, type: 'debit' as const
         }));
-        return [...procurementCredits, ...paymentDebits].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 5);
+        return [...procurementCredits, ...paymentDebits].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     }, [procurements, payments]);
 
     return (
@@ -237,7 +238,13 @@ const FinancialLedgerCard: React.FC<{ subsidies: SubsidyApplication[], procureme
                 <div><p className="text-xs text-gray-400">Total Paid</p><p className="font-semibold text-lg text-white">₹{totalPaid.toLocaleString('en-IN')}</p></div>
                 <div><p className="text-xs text-gray-400">Outstanding</p><p className="font-semibold text-lg text-yellow-400">₹{balance.toLocaleString('en-IN')}</p></div>
             </div>
-            <p className="text-sm font-semibold text-gray-300 mb-2">Recent Transactions:</p>
+             <div className="flex justify-between items-center mb-2">
+                <p className="text-sm font-semibold text-gray-300">Transaction History:</p>
+                <button onClick={() => alert("Coming soon: Downloadable PDF statements.")} className="text-xs text-teal-400 hover:text-teal-300 font-medium inline-flex items-center gap-1">
+                    <ArrowDownTrayIcon className="h-4 w-4" />
+                    Download Statement
+                </button>
+            </div>
             <ul className="space-y-2 text-sm max-h-48 overflow-y-auto pr-2">
                 {transactions.length > 0 ? transactions.map(t => (
                     <li key={`${t.type}-${t.id}`} className="flex justify-between items-center p-2 bg-gray-700/50 rounded-md">
@@ -258,14 +265,15 @@ const FinancialLedgerCard: React.FC<{ subsidies: SubsidyApplication[], procureme
 const DocumentManagerCard: React.FC<{ documents: Document[] }> = ({ documents }) => (
     <PortalCard icon={<FolderIcon />} title="Document Manager">
         <p className="text-xs text-gray-400 mb-2">Status of documents submitted for subsidies.</p>
-        <ul className="space-y-2 text-sm max-h-48 overflow-y-auto pr-2">
+        <ul className="space-y-2 text-sm max-h-40 overflow-y-auto pr-2 mb-3">
             {documents.length > 0 ? documents.map(doc => (
                 <li key={doc.id} className="flex justify-between items-center p-2 bg-gray-700/50 rounded-md">
                     <span className="text-white">{doc.documentType}</span>
                     <span className={`font-semibold text-xs ${documentStatusStyles[doc.status]}`}>{doc.status}</span>
                 </li>
-            )) : <p className="text-gray-500 text-center mt-8">No documents on file.</p>}
+            )) : <p className="text-gray-500 text-center py-8">No documents on file.</p>}
         </ul>
+         <button onClick={() => alert("Coming soon: Document upload functionality.")} className="w-full text-sm bg-blue-600/50 hover:bg-blue-600 text-white font-semibold py-1.5 rounded-md">Upload New Document</button>
     </PortalCard>
 );
 
@@ -277,7 +285,7 @@ const CropInsuranceCard: React.FC<{ policy?: CropInsurancePolicy }> = ({ policy 
                 <p><strong className="text-gray-400 block">Insurer:</strong> {policy.insurer}</p>
                 <p><strong className="text-gray-400 block">Coverage:</strong> ₹{policy.sumInsured.toLocaleString('en-IN')}</p>
                 <p><strong className="text-gray-400 block">Expires:</strong> {new Date(policy.endDate).toLocaleDateString()}</p>
-                <button className="mt-2 w-full text-sm bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 rounded-md">Initiate Claim</button>
+                <button onClick={() => alert("Coming soon: Simplified claim initiation.")} className="mt-2 w-full text-sm bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 rounded-md">Initiate Claim</button>
             </div>
         ) : <p className="text-gray-500 text-center mt-8">No active crop insurance policy found.</p>}
     </PortalCard>
@@ -467,7 +475,8 @@ const RequestVisitCard: React.FC<{ farmer: Farmer; landParcels: LandParcel[]; on
                     <option>Pest/Disease Issue</option><option>Soil Health Query</option><option>Irrigation Problem</option><option>Harvesting Advice</option><option>Other</option>
                 </select>
                 <select value={request.urgency} onChange={e => setRequest(r => ({ ...r, urgency: e.target.value as FarmVisitUrgency }))} className="bg-gray-700 border border-gray-600 rounded-md p-2 text-white w-full">
-                    <option value="Normal">Normal</option><option value="Urgent">Urgent</option>
+                    <option value="Normal">Normal</option>
+                    <option value="Urgent">Urgent</option>
                 </select>
             </div>
             <select value={request.landParcelId} onChange={e => setRequest(r => ({ ...r, landParcelId: e.target.value }))} className="bg-gray-700 border border-gray-600 rounded-md p-2 text-white w-full">

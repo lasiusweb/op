@@ -143,5 +143,18 @@ export const mockEmployeeActivity: EmployeeActivity[] = [
 export const mockEmployeeLifecycleData: EmployeeLifecycle[] = [];
 export const mockProfileChangeRequests: ProfileChangeRequest[] = [];
 
-export const mockCropInsurancePolicies: CropInsurancePolicy[] = [];
+export const mockCropInsurancePolicies: CropInsurancePolicy[] = [
+    {
+        id: 'CI-001',
+        farmerId: 'FARM001', // R. Venkatesh
+        policyNumber: 'AGRI-2024-8451',
+        insurer: 'AgriCorp Insurance',
+        coverageType: 'Weather-Based',
+        sumInsured: 250000,
+        premium: 12500,
+        startDate: '2024-06-01',
+        endDate: '2025-05-31',
+        status: 'Active'
+    }
+];
 export const mockFarmerProfileChangeRequests: FarmerProfileChangeRequest[] = [];
