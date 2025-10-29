@@ -12,6 +12,7 @@ const EmployeeLifecycle: React.FC<EmployeeLifecycleProps> = ({ onViewProfile }) 
   const [activeTab, setActiveTab] = useState<'Onboarding' | 'Offboarding'>('Onboarding');
   const [lifecycleData, setLifecycleData] = useState<EmployeeLifecycle[]>(mockEmployeeLifecycleData);
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const employeeMap = useMemo(() => new Map(mockEmployees.map(e => [e.id, e])), []);
 
@@ -34,18 +35,34 @@ const EmployeeLifecycle: React.FC<EmployeeLifecycleProps> = ({ onViewProfile }) 
   };
   
   const filteredData = useMemo(() => {
-      return lifecycleData.filter(item => item.processType === activeTab);
-  }, [lifecycleData, activeTab]);
+    return lifecycleData.filter(item => {
+        const employee = employeeMap.get(item.employeeId);
+        const matchesTab = item.processType === activeTab;
+        const matchesSearch = searchTerm.trim() === '' || (employee && employee.fullName.toLowerCase().includes(searchTerm.trim().toLowerCase()));
+        return matchesTab && matchesSearch;
+    });
+  }, [lifecycleData, activeTab, searchTerm, employeeMap]);
 
   const TabButton: React.FC<{ tabId: 'Onboarding' | 'Offboarding'; children: React.ReactNode; icon: React.ReactNode }> = ({ tabId, children, icon }) => (
-    <button onClick={() => setActiveTab(tabId)} className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${activeTab === tabId ? 'bg-gray-800/50 text-teal-400 border-b-2 border-teal-400' : 'text-gray-400 hover:bg-gray-700/50'}`}>{icon}{children}</button>
+    <button onClick={() => setActiveTab(tabId)} className={`flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors ${activeTab === tabId ? 'border-teal-400 text-teal-400' : 'border-transparent text-gray-400 hover:text-white'}`}>{icon}{children}</button>
   );
 
   return (
     <DashboardCard title="Employee Lifecycle Management">
-      <div className="mb-4 border-b border-gray-700 flex">
-        <TabButton tabId="Onboarding" icon={<UserPlusIcon className="h-5 w-5" />}>Onboarding ({lifecycleData.filter(d => d.processType === 'Onboarding').length})</TabButton>
-        <TabButton tabId="Offboarding" icon={<UserMinusIcon className="h-5 w-5" />}>Offboarding ({lifecycleData.filter(d => d.processType === 'Offboarding').length})</TabButton>
+      <div className="mb-4 flex justify-between items-end border-b border-gray-700">
+        <div className="flex">
+            <TabButton tabId="Onboarding" icon={<UserPlusIcon className="h-5 w-5" />}>Onboarding ({lifecycleData.filter(d => d.processType === 'Onboarding').length})</TabButton>
+            <TabButton tabId="Offboarding" icon={<UserMinusIcon className="h-5 w-5" />}>Offboarding ({lifecycleData.filter(d => d.processType === 'Offboarding').length})</TabButton>
+        </div>
+        <div className="pb-2">
+            <input
+                type="text"
+                placeholder="Search by employee name..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full max-w-xs bg-gray-800 border border-gray-700 rounded-md px-3 py-1.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+            />
+        </div>
       </div>
 
        <div className="overflow-x-auto rounded-lg border border-gray-700/50">
@@ -59,67 +76,75 @@ const EmployeeLifecycle: React.FC<EmployeeLifecycleProps> = ({ onViewProfile }) 
                     </tr>
                 </thead>
                 <tbody>
-                    {filteredData.map(process => {
-                        const employee = employeeMap.get(process.employeeId);
-                        const completedTasks = process.tasks.filter(t => t.status === 'Completed').length;
-                        const totalTasks = process.tasks.length;
-                        const progress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 100;
+                    {filteredData.length > 0 ? (
+                        filteredData.map(process => {
+                            const employee = employeeMap.get(process.employeeId);
+                            const completedTasks = process.tasks.filter(t => t.status === 'Completed').length;
+                            const totalTasks = process.tasks.length;
+                            const progress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 100;
 
-                        return (
-                             <React.Fragment key={process.employeeId}>
-                                <tr className="border-b border-gray-700 bg-gray-800/50 hover:bg-gray-700/50 cursor-pointer" onClick={() => setExpandedRowId(expandedRowId === process.employeeId ? null : process.employeeId)}>
-                                    <td className="px-6 py-4">
-                                        <button 
-                                            onClick={(e) => { e.stopPropagation(); if (employee) onViewProfile(employee.id); }}
-                                            className="font-medium text-white text-left hover:text-teal-400 transition-colors"
-                                        >
-                                            {employee?.fullName}
-                                        </button>
-                                        <div className="text-xs text-gray-500">{employee?.role}</div>
-                                    </td>
-                                    <td className="px-6 py-4">{new Date(process.startDate).toLocaleDateString()}</td>
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-full bg-gray-700 rounded-full h-2.5">
-                                                <div className="bg-teal-500 h-2.5 rounded-full" style={{ width: `${progress}%` }}></div>
-                                            </div>
-                                            <span className="font-mono text-xs">{progress}%</span>
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${process.status === 'Completed' ? 'bg-green-500/20 text-green-300' : 'bg-blue-500/20 text-blue-300'}`}>
-                                            {process.status}
-                                        </span>
-                                    </td>
-                                </tr>
-                                {expandedRowId === process.employeeId && (
-                                    <tr className="bg-gray-900/50">
-                                        <td colSpan={4} className="p-4">
-                                            <div className="bg-gray-800/50 p-4 rounded-lg">
-                                                <h4 className="font-semibold text-white mb-3">Checklist</h4>
-                                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                                                    {process.tasks.map(task => (
-                                                        <label key={task.id} className="flex items-start p-2 rounded-md bg-gray-700/50 hover:bg-gray-700 transition-colors cursor-pointer">
-                                                            <input
-                                                                type="checkbox"
-                                                                checked={task.status === 'Completed'}
-                                                                onChange={() => handleToggleTask(process.employeeId, task.id)}
-                                                                className="h-4 w-4 mt-1 rounded border-gray-500 text-teal-500 focus:ring-teal-500 flex-shrink-0"
-                                                            />
-                                                            <div className="ml-3">
-                                                                <span className={`text-sm ${task.status === 'Completed' ? 'text-gray-400 line-through' : 'text-gray-200'}`}>{task.description}</span>
-                                                                <span className="block text-xs text-gray-500">Responsible: {task.responsible}</span>
-                                                            </div>
-                                                        </label>
-                                                    ))}
+                            return (
+                                <React.Fragment key={process.employeeId}>
+                                    <tr className="border-b border-gray-700 bg-gray-800/50 hover:bg-gray-700/50 cursor-pointer" onClick={() => setExpandedRowId(expandedRowId === process.employeeId ? null : process.employeeId)}>
+                                        <td className="px-6 py-4">
+                                            <button 
+                                                onClick={(e) => { e.stopPropagation(); if (employee) onViewProfile(employee.id); }}
+                                                className="font-medium text-white text-left hover:text-teal-400 transition-colors"
+                                            >
+                                                {employee?.fullName}
+                                            </button>
+                                            <div className="text-xs text-gray-500">{employee?.role}</div>
+                                        </td>
+                                        <td className="px-6 py-4">{new Date(process.startDate).toLocaleDateString()}</td>
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-full bg-gray-700 rounded-full h-2.5">
+                                                    <div className="bg-teal-500 h-2.5 rounded-full" style={{ width: `${progress}%` }}></div>
                                                 </div>
+                                                <span className="font-mono text-xs">{progress}%</span>
                                             </div>
                                         </td>
+                                        <td className="px-6 py-4">
+                                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${process.status === 'Completed' ? 'bg-green-500/20 text-green-300' : 'bg-blue-500/20 text-blue-300'}`}>
+                                                {process.status}
+                                            </span>
+                                        </td>
                                     </tr>
-                                )}
-                            </React.Fragment>
-                        )
-                    })}
+                                    {expandedRowId === process.employeeId && (
+                                        <tr className="bg-gray-900/50">
+                                            <td colSpan={4} className="p-4">
+                                                <div className="bg-gray-800/50 p-4 rounded-lg">
+                                                    <h4 className="font-semibold text-white mb-3">Checklist</h4>
+                                                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                                                        {process.tasks.map(task => (
+                                                            <label key={task.id} className="flex items-start p-2 rounded-md bg-gray-700/50 hover:bg-gray-700 transition-colors cursor-pointer">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={task.status === 'Completed'}
+                                                                    onChange={() => handleToggleTask(process.employeeId, task.id)}
+                                                                    className="h-4 w-4 mt-1 rounded border-gray-500 text-teal-500 focus:ring-teal-500 flex-shrink-0"
+                                                                />
+                                                                <div className="ml-3">
+                                                                    <span className={`text-sm ${task.status === 'Completed' ? 'text-gray-400 line-through' : 'text-gray-200'}`}>{task.description}</span>
+                                                                    <span className="block text-xs text-gray-500">Responsible: {task.responsible}</span>
+                                                                </div>
+                                                            </label>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    )}
+                                </React.Fragment>
+                            )
+                        })
+                    ) : (
+                        <tr>
+                            <td colSpan={4} className="text-center py-16 text-gray-500">
+                                No employees found matching your search.
+                            </td>
+                        </tr>
+                    )}
                 </tbody>
             </table>
         </div>

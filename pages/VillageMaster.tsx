@@ -109,7 +109,6 @@ const VillageMaster: React.FC = () => {
     const handleSaveVillage = (villageData: Partial<Village>) => {
         const now = new Date().toISOString();
         if (villageData.id) { // Edit
-            // FIX: Cast the updated village object to the `Village` type to resolve TypeScript error.
             setVillages(villages.map(v => v.id === villageData.id ? ({ ...v, ...villageData, updatedAt: now } as Village) : v));
         } else { // Add
             const newVillage: Village = {

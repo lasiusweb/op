@@ -39,7 +39,6 @@ const DistrictModal: React.FC<{
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value, type } = e.target;
         const isNumberField = type === 'number';
-        // FIX: Correctly handle number parsing to avoid saving an empty string for a number field.
         setFormData(prev => ({ ...prev, [name]: isNumberField ? (value ? parseInt(value, 10) : undefined) : value }));
     };
 
@@ -100,7 +99,6 @@ const DistrictMaster: React.FC = () => {
     const handleSaveDistrict = (districtData: Partial<District>) => {
         const now = new Date().toISOString();
         if (districtData.id) { // Edit
-            // FIX: Cast the updated district object to the `District` type to resolve TypeScript error.
             setDistricts(districts.map(d => d.id === districtData.id ? ({ ...d, ...districtData, updatedAt: now } as District) : d));
         } else { // Add
             const newDistrict: District = {

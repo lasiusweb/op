@@ -1,5 +1,4 @@
 import React, { useState, FormEvent, useMemo, useRef } from 'react';
-// FIX: Replaced User with Employee and mockUsers with mockEmployees
 import type { Task, Employee, TaskStatus, TaskPriority, Farmer } from '../types';
 import DashboardCard from '../components/DashboardCard';
 import { PencilIcon, TrashIcon, ArrowUpIcon, ArrowDownIcon, ClockIcon, ChevronDownIcon, ChevronUpIcon, ChevronUpDownIcon } from '../components/Icons';

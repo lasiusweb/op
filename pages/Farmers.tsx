@@ -86,7 +86,6 @@ const farmerTemplateHeaders = [
 ];
 
 
-// FIX: Changed from default to named export
 export const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, setAllFarmers, loading }) => {
     const [expandedRow, setExpandedRow] = useState<string | null>(null);
     const [editingFarmerId, setEditingFarmerId] = useState<string | null>(null);

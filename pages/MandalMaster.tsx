@@ -108,7 +108,6 @@ const MandalMaster: React.FC = () => {
     const handleSaveMandal = (mandalData: Partial<Mandal>) => {
         const now = new Date().toISOString();
         if (mandalData.id) { // Edit
-            // FIX: Cast the updated mandal object to the `Mandal` type to resolve TypeScript error.
             setMandals(mandals.map(m => m.id === mandalData.id ? { ...m, ...mandalData, updatedAt: now } as Mandal : m));
         } else { // Add
             const newMandal: Mandal = {
