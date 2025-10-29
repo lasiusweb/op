@@ -24,8 +24,9 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage, isSideba
 
   const employeeHubPagesInfo = [
       { name: 'Employee List', page: 'employees' },
+      { name: 'Add Employee', page: 'addEmployee' },
       { name: 'Org Chart', page: 'employeeHierarchy' },
-      { name: 'On/Offboarding', page: 'employeeLifecycle' },
+      { name: 'Lifecycle', page: 'employeeLifecycle' },
       { name: 'Change Requests', page: 'profileChangeRequests' },
       { name: 'Retirements', page: 'upcomingRetirements' },
   ];
@@ -106,7 +107,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage, isSideba
 
   const [isDashboardsOpen, setIsDashboardsOpen] = useState(dashboardsAndReportsPagesInfo.some(p => p.page === currentPage));
   const [isCoreManagementOpen, setIsCoreManagementOpen] = useState(coreManagementPagesInfo.some(p => p.page === currentPage));
-  const [isEmployeeHubOpen, setIsEmployeeHubOpen] = useState(employeeHubPagesInfo.some(p => p.page === currentPage));
+  const [isEmployeeHubOpen, setIsEmployeeHubOpen] = useState(employeeHubPagesInfo.some(p => p.page === currentPage) || currentPage === 'addEmployee');
   const [isTaskManagementOpen, setIsTaskManagementOpen] = useState(taskManagementPagesInfo.some(p => p.page === currentPage));
   const [isFarmerServicesOpen, setIsFarmerServicesOpen] = useState(farmerServicesPagesInfo.some(p => p.page === currentPage));
   const [isVisitManagementOpen, setIsVisitManagementOpen] = useState(visitManagementPagesInfo.some(p => p.page === currentPage));

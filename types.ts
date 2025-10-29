@@ -21,15 +21,24 @@ export interface PaymentStatus {
 
 // New types based on schema
 
-export type EmployeeRole = 'Admin' | 'Field Agent' | 'Reviewer' | 'Accountant' | 'Mandal Coordinator' | 'Procurement Center Manager' | 'Factory Manager';
+export type EmployeeRole = 'Admin' | 'Field Agent' | 'Reviewer' | 'Accountant' | 'Mandal Coordinator' | 'Procurement Center Manager' | 'Factory Manager' | 'HR Manager' | 'IT Support';
 
 export interface Employee {
   id: string;
+  firstName: string;
+  lastName: string;
   fullName: string;
+  aliasName?: string;
   role: EmployeeRole;
+  department?: string;
+  subDepartment?: string;
+  grade?: string;
+  shift?: string;
   email: string;
+  countryCode?: string;
   mobile: string;
-  region: string;
+  region: string; // Branch
+  jobLocation?: string;
   status: 'Active' | 'Inactive';
   reportingManagerId?: string;
   profilePhotoUrl?: string;
@@ -37,9 +46,20 @@ export interface Employee {
   updatedAt: string;
   joiningDate: string;
   dob: string; 
+  probationPeriodDays?: number;
+  trainingCompletionDate?: string;
+  dateOfPermanentEmployee?: string;
+  gender: 'Male' | 'Female' | 'Other';
+  employmentType?: 'Permanent' | 'Contract' | 'Internship';
+  insuranceNumber?: string;
+  insuranceCompany?: string;
+  insuranceExpiryDate?: string;
+  retirementAge?: number;
+  idProof?: string; 
   resignationDate?: string;
   lastWorkingDate?: string;
 }
+
 
 export type LifecycleTaskStatus = 'Pending' | 'Completed' | 'Not Applicable';
 

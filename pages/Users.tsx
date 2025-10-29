@@ -13,6 +13,7 @@ interface EmployeesProps {
   setAllEmployees: React.Dispatch<React.SetStateAction<Employee[]>>;
   onViewProfile: (employeeId: string) => void;
   onViewVisits: (employeeId: string) => void;
+  onAddNewEmployee: () => void;
 }
 
 const employeeTemplateHeaders = [
@@ -20,7 +21,7 @@ const employeeTemplateHeaders = [
 ];
 const validRoles: EmployeeRole[] = ['Admin', 'Field Agent', 'Reviewer', 'Accountant', 'Mandal Coordinator', 'Procurement Center Manager', 'Factory Manager'];
 
-const Employees: React.FC<EmployeesProps> = ({ currentEmployee, allEmployees, setAllEmployees, onViewProfile, allVisitRequests, onViewVisits }) => {
+const Employees: React.FC<EmployeesProps> = ({ currentEmployee, allEmployees, setAllEmployees, onViewProfile, allVisitRequests, onViewVisits, onAddNewEmployee }) => {
   const isAdmin = currentEmployee.role === 'Admin';
   const contentRef = useRef<HTMLDivElement>(null);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
@@ -75,6 +76,8 @@ const Employees: React.FC<EmployeesProps> = ({ currentEmployee, allEmployees, se
             const status = ['Active', 'Inactive'].includes(item.status) ? item.status : 'Active';
             return {
                 id: `EMP-IMP-${Date.now() + index}`,
+                firstName: item.fullName?.split(' ')[0] || 'Unnamed',
+                lastName: item.fullName?.split(' ').slice(1).join(' ') || '',
                 fullName: item.fullName || 'Unnamed',
                 role: role,
                 email: item.email || '',
@@ -86,6 +89,7 @@ const Employees: React.FC<EmployeesProps> = ({ currentEmployee, allEmployees, se
                 updatedAt: now,
                 joiningDate: now,
                 dob: '1990-01-01', // A sensible default.
+                gender: 'Male',
             };
         });
         setAllEmployees(prev => [...prev, ...processedEmployees]);
@@ -124,7 +128,7 @@ const Employees: React.FC<EmployeesProps> = ({ currentEmployee, allEmployees, se
                     <ArrowUpTrayIcon className="h-5 w-5" />
                     Import Employees
                 </button>
-                <button className="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-md transition-colors">
+                <button onClick={onAddNewEmployee} className="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-md transition-colors">
                   Add New Employee
                 </button>
             </div>

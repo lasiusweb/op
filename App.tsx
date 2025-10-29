@@ -44,6 +44,7 @@ import FarmerPortal from './pages/FarmerPortal';
 import CropInsurance from './pages/CropInsurance';
 import DocumentManager from './pages/DocumentManager';
 import AddFarmer from './pages/AddFarmer';
+import AddEmployee from './pages/AddEmployee';
 import ManageVisits from './pages/ManageVisits';
 import ManageVisitSlots from './pages/ManageVisitSlots';
 import VisitReport from './pages/VisitReport';
@@ -128,7 +129,8 @@ const App: React.FC = () => {
       dashboard: 'Executive Dashboard',
       farmers: 'Farmer Management',
       addFarmer: 'Add New Farmer',
-      employees: 'Employee Management',
+      employees: 'Employee & Role Management',
+      addEmployee: 'Add New Employee',
       employeeHierarchy: 'Organizational Chart',
       employeeLifecycle: 'Employee Lifecycle',
       profileChangeRequests: 'Profile Change Requests',
@@ -226,6 +228,11 @@ const App: React.FC = () => {
     handleSetCurrentPage('farmers');
   };
 
+  const handleAddNewEmployee = (newEmployee: Employee) => {
+    setEmployees(prev => [newEmployee, ...prev]);
+    handleSetCurrentPage('employees');
+  };
+
   const handleAddPlantationLog = (newLog: PlantationLogType) => {
     setPlantationLogs(prev => [newLog, ...prev]);
   };
@@ -255,7 +262,10 @@ const App: React.FC = () => {
                     onViewProfile={handleViewProfile} 
                     allVisitRequests={farmVisitRequests}
                     onViewVisits={handleViewEmployeeVisits}
+                    onAddNewEmployee={() => handleSetCurrentPage('addEmployee')}
                  />;
+      case 'addEmployee':
+          return <AddEmployee onAddEmployee={handleAddNewEmployee} onCancel={() => handleSetCurrentPage('employees')} allEmployees={employees} />;
       case 'employeeHierarchy':
           return <EmployeeHierarchy allEmployees={employees} onViewProfile={handleViewProfile} />;
       case 'employeeLifecycle':

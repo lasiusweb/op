@@ -5,14 +5,14 @@ const pastDate = (days: number) => new Date(now.getTime() - days * 24 * 60 * 60 
 const futureDate = (days: number) => new Date(now.getTime() + days * 24 * 60 * 60 * 1000).toISOString();
 
 export const mockEmployees: Employee[] = [
-    { id: 'EMP001', fullName: 'Anil Kumar', role: 'Field Agent', email: 'anil.k@example.com', mobile: '9123456780', region: 'Warangal', status: 'Active', reportingManagerId: 'EMP002', profilePhotoUrl: 'https://i.pravatar.cc/150?u=EMP001', createdAt: pastDate(30), updatedAt: pastDate(2), joiningDate: pastDate(30), dob: '1995-08-15' },
-    { id: 'EMP002', fullName: 'Sunita Sharma', role: 'Mandal Coordinator', email: 'sunita.s@example.com', mobile: '9123456781', region: 'Warangal', status: 'Active', reportingManagerId: 'EMP005', profilePhotoUrl: 'https://i.pravatar.cc/150?u=EMP002', createdAt: pastDate(100), updatedAt: pastDate(10), joiningDate: pastDate(100), dob: '1988-05-20' },
-    { id: 'EMP003', fullName: 'Vijay Singh', role: 'Field Agent', email: 'vijay.s@example.com', mobile: '9123456782', region: 'Mulugu', status: 'Active', reportingManagerId: 'EMP002', profilePhotoUrl: 'https://i.pravatar.cc/150?u=EMP003', createdAt: pastDate(80), updatedAt: pastDate(5), joiningDate: pastDate(80), dob: '1992-11-30' },
-    { id: 'EMP004', fullName: 'Priya Patel', role: 'Accountant', email: 'priya.p@example.com', mobile: '9123456783', region: 'Head Office', status: 'Inactive', reportingManagerId: 'EMP005', profilePhotoUrl: 'https://i.pravatar.cc/150?u=EMP004', createdAt: pastDate(120), updatedAt: pastDate(20), joiningDate: pastDate(120), dob: '1990-02-10', resignationDate: pastDate(25), lastWorkingDate: pastDate(20) },
-    { id: 'EMP005', fullName: 'Rajesh Gupta', role: 'Admin', email: 'rajesh.g@example.com', mobile: '9123456784', region: 'Head Office', status: 'Active', profilePhotoUrl: 'https://i.pravatar.cc/150?u=EMP005', createdAt: pastDate(200), updatedAt: pastDate(1), joiningDate: pastDate(200), dob: '1974-01-01' },
-    { id: 'EMP006', fullName: 'Kavita Rao', role: 'Procurement Center Manager', email: 'kavita.r@example.com', mobile: '9123456785', region: 'Hanmakonda', status: 'Active', reportingManagerId: 'EMP005', profilePhotoUrl: 'https://i.pravatar.cc/150?u=EMP006', createdAt: pastDate(90), updatedAt: pastDate(8), joiningDate: pastDate(90), dob: '1985-07-22' },
-    { id: 'EMP007', fullName: 'Manoj Reddy', role: 'Factory Manager', email: 'manoj.r@example.com', mobile: '9123456786', region: 'Mulugu', status: 'Active', reportingManagerId: 'EMP005', profilePhotoUrl: 'https://i.pravatar.cc/150?u=EMP007', createdAt: pastDate(110), updatedAt: pastDate(12), joiningDate: pastDate(110), dob: '1982-03-12' },
-    { id: 'EMP008', fullName: 'Meena Kumari', role: 'Reviewer', email: 'meena.k@example.com', mobile: '9123456787', region: 'Head Office', status: 'Active', reportingManagerId: 'EMP005', profilePhotoUrl: 'https://i.pravatar.cc/150?u=EMP008', createdAt: pastDate(60), updatedAt: pastDate(6), joiningDate: pastDate(60), dob: '1965-10-10' },
+    { id: 'EMP001', firstName: 'Anil', lastName: 'Kumar', fullName: 'Anil Kumar', role: 'Field Agent', department: 'Field Operations', email: 'anil.k@example.com', mobile: '9123456780', region: 'Warangal', status: 'Active', reportingManagerId: 'EMP002', profilePhotoUrl: 'https://i.pravatar.cc/150?u=EMP001', createdAt: pastDate(30), updatedAt: pastDate(2), joiningDate: pastDate(30), dob: '1995-08-15', gender: 'Male', employmentType: 'Permanent', jobLocation: 'Warangal (India)' },
+    { id: 'EMP002', firstName: 'Sunita', lastName: 'Sharma', fullName: 'Sunita Sharma', role: 'Mandal Coordinator', department: 'Operations', email: 'sunita.s@example.com', mobile: '9123456781', region: 'Warangal', status: 'Active', reportingManagerId: 'EMP005', profilePhotoUrl: 'https://i.pravatar.cc/150?u=EMP002', createdAt: pastDate(100), updatedAt: pastDate(10), joiningDate: pastDate(100), dob: '1988-05-20', gender: 'Female', employmentType: 'Permanent', jobLocation: 'Warangal (India)' },
+    { id: 'EMP003', firstName: 'Vijay', lastName: 'Singh', fullName: 'Vijay Singh', role: 'Field Agent', department: 'Field Operations', email: 'vijay.s@example.com', mobile: '9123456782', region: 'Mulugu', status: 'Active', reportingManagerId: 'EMP002', profilePhotoUrl: 'https://i.pravatar.cc/150?u=EMP003', createdAt: pastDate(80), updatedAt: pastDate(5), joiningDate: pastDate(80), dob: '1992-11-30', gender: 'Male', employmentType: 'Permanent', jobLocation: 'Mulugu (India)' },
+    { id: 'EMP004', firstName: 'Priya', lastName: 'Patel', fullName: 'Priya Patel', role: 'Accountant', department: 'Finance', email: 'priya.p@example.com', mobile: '9123456783', region: 'Head Office', status: 'Inactive', reportingManagerId: 'EMP005', profilePhotoUrl: 'https://i.pravatar.cc/150?u=EMP004', createdAt: pastDate(120), updatedAt: pastDate(20), joiningDate: pastDate(120), dob: '1990-02-10', gender: 'Female', employmentType: 'Permanent', jobLocation: 'Delhi (India)', resignationDate: pastDate(25), lastWorkingDate: pastDate(20) },
+    { id: 'EMP005', firstName: 'Rajesh', lastName: 'Gupta', fullName: 'Rajesh Gupta', role: 'Admin', department: 'Management', email: 'rajesh.g@example.com', mobile: '9123456784', region: 'Head Office', status: 'Active', profilePhotoUrl: 'https://i.pravatar.cc/150?u=EMP005', createdAt: pastDate(200), updatedAt: pastDate(1), joiningDate: pastDate(200), dob: '1974-01-01', gender: 'Male', employmentType: 'Permanent', jobLocation: 'Delhi (India)' },
+    { id: 'EMP006', firstName: 'Kavita', lastName: 'Rao', fullName: 'Kavita Rao', role: 'Procurement Center Manager', department: 'Procurement', email: 'kavita.r@example.com', mobile: '9123456785', region: 'Hanmakonda', status: 'Active', reportingManagerId: 'EMP005', profilePhotoUrl: 'https://i.pravatar.cc/150?u=EMP006', createdAt: pastDate(90), updatedAt: pastDate(8), joiningDate: pastDate(90), dob: '1985-07-22', gender: 'Female', employmentType: 'Permanent', jobLocation: 'Hanmakonda (India)' },
+    { id: 'EMP007', firstName: 'Manoj', lastName: 'Reddy', fullName: 'Manoj Reddy', role: 'Factory Manager', department: 'Production', email: 'manoj.r@example.com', mobile: '9123456786', region: 'Mulugu', status: 'Active', reportingManagerId: 'EMP005', profilePhotoUrl: 'https://i.pravatar.cc/150?u=EMP007', createdAt: pastDate(110), updatedAt: pastDate(12), joiningDate: pastDate(110), dob: '1982-03-12', gender: 'Male', employmentType: 'Permanent', jobLocation: 'Mulugu (India)' },
+    { id: 'EMP008', firstName: 'Meena', lastName: 'Kumari', fullName: 'Meena Kumari', role: 'Reviewer', department: 'Compliance', email: 'meena.k@example.com', mobile: '9123456787', region: 'Head Office', status: 'Active', reportingManagerId: 'EMP005', profilePhotoUrl: 'https://i.pravatar.cc/150?u=EMP008', createdAt: pastDate(60), updatedAt: pastDate(6), joiningDate: pastDate(60), dob: '1965-10-10', gender: 'Female', employmentType: 'Permanent', jobLocation: 'Delhi (India)', retirementAge: 60 },
 ];
 
 const onboardingTasks: LifecycleTask[] = [
@@ -104,505 +104,135 @@ export const mockFarmersData: Farmer[] = [
   { id: '3501008-24-0001', fullName: 'S. Kumar', fatherName: 'S. Reddy', mobile: '9876543211', aadhaar: '**** **** 5678', village: 'Eturnagaram', mandal: 'Eturnagaram', district: 'Mulugu', status: 'Active', gender: 'Male', dob: '1982-11-15', bankName: 'HDFC Bank', bankAccountNumber: '**** **** 8876', ifscCode: 'HDFC0005678', cropType: 'Oil Palm', accountVerified: true, photoUploaded: false, remarks: null, photoUrl: undefined, assignedAgentId: 'EMP001', createdAt: pastDate(60), updatedAt: pastDate(4) },
   { id: '0702001-24-0001', fullName: 'M. Laxmi', fatherName: 'M. Gupta', mobile: '9876543212', aadhaar: '**** **** 9012', village: 'Gorrekunta', mandal: 'Geesugonda', district: 'Warangal', status: 'Inactive', gender: 'Female', dob: '1990-02-10', bankName: 'ICICI Bank', bankAccountNumber: '**** **** 4321', ifscCode: 'ICIC0009012', cropType: 'Oil Palm', accountVerified: false, photoUploaded: true, remarks: 'Account inactive due to land sale.', photoUrl: 'https://i.pravatar.cc/150?u=0702001-24-0001', assignedAgentId: 'EMP001', createdAt: pastDate(70), updatedAt: pastDate(15) },
   { id: '1005001-24-0001', fullName: 'K. Srinivas', fatherName: 'K. Murthy', mobile: '9876543213', aadhaar: '**** **** 3456', village: 'Hasanparthy', mandal: 'Hasanparthy', district: 'Hanmakonda', status: 'Active', gender: 'Male', dob: '1968-07-30', bankName: 'Axis Bank', bankAccountNumber: '**** **** 6543', ifscCode: 'UTIB0003456', cropType: 'Oil Palm', accountVerified: true, photoUploaded: true, remarks: 'Participated in the drip irrigation subsidy program.', photoUrl: undefined, assignedAgentId: 'EMP001', createdAt: pastDate(45), updatedAt: pastDate(8) },
-  { id: '3502001-24-0001', fullName: 'G. Prasad', fatherName: 'G. Naidu', mobile: '9876543214', aadhaar: '**** **** 7890', village: 'Govindaraopet', mandal: 'Govindaraopet', district: 'Mulugu', status: 'Active', gender: 'Male', dob: '1978-09-05', bankName: 'State Bank of India', bankAccountNumber: '**** **** 0987', ifscCode: 'SBIN0007890', cropType: 'Oil Palm', accountVerified: false, photoUploaded: false, remarks: 'Awaiting bank account verification.', photoUrl: 'https://i.pravatar.cc/150?u=3502001-24-0001', assignedAgentId: 'EMP003', createdAt: pastDate(55), updatedAt: pastDate(1) },
+  { id: '3502001-24-0001', fullName: 'G. Prasad', fatherName: 'G. Naidu', mobile: '9876543214', aadhaar: '**** **** 7890', village: 'Govindaraopet', mandal: 'Govindaraopet', district: 'Mulugu', status: 'Active', gender: 'Male', dob: '1978-01-25', bankName: 'State Bank of India', bankAccountNumber: '**** **** 0987', ifscCode: 'SBIN0007890', cropType: 'Oil Palm', accountVerified: false, photoUploaded: false, remarks: null, photoUrl: undefined, assignedAgentId: 'EMP003', createdAt: pastDate(85), updatedAt: pastDate(2) },
 ];
 
 export const mockTasks: Task[] = [
-  { id: 'TSK001', title: 'Inspect Farmer R. Venkatesh\'s Plot', description: 'Conduct a routine inspection of plot #45B and report on crop health. Check for signs of pest infestation and verify irrigation system functionality. Document findings with photographic evidence.', assignedToId: 'EMP001', relatedFarmerId: '0701001-24-0001', dueDate: '2024-08-15', status: 'In Progress', priority: 'High', latitude: 17.98, longitude: 79.59, createdAt: pastDate(10), updatedAt: pastDate(3), completedAt: undefined },
-  { id: 'TSK002', title: 'Verify Subsidy Application #S4521', description: 'Check submitted documents for farmer S. Kumar and verify land records.', assignedToId: 'EMP003', relatedFarmerId: '3501008-24-0001', dueDate: '2024-08-10', status: 'Completed', priority: 'Medium', latitude: 18.25, longitude: 80.29, createdAt: pastDate(12), updatedAt: pastDate(1), completedAt: pastDate(1) },
-  { id: 'TSK003', title: 'Collect Soil Samples from Hanmakonda', description: 'Collect 5 soil samples from designated areas in Hasanparthy mandal. Samples should be taken from a depth of 15cm and properly labeled for lab analysis.', assignedToId: 'EMP001', dueDate: '2024-08-20', status: 'Pending', priority: 'Medium', latitude: 18.00, longitude: 79.58, createdAt: pastDate(8), updatedAt: pastDate(8), completedAt: undefined },
-  { id: 'TSK004', title: 'Review Q2 Financial Reports', description: 'Audit and approve the financial statements for the second quarter.', assignedToId: 'EMP004', dueDate: '2024-08-12', status: 'Rejected', priority: 'Low', createdAt: pastDate(20), updatedAt: pastDate(5), completedAt: undefined },
-  { id: 'TSK005', title: 'Onboard New Farmers in Mulugu', description: 'Complete the registration and onboarding process for 10 new farmers.', assignedToId: 'EMP002', dueDate: '2024-08-18', status: 'Pending', priority: 'High', createdAt: pastDate(5), updatedAt: pastDate(5), completedAt: undefined },
-];
-
-export const mockEmployeeActivity: EmployeeActivity[] = [
-  { id: 'ACT001', employeeId: 'EMP001', action: 'Completed Task', details: 'TSK002 - Verify Subsidy Application #S4521', timestamp: pastDate(1), icon: 'task' },
-  { id: 'ACT002', employeeId: 'EMP001', action: 'Updated Farmer Profile', details: 'R. Venkatesh', timestamp: pastDate(3), icon: 'employee' },
-  { id: 'ACT003', employeeId: 'EMP002', action: 'Onboarded New Farmers', details: '10 new farmers in Mulugu', timestamp: pastDate(5), icon: 'employee' },
-  { id: 'ACT004', employeeId: 'EMP003', action: 'Verified Documents', details: 'SUB002 - Aadhaar Card', timestamp: pastDate(4), icon: 'subsidy' },
-  { id: 'ACT005', employeeId: 'EMP005', action: 'Approved Sanction', details: 'SAN001 - High Value Subsidy', timestamp: pastDate(9), icon: 'payment' },
-  { id: 'ACT006', employeeId: 'EMP001', action: 'Logged Plantation Activity', details: 'Fertilizing for R. Venkatesh', timestamp: pastDate(20), icon: 'task' },
+  { id: 'TSK001', title: 'Verify R. Venkatesh Documents', description: 'Cross-check Aadhaar and land records for subsidy application SUB001.', assignedToId: 'EMP008', relatedFarmerId: '0701001-24-0001', dueDate: futureDate(2), status: 'In Progress', priority: 'High', createdAt: pastDate(1), updatedAt: pastDate(0) },
+  { id: 'TSK002', title: 'Field Visit to S. Kumar', description: 'Inspect new plantation area and verify GPS coordinates for LP002.', assignedToId: 'EMP001', relatedFarmerId: '3501008-24-0001', dueDate: futureDate(5), status: 'Pending', priority: 'Medium', latitude: 18.35, longitude: 80.42, createdAt: pastDate(2), updatedAt: pastDate(2) },
+  { id: 'TSK003', title: 'Process Payment for PB003', description: 'Release payment for K. Srinivas for procurement batch PB003.', assignedToId: 'EMP004', relatedFarmerId: '1005001-24-0001', dueDate: pastDate(1), status: 'Completed', priority: 'High', completedAt: pastDate(1), createdAt: pastDate(4), updatedAt: pastDate(1) },
+  { id: 'TSK004', title: 'Quarterly Report Generation', description: 'Generate and submit Q2 procurement and financial reports.', assignedToId: 'EMP002', dueDate: futureDate(10), status: 'Pending', priority: 'Low', createdAt: pastDate(5), updatedAt: pastDate(5) },
+  { id: 'TSK005', title: 'Follow-up on G. Prasad land', description: 'Check on irrigation installation status for LP005.', assignedToId: 'EMP003', relatedFarmerId: '3502001-24-0001', dueDate: futureDate(3), status: 'Pending', priority: 'Medium', latitude: 18.22, longitude: 80.35, createdAt: pastDate(1), updatedAt: pastDate(1) },
 ];
 
 export const mockLandParcels: LandParcel[] = [
-    { id: 'LP001', farmerId: '0701001-24-0001', surveyNumber: 'SN-WGL-01', areaAcres: 5.2, soilType: 'Red Loam', irrigationSource: 'Borewell', latitude: 17.98, longitude: 79.59, status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
-    { id: 'LP002', farmerId: '0701001-24-0001', surveyNumber: 'SN-WGL-02', areaAcres: 3.0, soilType: 'Red Loam', irrigationSource: 'Canal', latitude: 17.99, longitude: 79.60, status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
-    { id: 'LP003', farmerId: '3501008-24-0001', surveyNumber: 'SN-MUL-01', areaAcres: 10.5, soilType: 'Black Cotton', irrigationSource: 'Borewell', latitude: 18.25, longitude: 80.29, status: 'Active', createdAt: pastDate(400), updatedAt: pastDate(50) },
-    { id: 'LP004', farmerId: '1005001-24-0001', surveyNumber: 'SN-HNK-01', areaAcres: 8.0, soilType: 'Sandy Loam', irrigationSource: 'Rainfed', latitude: 18.00, longitude: 79.58, status: 'Active', createdAt: pastDate(250), updatedAt: pastDate(20) },
-    { id: 'LP005', farmerId: '1005001-24-0001', surveyNumber: 'SN-HNK-02', areaAcres: 4.5, soilType: 'Sandy Loam', irrigationSource: 'Borewell', latitude: 18.01, longitude: 79.59, status: 'Active', createdAt: pastDate(250), updatedAt: pastDate(20) },
-    { id: 'LP006', farmerId: '3502001-24-0001', surveyNumber: 'SN-MUL-02', areaAcres: 6.0, soilType: 'Red Sandy', irrigationSource: 'Canal', latitude: 18.26, longitude: 80.30, status: 'Fallow', createdAt: pastDate(300), updatedAt: pastDate(100) },
-    { id: 'LP007', farmerId: '0702001-24-0001', surveyNumber: 'SN-WGL-03', areaAcres: 7.1, soilType: 'Alluvial', irrigationSource: 'Canal', latitude: 17.97, longitude: 79.58, status: 'Sold', createdAt: pastDate(500), updatedAt: pastDate(15) },
+    { id: 'LP001', farmerId: '0701001-24-0001', surveyNumber: '123/A', areaAcres: 5.2, soilType: 'Red Loam', irrigationSource: 'Borewell', latitude: 18.00, longitude: 79.58, status: 'Active', createdAt: pastDate(50), updatedAt: pastDate(3) },
+    { id: 'LP002', farmerId: '3501008-24-0001', surveyNumber: '45/B/1', areaAcres: 10.0, soilType: 'Black Cotton', irrigationSource: 'Canal', latitude: 18.35, longitude: 80.42, status: 'Active', createdAt: pastDate(60), updatedAt: pastDate(4) },
+    { id: 'LP003', farmerId: '0702001-24-0001', surveyNumber: '210', areaAcres: 3.5, soilType: 'Red Loam', irrigationSource: 'Rainfed', latitude: 17.95, longitude: 79.62, status: 'Sold', createdAt: pastDate(70), updatedAt: pastDate(15) },
+    { id: 'LP004', farmerId: '1005001-24-0001', surveyNumber: '88/C', areaAcres: 8.0, soilType: 'Sandy Loam', irrigationSource: 'Borewell', latitude: 18.05, longitude: 79.53, status: 'Active', createdAt: pastDate(45), updatedAt: pastDate(8) },
+    { id: 'LP005', farmerId: '3502001-24-0001', surveyNumber: '15/2', areaAcres: 12.5, soilType: 'Black Cotton', irrigationSource: 'Canal', latitude: 18.22, longitude: 80.35, status: 'Active', createdAt: pastDate(85), updatedAt: pastDate(2) },
 ];
 
 export const mockLocations: Location[] = [
-    { id: 'LOC01', name: 'Warangal Central PC', type: 'Procurement Center', mandal: 'Warangal', district: 'Warangal', latitude: 17.98, longitude: 79.59, managerId: 'EMP002', createdAt: pastDate(200), updatedAt: pastDate(20) },
-    { id: 'LOC02', name: 'Mulugu Hub', type: 'Procurement Center', mandal: 'Mulugu', district: 'Mulugu', latitude: 18.25, longitude: 80.29, managerId: 'EMP003', createdAt: pastDate(180), updatedAt: pastDate(15) },
-    { id: 'LOC03', name: 'Eturnagaram Factory', type: 'Factory', mandal: 'Eturnagaram', district: 'Mulugu', latitude: 18.37, longitude: 80.43, managerId: 'EMP007', createdAt: pastDate(300), updatedAt: pastDate(45) },
-    { id: 'LOC04', name: 'Hasanparthy Warehouse', type: 'Warehouse', mandal: 'Hasanparthy', district: 'Hanmakonda', latitude: 18.06, longitude: 79.53, managerId: 'EMP006', createdAt: pastDate(150), updatedAt: pastDate(10) },
-    { id: 'LOC05', name: 'Govindaraopet Collection Point', type: 'Procurement Center', mandal: 'Govindaraopet', district: 'Mulugu', latitude: 18.24, longitude: 80.21, createdAt: pastDate(90), updatedAt: pastDate(5) },
+    { id: 'LOC001', name: 'Warangal Central PC', type: 'Procurement Center', mandal: 'Warangal', district: 'Warangal', latitude: 17.97, longitude: 79.6, managerId: 'EMP006', createdAt: pastDate(200), updatedAt: pastDate(20) },
+    { id: 'LOC002', name: 'Mulugu Factory', type: 'Factory', mandal: 'Mulugu', district: 'Mulugu', latitude: 18.18, longitude: 80.28, managerId: 'EMP007', createdAt: pastDate(300), updatedAt: pastDate(30) },
+    { id: 'LOC003', name: 'Geesugonda Warehouse', type: 'Warehouse', mandal: 'Geesugonda', district: 'Warangal', latitude: 17.90, longitude: 79.70, managerId: 'EMP002', createdAt: pastDate(150), updatedAt: pastDate(15) },
 ];
 
 export const mockProcurementBatches: ProcurementBatch[] = [
-    { id: 'PB001', farmerId: '0701001-24-0001', procurementCenterId: 'LOC01', weightKg: 1250.5, qualityGrade: 'A', oilContentPercentage: 22.5, procurementDate: pastDate(10), pricePerKg: 12.5, totalAmount: 15631.25, paymentStatus: 'Paid', status: 'Active', createdAt: pastDate(10), updatedAt: pastDate(8) },
-    { id: 'PB002', farmerId: '3501008-24-0001', procurementCenterId: 'LOC02', weightKg: 2100.0, qualityGrade: 'B', oilContentPercentage: 20.1, procurementDate: pastDate(8), pricePerKg: 11.0, totalAmount: 23100.00, paymentStatus: 'Pending', status: 'Active', createdAt: pastDate(8), updatedAt: pastDate(8) },
-    { id: 'PB003', farmerId: '1005001-24-0001', procurementCenterId: 'LOC04', weightKg: 850.75, qualityGrade: 'A', oilContentPercentage: 23.1, procurementDate: pastDate(5), pricePerKg: 12.5, totalAmount: 10634.38, paymentStatus: 'Partial', status: 'Active', createdAt: pastDate(5), updatedAt: pastDate(2) },
-    { id: 'PB004', farmerId: '3502001-24-0001', procurementCenterId: 'LOC05', weightKg: 1500.0, qualityGrade: 'C', oilContentPercentage: 18.5, procurementDate: pastDate(2), pricePerKg: 9.5, totalAmount: 14250.00, paymentStatus: 'Pending', status: 'Cancelled', createdAt: pastDate(2), updatedAt: pastDate(1) },
+    { id: 'PB001', farmerId: '0701001-24-0001', procurementCenterId: 'LOC001', weightKg: 1250.5, qualityGrade: 'A', oilContentPercentage: 22.5, procurementDate: pastDate(5), pricePerKg: 20.50, totalAmount: 25635.25, paymentStatus: 'Paid', status: 'Active', createdAt: pastDate(5), updatedAt: pastDate(4) },
+    { id: 'PB002', farmerId: '3501008-24-0001', procurementCenterId: 'LOC002', weightKg: 2100.0, qualityGrade: 'B', oilContentPercentage: 20.1, procurementDate: pastDate(8), pricePerKg: 18.00, totalAmount: 37800.00, paymentStatus: 'Partial', status: 'Active', createdAt: pastDate(8), updatedAt: pastDate(8) },
+    { id: 'PB003', farmerId: '1005001-24-0001', procurementCenterId: 'LOC001', weightKg: 850.0, qualityGrade: 'A', oilContentPercentage: 23.1, procurementDate: pastDate(10), pricePerKg: 21.00, totalAmount: 17850.00, paymentStatus: 'Paid', status: 'Active', createdAt: pastDate(10), updatedAt: pastDate(9) },
+    { id: 'PB004', farmerId: '3502001-24-0001', procurementCenterId: 'LOC002', weightKg: 3500.2, qualityGrade: 'C', oilContentPercentage: 18.5, procurementDate: pastDate(12), pricePerKg: 15.50, totalAmount: 54253.10, paymentStatus: 'Pending', status: 'Cancelled', createdAt: pastDate(12), updatedAt: pastDate(11) },
 ];
 
 export const mockPayments: Payment[] = [
-    { id: 'PAY001', procurementBatchId: 'PB001', farmerId: '0701001-24-0001', amount: 15631.25, paymentDate: pastDate(8), transactionId: 'TXN12345678', paymentMethod: 'Bank Transfer', status: 'Success', createdAt: pastDate(8), updatedAt: pastDate(8) },
-    { id: 'PAY002', procurementBatchId: 'PB003', farmerId: '1005001-24-0001', amount: 5000.00, paymentDate: pastDate(2), transactionId: 'TXN98765432', paymentMethod: 'Bank Transfer', status: 'Success', createdAt: pastDate(2), updatedAt: pastDate(2) },
+    { id: 'PAY001', procurementBatchId: 'PB001', farmerId: '0701001-24-0001', amount: 25635.25, paymentDate: pastDate(4), transactionId: 'TRN' + Date.now(), paymentMethod: 'Bank Transfer', status: 'Success', createdAt: pastDate(4), updatedAt: pastDate(4) },
+    { id: 'PAY002', procurementBatchId: 'PB002', farmerId: '3501008-24-0001', amount: 20000.00, paymentDate: pastDate(7), transactionId: 'TRN' + (Date.now() - 1000), paymentMethod: 'Bank Transfer', status: 'Success', createdAt: pastDate(7), updatedAt: pastDate(7) },
+    { id: 'PAY003', procurementBatchId: 'PB003', farmerId: '1005001-24-0001', amount: 17850.00, paymentDate: pastDate(9), transactionId: 'TRN' + (Date.now() - 2000), paymentMethod: 'Cheque', status: 'Success', createdAt: pastDate(9), updatedAt: pastDate(9) },
 ];
 
-export const mockSubsidyApplications: SubsidyApplication[] = [
-    { id: 'SUB001', farmerId: '1005001-24-0001', applicationDate: pastDate(40), subsidyType: 'Drip Irrigation', status: 'Approved', requestedAmount: 50000, approvedAmount: 45000, notes: 'Approved with 10% reduction.', createdAt: pastDate(40), updatedAt: pastDate(10) },
-    { id: 'SUB002', farmerId: '3501008-24-0001', applicationDate: pastDate(35), subsidyType: 'New Seedlings', status: 'Under Review', requestedAmount: 25000, createdAt: pastDate(35), updatedAt: pastDate(5) },
-    { id: 'SUB003', farmerId: '3502001-24-0001', applicationDate: pastDate(30), subsidyType: 'Fertilizer', status: 'Documents Pending', requestedAmount: 10000, createdAt: pastDate(30), updatedAt: pastDate(30) },
-    { id: 'SUB004', farmerId: '0701001-24-0001', applicationDate: pastDate(25), subsidyType: 'Drip Irrigation', status: 'Rejected', requestedAmount: 60000, notes: 'Ineligible due to prior subsidy claim.', createdAt: pastDate(25), updatedAt: pastDate(15) },
-];
-
-export const mockDocuments: Document[] = [
-    { id: 'DOC001', subsidyApplicationId: 'SUB002', documentType: 'Aadhaar Card', status: 'Verified', verifiedById: 'EMP003', verifiedAt: pastDate(4), createdAt: pastDate(35), updatedAt: pastDate(4) },
-    { id: 'DOC002', subsidyApplicationId: 'SUB002', documentType: 'Land Record (Pattadar)', status: 'Pending', createdAt: pastDate(35), updatedAt: pastDate(35) },
-    { id: 'DOC003', subsidyApplicationId: 'SUB003', documentType: 'Aadhaar Card', status: 'Pending', createdAt: pastDate(30), updatedAt: pastDate(30) },
+export const mockQualityInspections: QualityInspection[] = [
+    { id: 'QI001', procurementBatchId: 'PB001', inspectorId: 'EMP006', inspectionDate: pastDate(5), ffaLevel: 2.5, moistureContent: 0.2, bruisingPercentage: 5, status: 'Passed', createdAt: pastDate(5), updatedAt: pastDate(5) },
+    { id: 'QI002', procurementBatchId: 'PB004', inspectorId: 'EMP007', inspectionDate: pastDate(12), ffaLevel: 5.8, moistureContent: 0.8, bruisingPercentage: 25, status: 'Failed', notes: 'High bruising and FFA levels.', createdAt: pastDate(12), updatedAt: pastDate(12) },
 ];
 
 export const mockDistricts: District[] = [
-    { id: 'DIST10', name: 'Hanmakonda', code: 10, status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'DIST35', name: 'Mulugu', code: 35, status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
+  { id: 'DIST07', name: 'Warangal', code: 7, status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+  { id: 'DIST10', name: 'Hanmakonda', code: 10, status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+  { id: 'DIST35', name: 'Mulugu', code: 35, status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
 ];
 
 export const mockMandals: Mandal[] = [
-    // Hanmakonda District
-    { id: 'MAND1001', name: 'Bheemadavarpalle', districtId: 'DIST10', code: '01', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'MAND1002', name: 'Dharmasagar', districtId: 'DIST10', code: '02', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'MAND1003', name: 'Elkathurthi', districtId: 'DIST10', code: '03', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'MAND1004', name: 'Hanamkonda', districtId: 'DIST10', code: '04', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'MAND1005', name: 'Hasanparthy', districtId: 'DIST10', code: '05', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'MAND1006', name: 'Inavolu', districtId: 'DIST10', code: '06', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'MAND1007', name: 'Kamalapur', districtId: 'DIST10', code: '07', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'MAND1008', name: 'Khazipet', districtId: 'DIST10', code: '08', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'MAND1009', name: 'Velair', districtId: 'DIST10', code: '09', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    // Mulugu District
-    { id: 'MAND3501', name: 'Eturnagaram', districtId: 'DIST35', code: '01', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'MAND3502', name: 'Govindaraopet', districtId: 'DIST35', code: '02', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'MAND3503', name: 'Kannaigudem', districtId: 'DIST35', code: '03', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'MAND3504', name: 'Mangapet', districtId: 'DIST35', code: '04', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'MAND3505', name: 'Mulugu', districtId: 'DIST35', code: '05', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'MAND3506', name: 'Tadvai (SS)', districtId: 'DIST35', code: '06', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'MAND3507', name: 'Venkatapur', districtId: 'DIST35', code: '07', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'MAND3508', name: 'Venkatapuram', districtId: 'DIST35', code: '08', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'MAND3509', name: 'Wazeed', districtId: 'DIST35', code: '09', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
+  { id: 'MAND0701', name: 'Warangal', districtId: 'DIST07', code: '01', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+  { id: 'MAND0702', name: 'Geesugonda', districtId: 'DIST07', code: '02', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+  { id: 'MAND1005', name: 'Hasanparthy', districtId: 'DIST10', code: '05', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+  { id: 'MAND3501', name: 'Mulugu', districtId: 'DIST35', code: '01', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+  { id: 'MAND3502', name: 'Govindaraopet', districtId: 'DIST35', code: '02', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+  { id: 'MAND3508', name: 'Eturnagaram', districtId: 'DIST35', code: '08', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
 ];
 
 export const mockVillages: Village[] = [
-    // Hanmakonda -> Bheemadavarpalle (MAND1001)
-    { id: 'VILL1001001', name: 'Ananthasagar', mandalId: 'MAND1001', code: '001', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1001002', name: 'Aravapally', mandalId: 'MAND1001', code: '002', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1001003', name: 'Baopet', mandalId: 'MAND1001', code: '003', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1001004', name: 'Damera', mandalId: 'MAND1001', code: '004', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1001005', name: 'Dandepalle', mandalId: 'MAND1001', code: '005', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1001006', name: 'Devannapeta', mandalId: 'MAND1001', code: '006', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1001007', name: 'Elkathurthy', mandalId: 'MAND1001', code: '007', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1001008', name: 'Gopalpur', mandalId: 'MAND1001', code: '008', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1001009', name: 'Hasanparthy', mandalId: 'MAND1001', code: '009', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1001010', name: 'Jaigiri', mandalId: 'MAND1001', code: '010', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1001011', name: 'Jeelgul', mandalId: 'MAND1001', code: '011', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1001012', name: 'Keshwapur', mandalId: 'MAND1001', code: '012', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1001013', name: 'Kothulnadum', mandalId: 'MAND1001', code: '013', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1001014', name: 'Laknavaram', mandalId: 'MAND1001', code: '014', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1001015', name: 'Madipalle', mandalId: 'MAND1001', code: '015', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1001016', name: 'Mallaredipally', mandalId: 'MAND1001', code: '016', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1001017', name: 'Muchela', mandalId: 'MAND1001', code: '017', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1001018', name: 'Nagaram', mandalId: 'MAND1001', code: '018', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1001019', name: 'Pembartthy', mandalId: 'MAND1001', code: '019', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1001020', name: 'Penchakalpeta', mandalId: 'MAND1001', code: '020', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1001021', name: 'Siddapur', mandalId: 'MAND1001', code: '021', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1001022', name: 'Sudanpalle', mandalId: 'MAND1001', code: '022', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1001023', name: 'Suraram', mandalId: 'MAND1001', code: '023', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1001024', name: 'Thimmapur', mandalId: 'MAND1001', code: '024', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1001025', name: 'Vangapahad', mandalId: 'MAND1001', code: '025', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1001026', name: 'Veeranarayanap', mandalId: 'MAND1001', code: '026', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1001027', name: 'Yellapur', mandalId: 'MAND1001', code: '027', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    // Hanmakonda -> Dharmasagar (MAND1002)
-    { id: 'VILL1002001', name: 'Bheemaram', mandalId: 'MAND1002', code: '001', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1002002', name: 'Chinthagattu', mandalId: 'MAND1002', code: '002', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1002003', name: 'Devunoor', mandalId: 'MAND1002', code: '003', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1002004', name: 'Dharmapur', mandalId: 'MAND1002', code: '004', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1002005', name: 'Dharmasagar', mandalId: 'MAND1002', code: '005', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1002006', name: 'Jhanakipur', mandalId: 'MAND1002', code: '006', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1002007', name: 'Kyathampalle', mandalId: 'MAND1002', code: '007', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1002008', name: 'Mallakpalli', mandalId: 'MAND1002', code: '008', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1002009', name: 'Mulkanoor', mandalId: 'MAND1002', code: '009', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1002010', name: 'Musthafapur', mandalId: 'MAND1002', code: '010', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1002011', name: 'Narayanagiri', mandalId: 'MAND1002', code: '011', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1002012', name: 'Peddapendayal', mandalId: 'MAND1002', code: '012', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1002013', name: 'Ratnagiri', mandalId: 'MAND1002', code: '013', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1002014', name: 'Somadevrapalli', mandalId: 'MAND1002', code: '014', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1002015', name: 'Thatikayala', mandalId: 'MAND1002', code: '015', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1002016', name: 'Unikicherla', mandalId: 'MAND1002', code: '016', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1002017', name: 'Yelukurthi Dharm', mandalId: 'MAND1002', code: '017', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    // Hanmakonda -> Elkathurthi (MAND1003)
-    { id: 'VILL1003001', name: 'Arapalli', mandalId: 'MAND1003', code: '001', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1003002', name: 'Guntrupally', mandalId: 'MAND1003', code: '002', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1003003', name: 'Indranagar', mandalId: 'MAND1003', code: '003', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1003004', name: 'Kothapalli', mandalId: 'MAND1003', code: '004', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1003005', name: 'Madikonda', mandalId: 'MAND1003', code: '005', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1003006', name: 'Rampur', mandalId: 'MAND1003', code: '006', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1003007', name: 'Shyampet', mandalId: 'MAND1003', code: '007', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1003008', name: 'Somidi', mandalId: 'MAND1003', code: '008', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1003009', name: 'Tekulaguden', mandalId: 'MAND1003', code: '009', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1003010', name: 'Tharalapalli', mandalId: 'MAND1003', code: '010', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    // Hanmakonda -> Hanamkonda (MAND1004)
-    { id: 'VILL1004001', name: 'Hanamkonda', mandalId: 'MAND1004', code: '001', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1004002', name: 'Palvelpula', mandalId: 'MAND1004', code: '002', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1004003', name: 'Waddepalle', mandalId: 'MAND1004', code: '003', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    // Hanmakonda -> Hasanparthy (MAND1005)
-    { id: 'VILL1005001', name: 'Ananthasagar', mandalId: 'MAND1005', code: '001', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1005002', name: 'Aravapally', mandalId: 'MAND1005', code: '002', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1005003', name: 'Desarajupalle', mandalId: 'MAND1005', code: '003', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1005004', name: 'Gunded', mandalId: 'MAND1005', code: '004', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1005005', name: 'Jaigiri', mandalId: 'MAND1005', code: '005', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1005006', name: 'Jujnoor', mandalId: 'MAND1005', code: '006', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1005007', name: 'Lingavarigudem', mandalId: 'MAND1005', code: '007', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1005008', name: 'Mulkalagudem', mandalId: 'MAND1005', code: '008', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1005009', name: 'Narsimlagudde', mandalId: 'MAND1005', code: '009', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1005010', name: 'Ontimamidipally', mandalId: 'MAND1005', code: '010', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1005011', name: 'Panthini', mandalId: 'MAND1005', code: '011', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1005012', name: 'Punnel', mandalId: 'MAND1005', code: '012', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1005013', name: 'Ramnagar', mandalId: 'MAND1005', code: '013', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1005014', name: 'Singaram', mandalId: 'MAND1005', code: '014', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1005015', name: 'Uduthagudem', mandalId: 'MAND1005', code: '015', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1005016', name: 'Vanamalakanapa', mandalId: 'MAND1005', code: '016', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1005017', name: 'Venkata', mandalId: 'MAND1005', code: '017', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    // Hanmakonda -> Inavolu (MAND1006)
-    { id: 'VILL1006001', name: 'Ambala', mandalId: 'MAND1006', code: '001', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1006002', name: 'Bheempalli', mandalId: 'MAND1006', code: '002', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1006003', name: 'Dharmaram', mandalId: 'MAND1006', code: '003', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1006004', name: 'Garneapally', mandalId: 'MAND1006', code: '004', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1006005', name: 'Gudur', mandalId: 'MAND1006', code: '005', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1006006', name: 'Inavolu', mandalId: 'MAND1006', code: '006', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1006007', name: 'Kakkieralapally', mandalId: 'MAND1006', code: '007', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1006008', name: 'Kondaparthy', mandalId: 'MAND1006', code: '008', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1006009', name: 'Manchinillabanda', mandalId: 'MAND1006', code: '009', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1006010', name: 'Mutharam (P.K)', mandalId: 'MAND1006', code: '010', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1006011', name: 'Nandadam', mandalId: 'MAND1006', code: '011', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1006012', name: 'Pantini', mandalId: 'MAND1006', code: '012', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    // Hanmakonda -> Kamalapur (MAND1007)
-    { id: 'VILL1007001', name: 'Ambala', mandalId: 'MAND1007', code: '001', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1007002', name: 'Bheempalli', mandalId: 'MAND1007', code: '002', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1007003', name: 'Gudur', mandalId: 'MAND1007', code: '003', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1007004', name: 'Guniparthi', mandalId: 'MAND1007', code: '004', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1007005', name: 'Kamalapur', mandalId: 'MAND1007', code: '005', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1007006', name: 'Kaniparthi', mandalId: 'MAND1007', code: '006', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1007007', name: 'Kannur', mandalId: 'MAND1007', code: '007', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1007008', name: 'Madannapeta', mandalId: 'MAND1007', code: '008', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1007009', name: 'Mallur', mandalId: 'MAND1007', code: '009', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1007010', name: 'Marripalligudem', mandalId: 'MAND1007', code: '010', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1007011', name: 'Nerella', mandalId: 'MAND1007', code: '011', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1007012', name: 'Sanigaram', mandalId: 'MAND1007', code: '012', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1007013', name: 'Uppal', mandalId: 'MAND1007', code: '013', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1007014', name: 'Vangapalle', mandalId: 'MAND1007', code: '014', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    // Hanmakonda -> Khazipet (MAND1008)
-    { id: 'VILL1008001', name: 'Amma', mandalId: 'MAND1008', code: '001', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1008002', name: 'Battupalli', mandalId: 'MAND1008', code: '002', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1008003', name: 'Kadipikonda', mandalId: 'MAND1008', code: '003', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1008004', name: 'Kazipet', mandalId: 'MAND1008', code: '004', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1008005', name: 'Madikonda', mandalId: 'MAND1008', code: '005', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1008006', name: 'Rampur', mandalId: 'MAND1008', code: '006', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1008007', name: 'Shyampet', mandalId: 'MAND1008', code: '007', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1008008', name: 'Somidi', mandalId: 'MAND1008', code: '008', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1008009', name: 'Tekulaguden', mandalId: 'MAND1008', code: '009', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1008010', name: 'Tharalapalli', mandalId: 'MAND1008', code: '010', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    // Hanmakonda -> Velair (MAND1009)
-    { id: 'VILL1009001', name: 'Chnitha Thanda', mandalId: 'MAND1009', code: '001', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1009002', name: 'Kammaripeta', mandalId: 'MAND1009', code: '002', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1009003', name: 'Laxmithanda', mandalId: 'MAND1009', code: '003', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1009004', name: 'Shalapally', mandalId: 'MAND1009', code: '004', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1009005', name: 'Sodas', mandalId: 'MAND1009', code: '005', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1009006', name: 'Upparapelli', mandalId: 'MAND1009', code: '006', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL1009007', name: 'Velair', mandalId: 'MAND1009', code: '007', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    // Mulugu -> Eturnagaram (MAND3501)
-    { id: 'VILL3501001', name: 'Akulavari Ghana', mandalId: 'MAND3501', code: '001', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3501002', name: 'Allamvari Ghana', mandalId: 'MAND3501', code: '002', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3501003', name: 'Alugupalli', mandalId: 'MAND3501', code: '003', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3501004', name: 'Banaji Bandham', mandalId: 'MAND3501', code: '004', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3501005', name: 'Chalpaka', mandalId: 'MAND3501', code: '005', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3501006', name: 'Chinabo', mandalId: 'MAND3501', code: '006', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3501007', name: 'Ekkela', mandalId: 'MAND3501', code: '007', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3501008', name: 'Ellapur Koyagud', mandalId: 'MAND3501', code: '008', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3501009', name: 'Eturnagaram', mandalId: 'MAND3501', code: '009', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3501010', name: 'Gogubelle (ROFI', mandalId: 'MAND3501', code: '010', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3501011', name: 'Lingapur', mandalId: 'MAND3501', code: '011', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3501012', name: 'Manaspalle', mandalId: 'MAND3501', code: '012', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3501013', name: 'Mullakatla', mandalId: 'MAND3501', code: '013', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3501014', name: 'Papkapur', mandalId: 'MAND3501', code: '014', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3501015', name: 'Pedda Venkatap', mandalId: 'MAND3501', code: '015', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3501016', name: 'Ramannagudem', mandalId: 'MAND3501', code: '016', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3501017', name: 'Rampur(Agrahar', mandalId: 'MAND3501', code: '017', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3501018', name: 'Rampur(Agrahar', mandalId: 'MAND3501', code: '018', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3501019', name: 'Roheer', mandalId: 'MAND3501', code: '019', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3501020', name: 'Royyur (ROFR)', mandalId: 'MAND3501', code: '020', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3501021', name: 'Shapalle', mandalId: 'MAND3501', code: '021', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3501022', name: 'Shivapur', mandalId: 'MAND3501', code: '022', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3501023', name: 'Shivapur (ROFR', mandalId: 'MAND3501', code: '023', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3501024', name: 'Veerapuram (RO', mandalId: 'MAND3501', code: '024', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3501025', name: 'Medaram', mandalId: 'MAND3501', code: '025', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    // Mulugu -> Govindaraopet (MAND3502)
-    { id: 'VILL3502001', name: 'Bussapur', mandalId: 'MAND3502', code: '001', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3502002', name: 'Chalwai', mandalId: 'MAND3502', code: '002', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3502003', name: 'Karlappalle', mandalId: 'MAND3502', code: '003', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3502004', name: 'Laknavaram', mandalId: 'MAND3502', code: '004', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3502005', name: 'Machchapur', mandalId: 'MAND3502', code: '005', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3502006', name: 'Moddulagudem (', mandalId: 'MAND3502', code: '006', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3502007', name: 'Motlagudem', mandalId: 'MAND3502', code: '007', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3502008', name: 'Motlagudem (RC', mandalId: 'MAND3502', code: '008', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3502009', name: 'Muthapur', mandalId: 'MAND3502', code: '009', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3502010', name: 'Muthapur (ROFR', mandalId: 'MAND3502', code: '010', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3502011', name: 'Pasranagaram', mandalId: 'MAND3502', code: '011', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3502012', name: 'Pasranagaram (F', mandalId: 'MAND3502', code: '012', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3502013', name: 'Prajectnagar (RC', mandalId: 'MAND3502', code: '013', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3502014', name: 'Rampur', mandalId: 'MAND3502', code: '014', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3502015', name: 'Rangapur', mandalId: 'MAND3502', code: '015', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3502016', name: 'Rangapuram (RC', mandalId: 'MAND3502', code: '016', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3502017', name: 'Kannaigudem', mandalId: 'MAND3502', code: '017', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    // Mulugu -> Kannaigudem (MAND3503)
-    { id: 'VILL3503001', name: 'Ailapur', mandalId: 'MAND3503', code: '001', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3503002', name: 'Andukpalle', mandalId: 'MAND3503', code: '002', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3503003', name: 'Bhopathipuram', mandalId: 'MAND3503', code: '003', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3503004', name: 'Bhopathipuram (', mandalId: 'MAND3503', code: '004', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3503005', name: 'Buttaigudem', mandalId: 'MAND3503', code: '005', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3503006', name: 'Chityal', mandalId: 'MAND3503', code: '006', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3503007', name: 'Chityal (ROFR)', mandalId: 'MAND3503', code: '007', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3503008', name: 'Devadh', mandalId: 'MAND3503', code: '008', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3503009', name: 'Gangaram Gutta', mandalId: 'MAND3503', code: '009', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3503010', name: 'Gangugudem', mandalId: 'MAND3503', code: '010', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3503011', name: 'Guttalagangaram', mandalId: 'MAND3503', code: '011', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3503012', name: 'Kanthanpalle', mandalId: 'MAND3503', code: '012', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3503013', name: 'Kothuru', mandalId: 'MAND3503', code: '013', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3503014', name: 'Laxmipuram', mandalId: 'MAND3503', code: '014', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3503015', name: 'Muppanapalle', mandalId: 'MAND3503', code: '015', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3503016', name: 'Padigapur(Pattig', mandalId: 'MAND3503', code: '016', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3503017', name: 'Rajannapeta', mandalId: 'MAND3503', code: '017', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3503018', name: 'Sarvai', mandalId: 'MAND3503', code: '018', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3503019', name: 'Thupakulaguder', mandalId: 'MAND3503', code: '019', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3503020', name: 'Thupakulaguder', mandalId: 'MAND3503', code: '020', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    // Mulugu -> Mangapet (MAND3504)
-    { id: 'VILL3504001', name: 'Akinepalli', mandalId: 'MAND3504', code: '001', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3504002', name: 'Barlagudem (D)', mandalId: 'MAND3504', code: '002', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3504003', name: 'Balannagudem', mandalId: 'MAND3504', code: '003', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3504004', name: 'Balannagudem (', mandalId: 'MAND3504', code: '004', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3504005', name: 'Brahmanapalli', mandalId: 'MAND3504', code: '005', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3504006', name: 'Cherupalle', mandalId: 'MAND3504', code: '006', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3504007', name: 'Chunchupalle', mandalId: 'MAND3504', code: '007', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3504008', name: 'Domeda', mandalId: 'MAND3504', code: '008', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3504009', name: 'Domeda (ROFR)', mandalId: 'MAND3504', code: '009', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3504010', name: 'Kamalapur', mandalId: 'MAND3504', code: '010', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3504011', name: 'Kathigudem', mandalId: 'MAND3504', code: '011', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3504012', name: 'Komatipalle', mandalId: 'MAND3504', code: '012', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3504013', name: 'Kothachipurudub', mandalId: 'MAND3504', code: '013', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3504014', name: 'Mallur', mandalId: 'MAND3504', code: '014', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3504015', name: 'Mangapet', mandalId: 'MAND3504', code: '015', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3504016', name: 'Narsaigudem (R', mandalId: 'MAND3504', code: '016', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3504017', name: 'Narsimhasagar', mandalId: 'MAND3504', code: '017', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3504018', name: 'Narsimhasagar (', mandalId: 'MAND3504', code: '018', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3504019', name: 'Poredupalle', mandalId: 'MAND3504', code: '019', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3504020', name: 'Rajupet', mandalId: 'MAND3504', code: '020', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3504021', name: 'Ramachandrunip', mandalId: 'MAND3504', code: '021', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3504022', name: 'Thakkallagudem', mandalId: 'MAND3504', code: '022', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3504023', name: 'Thimmapet', mandalId: 'MAND3504', code: '023', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3504024', name: 'Thimmapuram (F', mandalId: 'MAND3504', code: '024', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3504025', name: 'Thondyal Laxmip', mandalId: 'MAND3504', code: '025', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3504026', name: 'Thondyal Laxmip', mandalId: 'MAND3504', code: '026', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3504027', name: 'Wadagudem', mandalId: 'MAND3504', code: '027', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3504028', name: 'Kothur Motlagud', mandalId: 'MAND3504', code: '028', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3504029', name: 'Narsapur', mandalId: 'MAND3504', code: '029', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    // Mulugu -> Mulugu (MAND3505)
-    { id: 'VILL3505001', name: 'Abbapuram', mandalId: 'MAND3505', code: '001', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3505002', name: 'Annampalle', mandalId: 'MAND3505', code: '002', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3505003', name: 'Bandarupalle', mandalId: 'MAND3505', code: '003', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3505004', name: 'Incherla', mandalId: 'MAND3505', code: '004', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3505005', name: 'Jaggannapeta', mandalId: 'MAND3505', code: '005', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3505006', name: 'Jakaram', mandalId: 'MAND3505', code: '006', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3505007', name: 'Kannaigudem', mandalId: 'MAND3505', code: '007', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3505008', name: 'Kasimdevipeta', mandalId: 'MAND3505', code: '008', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3505009', name: 'Kothur', mandalId: 'MAND3505', code: '009', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3505010', name: 'Mallampalle', mandalId: 'MAND3505', code: '010', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3505011', name: 'Mulugu', mandalId: 'MAND3505', code: '011', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3505012', name: 'Pathipalle', mandalId: 'MAND3505', code: '012', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3505013', name: 'Potlapur', mandalId: 'MAND3505', code: '013', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3505014', name: 'Pathipalle (ROFF', mandalId: 'MAND3505', code: '014', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3505015', name: 'Ramchandrapur-', mandalId: 'MAND3505', code: '015', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3505016', name: 'Sarvapuram', mandalId: 'MAND3505', code: '016', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    // Mulugu -> Tadvai (SS) (MAND3506)
-    { id: 'VILL3506001', name: 'Adharwayi', mandalId: 'MAND3506', code: '001', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506002', name: 'Alligudem', mandalId: 'MAND3506', code: '002', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506003', name: 'Amkampalle', mandalId: 'MAND3506', code: '003', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506004', name: 'Annaram', mandalId: 'MAND3506', code: '004', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506005', name: 'Bandal', mandalId: 'MAND3506', code: '005', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506006', name: 'Bayyakkapet', mandalId: 'MAND3506', code: '006', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506007', name: 'Beerelli', mandalId: 'MAND3506', code: '007', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506008', name: 'Bodigudem', mandalId: 'MAND3506', code: '008', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506009', name: 'Bollepalli', mandalId: 'MAND3506', code: '009', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506010', name: 'Chowled', mandalId: 'MAND3506', code: '010', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506011', name: 'Dameravai', mandalId: 'MAND3506', code: '011', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506012', name: 'Durgaram', mandalId: 'MAND3506', code: '012', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506013', name: 'Gangram', mandalId: 'MAND3506', code: '013', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506014', name: 'Gonepalle', mandalId: 'MAND3506', code: '014', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506015', name: 'Immadi Gudem', mandalId: 'MAND3506', code: '015', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506016', name: 'Immadi Gudem (', mandalId: 'MAND3506', code: '016', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506017', name: 'Jampangavai', mandalId: 'MAND3506', code: '017', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506018', name: 'Kalwapalle', mandalId: 'MAND3506', code: '018', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506019', name: 'Kalwapalle (ROF', mandalId: 'MAND3506', code: '019', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506020', name: 'Kamaram (P.A) (', mandalId: 'MAND3506', code: '020', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506021', name: 'Kamaram (Pattita', mandalId: 'MAND3506', code: '021', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506022', name: 'Kamsettigudem', mandalId: 'MAND3506', code: '022', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506023', name: 'Kannepally (ROF', mandalId: 'MAND3506', code: '023', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506024', name: 'Katapuram', mandalId: 'MAND3506', code: '024', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506025', name: 'Kondaparthi', mandalId: 'MAND3506', code: '025', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506026', name: 'Lavval', mandalId: 'MAND3506', code: '026', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506027', name: 'Lingala', mandalId: 'MAND3506', code: '027', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506028', name: 'Lingala (ROFR)', mandalId: 'MAND3506', code: '028', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506029', name: 'Madaram', mandalId: 'MAND3506', code: '029', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506030', name: 'Medaram (Jathar', mandalId: 'MAND3506', code: '030', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506031', name: 'Narlapur', mandalId: 'MAND3506', code: '031', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506032', name: 'Narsapur (P.A)', mandalId: 'MAND3506', code: '032', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506033', name: 'Narsapur (P.A) (F', mandalId: 'MAND3506', code: '033', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506034', name: 'Narsapur (P.L)', mandalId: 'MAND3506', code: '034', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506035', name: 'Oorattam', mandalId: 'MAND3506', code: '035', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506036', name: 'Pambapur', mandalId: 'MAND3506', code: '036', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506037', name: 'Pocha Pur', mandalId: 'MAND3506', code: '037', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506038', name: 'Rampur (ROFR)', mandalId: 'MAND3506', code: '038', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506039', name: 'Tadvai', mandalId: 'MAND3506', code: '039', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506040', name: 'Vengalapuram', mandalId: 'MAND3506', code: '040', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506041', name: 'Venkannagudem', mandalId: 'MAND3506', code: '041', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506042', name: 'Ashannaguda Ye', mandalId: 'MAND3506', code: '042', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3506043', name: 'Katnarsapur', mandalId: 'MAND3506', code: '043', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    // Mulugu -> Venkatapur (MAND3507)
-    { id: 'VILL3507001', name: 'Adavirangapuran', mandalId: 'MAND3507', code: '001', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3507002', name: 'Enchencherupall', mandalId: 'MAND3507', code: '002', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3507003', name: 'Laxmidevipet', mandalId: 'MAND3507', code: '003', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3507004', name: 'Nallagunta', mandalId: 'MAND3507', code: '004', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3507005', name: 'Narasapuram', mandalId: 'MAND3507', code: '005', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3507006', name: 'Ramanujapur', mandalId: 'MAND3507', code: '006', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3507007', name: 'Thimmapur', mandalId: 'MAND3507', code: '007', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3507008', name: 'Venkatapur', mandalId: 'MAND3507', code: '008', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3507009', name: 'Palampet', mandalId: 'MAND3507', code: '009', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    // Mulugu -> Venkatapuram (MAND3508)
-    { id: 'VILL3508001', name: 'Alubaka (G)', mandalId: 'MAND3508', code: '001', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3508002', name: 'Ankannagudem (', mandalId: 'MAND3508', code: '002', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3508003', name: 'Barlagattugudem', mandalId: 'MAND3508', code: '003', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3508004', name: 'Barlagudem (Z)', mandalId: 'MAND3508', code: '004', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3508005', name: 'Bodapuram (G)', mandalId: 'MAND3508', code: '005', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3508006', name: 'Desarajupalle (G', mandalId: 'MAND3508', code: '006', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3508007', name: 'Desirajupalli (Z)', mandalId: 'MAND3508', code: '007', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3508008', name: 'Ippagudem (Z)', mandalId: 'MAND3508', code: '008', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3508009', name: 'Koya Bestagudei', mandalId: 'MAND3508', code: '009', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3508010', name: 'Mallapuram (G)', mandalId: 'MAND3508', code: '010', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3508011', name: 'Mari', mandalId: 'MAND3508', code: '011', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3508012', name: 'Nuguru (G)', mandalId: 'MAND3508', code: '012', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3508013', name: 'Nuguru (Z)', mandalId: 'MAND3508', code: '013', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3508014', name: 'Palem (G)', mandalId: 'MAND3508', code: '014', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3508015', name: 'Palem (Z)', mandalId: 'MAND3508', code: '015', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3508016', name: 'Pujarigudem (Z)', mandalId: 'MAND3508', code: '016', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3508017', name: 'Punem Veerapur', mandalId: 'MAND3508', code: '017', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3508018', name: 'Rachapalli (G)', mandalId: 'MAND3508', code: '018', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3508019', name: 'Sudibaka (G)', mandalId: 'MAND3508', code: '019', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3508020', name: 'Sudibaka (Z)', mandalId: 'MAND3508', code: '020', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3508021', name: 'Tippapuram (G)', mandalId: 'MAND3508', code: '021', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3508022', name: 'Up', mandalId: 'MAND3508', code: '022', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3508023', name: 'Veerabhadraram', mandalId: 'MAND3508', code: '023', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3508024', name: 'Venkatapuram (', mandalId: 'MAND3508', code: '024', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3508025', name: 'Wadagudem', mandalId: 'MAND3508', code: '025', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3508026', name: 'Wadagudem (Z)', mandalId: 'MAND3508', code: '026', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3508027', name: 'Bandagudem (G)', mandalId: 'MAND3508', code: '027', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3508028', name: 'Bandarupally(G)', mandalId: 'MAND3508', code: '028', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3508029', name: 'Ippagudem (G)', mandalId: 'MAND3508', code: '029', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3508030', name: 'Kothagudem (G)', mandalId: 'MAND3508', code: '030', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3508031', name: 'Morram Vanigude', mandalId: 'MAND3508', code: '031', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3508032', name: 'Alubaka (Z)', mandalId: 'MAND3508', code: '032', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    // Mulugu -> Wazeed (MAND3509)
-    { id: 'VILL3509001', name: 'Arunachalapuran', mandalId: 'MAND3509', code: '001', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3509002', name: 'Bollaram (Z)', mandalId: 'MAND3509', code: '002', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3509003', name: 'Chandr', mandalId: 'MAND3509', code: '003', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3509004', name: 'Cherukur (G)', mandalId: 'MAND3509', code: '004', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3509005', name: 'Cherukur (Z)', mandalId: 'MAND3509', code: '005', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3509006', name: 'Chintoor (Z)', mandalId: 'MAND3509', code: '006', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3509007', name: 'Dolapuram (G)', mandalId: 'MAND3509', code: '007', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3509008', name: 'Edjarlapalle (G)', mandalId: 'MAND3509', code: '008', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3509009', name: 'Edjarlapalle (Z)', mandalId: 'MAND3509', code: '009', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3509010', name: 'Gumm', mandalId: 'MAND3509', code: '010', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3509011', name: 'Janagalapalli (G)', mandalId: 'MAND3509', code: '011', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3509012', name: 'Kacharam (G)', mandalId: 'MAND3509', code: '012', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3509013', name: 'Kongala (G)', mandalId: 'MAND3509', code: '013', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3509014', name: 'Koppusuru', mandalId: 'MAND3509', code: '014', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3509015', name: 'Koyaveerapuram', mandalId: 'MAND3509', code: '015', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3509016', name: 'Laksh', mandalId: 'MAND3509', code: '016', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3509017', name: 'Lingapeta', mandalId: 'MAND3509', code: '017', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3509018', name: 'Morumuru (G)', mandalId: 'MAND3509', code: '018', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3509019', name: 'Mutharam (Chow', mandalId: 'MAND3509', code: '019', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3509020', name: 'Nagaram (G)', mandalId: 'MAND3509', code: '020', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3509021', name: 'Padigapuram (Z)', mandalId: 'MAND3509', code: '021', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3509022', name: 'Peddagollagu', mandalId: 'MAND3509', code: '022', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3509023', name: 'Pragallapalle (Z)', mandalId: 'MAND3509', code: '023', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3509024', name: 'Pusur Patch - I', mandalId: 'MAND3509', code: '024', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3509025', name: 'Wazeed (G)', mandalId: 'MAND3509', code: '025', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-    { id: 'VILL3509026', name: 'Ippagudem (G)', mandalId: 'MAND3509', code: '026', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(365) },
-];
-
-export const mockInspections: Inspection[] = [
-    { id: 'INSP001', relatedEntityType: 'SubsidyApplication', relatedEntityId: 'SUB001', inspectorId: 'EMP001', inspectionDate: pastDate(12), status: 'Completed', outcome: 'Passed', createdAt: pastDate(15), updatedAt: pastDate(12) },
-    { id: 'INSP002', relatedEntityType: 'LandParcel', relatedEntityId: 'LP003', inspectorId: 'EMP001', inspectionDate: pastDate(5), status: 'Completed', outcome: 'Needs Follow-up', notes: 'Possible pest issue on northern edge.', createdAt: pastDate(8), updatedAt: pastDate(5) },
-    { id: 'INSP003', relatedEntityType: 'SubsidyApplication', relatedEntityId: 'SUB002', inspectorId: 'EMP003', inspectionDate: futureDate(2), status: 'Scheduled', createdAt: pastDate(3), updatedAt: pastDate(3) },
-];
-
-export const mockHOSanctions: HOSanction[] = [
-    { id: 'SAN001', sanctionType: 'High Value Subsidy', relatedEntityId: 'SUB001', amount: 45000, status: 'Approved', submittedById: 'EMP003', reviewedById: 'EMP005', createdAt: pastDate(10), updatedAt: pastDate(9) },
-    { id: 'SAN002', sanctionType: 'Bulk Procurement Payment', relatedEntityId: 'PB002', amount: 23100, status: 'Pending Approval', submittedById: 'EMP004', createdAt: pastDate(7), updatedAt: pastDate(7) },
-    { id: 'SAN003', sanctionType: 'Operational Expense', relatedEntityId: 'EXP0724', amount: 150000, status: 'Rejected', submittedById: 'EMP002', reviewedById: 'EMP005', notes: 'Insufficient documentation for expense claim.', createdAt: pastDate(5), updatedAt: pastDate(4) },
-];
-
-export const mockPlantationLogs: PlantationLog[] = [
-    { id: 'PLOG001', farmerId: '0701001-24-0001', landParcelId: 'LP001', activityType: 'Fertilizing', activityDate: pastDate(20), materialsUsed: 'Urea', quantity: 50, unit: 'kg', cost: 1500, laborCount: 2, performedById: 'EMP001', createdAt: pastDate(20), updatedAt: pastDate(20) },
-    { id: 'PLOG002', farmerId: '3501008-24-0001', landParcelId: 'LP003', activityType: 'Pest Control', activityDate: pastDate(15), materialsUsed: 'Neem Oil', quantity: 5, unit: 'liters', cost: 2500, laborCount: 1, performedById: 'EMP001', createdAt: pastDate(15), updatedAt: pastDate(15) },
-];
-
-export const mockHarvestLogs: HarvestLog[] = [
-    { id: 'HARV001', farmerId: '0701001-24-0001', landParcelId: 'LP001', harvestDate: pastDate(10), quantityTonnes: 5.5, qualityGrade: 'A', harvestedById: 'EMP001', createdAt: pastDate(10), updatedAt: pastDate(10) },
-    { id: 'HARV002', farmerId: '3501008-24-0001', landParcelId: 'LP003', harvestDate: pastDate(8), quantityTonnes: 8.2, qualityGrade: 'B', harvestedById: 'EMP001', createdAt: pastDate(8), updatedAt: pastDate(8) },
-];
-
-export const mockMicroIrrigationInstallations: MicroIrrigationInstallation[] = [
-    { id: 'MI001', farmerId: '1005001-24-0001', landParcelId: 'LP004', subsidyApplicationId: 'SUB001', installationType: 'Drip', vendorName: 'Jain Irrigation', installationDate: pastDate(5), totalCost: 80000, subsidyAmount: 45000, status: 'Verified', inspectedById: 'EMP001', inspectionDate: pastDate(3), createdAt: pastDate(40), updatedAt: pastDate(3) },
-    { id: 'MI002', farmerId: '0701001-24-0001', landParcelId: 'LP002', subsidyApplicationId: 'SUB004', installationType: 'Drip', vendorName: 'Netafim', totalCost: 65000, subsidyAmount: 0, status: 'Pending Installation', createdAt: pastDate(25), updatedAt: pastDate(25) },
-];
-
-export const mockNurseryInventory: NurseryInventoryItem[] = [
-    { id: 'NINV001', name: 'Oil Palm Seedling (Tenera)', type: 'Seedling', quantity: 5000, unit: 'units', supplier: 'Govt. Nursery', purchaseDate: pastDate(60), costPerUnit: 150, createdAt: pastDate(60), updatedAt: pastDate(10) },
-    { id: 'NINV002', name: 'NPK Fertilizer 10-26-26', type: 'Fertilizer', quantity: 2500, unit: 'kg', supplier: 'Coromandel', purchaseDate: pastDate(30), costPerUnit: 35, createdAt: pastDate(30), updatedAt: pastDate(5) },
-    { id: 'NINV003', name: 'Cypermethrin', type: 'Pesticide', quantity: 100, unit: 'liters', supplier: 'Bayer', purchaseDate: pastDate(45), costPerUnit: 800, createdAt: pastDate(45), updatedAt: pastDate(15) },
-];
-
-export const mockFactoryInventory: FactoryInventoryItem[] = [
-    { id: 'FINV001', factoryId: 'FACT01', name: 'Raw FFB from Mulugu', type: 'Raw FFB', quantity: 250, unit: 'Tonnes', qualityGrade: 'B', storageLocation: 'Bay 01', receivedDate: pastDate(2), createdAt: pastDate(2), updatedAt: pastDate(1) },
-    { id: 'FINV002', factoryId: 'FACT01', name: 'Crude Palm Oil (CPO)', type: 'Crude Palm Oil', quantity: 55, unit: 'Tonnes', storageLocation: 'Tank A', receivedDate: pastDate(1), createdAt: pastDate(1), updatedAt: pastDate(1) },
-];
-
-export const mockProcurementCenterInventory: ProcurementCenterInventory[] = [
-    { id: 'PCINV001', procurementCenterId: 'PC01', quantityTonnes: 150.5, averageQualityGrade: 'B', lastUpdated: pastDate(1), status: 'Awaiting Transport', createdAt: pastDate(10), updatedAt: pastDate(1) },
-    { id: 'PCINV002', procurementCenterId: 'PC02', quantityTonnes: 88.0, averageQualityGrade: 'A', lastUpdated: pastDate(2), status: 'Awaiting Transport', createdAt: pastDate(12), updatedAt: pastDate(2) },
-];
-
-export const mockFarmVisitRequests: FarmVisitRequest[] = [
-    { id: 'FVR001', farmerId: '0701001-24-0001', landParcelId: 'LP001', requestType: 'Pest/Disease Issue', urgency: 'Urgent', description: 'Yellowing leaves on several trees, suspecting bud rot.', requestDate: pastDate(3), status: 'Scheduled', assignedAgentId: 'EMP001', visitDate: futureDate(1), createdAt: pastDate(3), updatedAt: pastDate(1) },
-    { id: 'FVR002', farmerId: '3501008-24-0001', landParcelId: 'LP003', requestType: 'Irrigation Problem', urgency: 'Normal', description: 'Drip irrigation system pressure is low in one section of the plot.', requestDate: pastDate(5), status: 'Pending', createdAt: pastDate(5), updatedAt: pastDate(5) },
+  { id: 'VILL0701001', name: 'Kothawada', mandalId: 'MAND0701', code: '001', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+  { id: 'VILL0702001', name: 'Gorrekunta', mandalId: 'MAND0702', code: '001', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+  { id: 'VILL1005001', name: 'Hasanparthy', mandalId: 'MAND1005', code: '001', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+  { id: 'VILL3501001', name: 'Mulugu', mandalId: 'MAND3501', code: '001', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+  { id: 'VILL3502001', name: 'Govindaraopet', mandalId: 'MAND3502', code: '001', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+  { id: 'VILL3508001', name: 'Eturnagaram', mandalId: 'MAND3508', code: '001', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
 ];
 
 export const mockProcurementCenters: ProcurementCenter[] = [
-    {id: 'PC01', name: 'Warangal Central PC', mandalId: 'MAND0701', managerId: 'EMP006', contactPerson: 'Suresh Kumar', contactMobile: '9988776655', status: 'Active', latitude: 17.9784, longitude: 79.5941, createdAt: pastDate(180), updatedAt: pastDate(10)},
-    {id: 'PC02', name: 'Eturnagaram PC', mandalId: 'MAND3501', managerId: 'EMP002', contactPerson: 'Lakshmi Priya', contactMobile: '9988776644', status: 'Active', latitude: 18.3377, longitude: 80.4300, createdAt: pastDate(120), updatedAt: pastDate(5)},
+    { id: 'PC001', name: 'Warangal Central PC', mandalId: 'MAND0701', managerId: 'EMP006', contactPerson: 'Kavita Rao', contactMobile: '9123456785', status: 'Active', latitude: 17.97, longitude: 79.6, createdAt: pastDate(200), updatedAt: pastDate(20) },
+    { id: 'PC002', name: 'Mulugu Town PC', mandalId: 'MAND3501', managerId: 'EMP002', contactPerson: 'Sunita Sharma', contactMobile: '9123456781', status: 'Active', latitude: 18.18, longitude: 80.28, createdAt: pastDate(180), updatedAt: pastDate(18) },
 ];
 
 export const mockFactories: Factory[] = [
-    {id: 'FACT01', name: 'Mulugu Oil Mill', mandalId: 'MAND3501', managerId: 'EMP007', capacityTonsPerDay: 200, contactMobile: '9876543210', status: 'Active', latitude: 18.25, longitude: 80.29, createdAt: pastDate(365), updatedAt: pastDate(30)},
+    { id: 'FACT01', name: 'Mulugu Oil Factory', mandalId: 'MAND3501', managerId: 'EMP007', capacityTonsPerDay: 50, contactMobile: '9123456786', status: 'Active', latitude: 18.20, longitude: 80.30, createdAt: pastDate(300), updatedAt: pastDate(30) },
+];
+
+export const mockSubsidyApplications: SubsidyApplication[] = [
+    { id: 'SUB001', farmerId: '0701001-24-0001', applicationDate: pastDate(20), subsidyType: 'Drip Irrigation', status: 'Under Review', requestedAmount: 50000, createdAt: pastDate(20), updatedAt: pastDate(5) },
+    { id: 'SUB002', farmerId: '1005001-24-0001', applicationDate: pastDate(30), subsidyType: 'New Seedlings', status: 'Approved', requestedAmount: 25000, approvedAmount: 22000, createdAt: pastDate(30), updatedAt: pastDate(10) },
+    { id: 'SUB003', farmerId: '3501008-24-0001', applicationDate: pastDate(15), subsidyType: 'Fertilizer', status: 'Documents Pending', requestedAmount: 10000, createdAt: pastDate(15), updatedAt: pastDate(15) },
+];
+
+export const mockDocuments: Document[] = [
+    { id: 'DOC001', subsidyApplicationId: 'SUB001', documentType: 'Aadhaar Card', status: 'Verified', verifiedById: 'EMP008', verifiedAt: pastDate(8), createdAt: pastDate(20), updatedAt: pastDate(8) },
+    { id: 'DOC002', subsidyApplicationId: 'SUB001', documentType: 'Land Record (Pattadar)', status: 'Pending', createdAt: pastDate(20), updatedAt: pastDate(20) },
+    { id: 'DOC003', subsidyApplicationId: 'SUB003', documentType: 'Aadhaar Card', status: 'Pending', createdAt: pastDate(15), updatedAt: pastDate(15) },
+];
+
+export const mockInspections: Inspection[] = [
+    { id: 'INSP001', relatedEntityType: 'SubsidyApplication', relatedEntityId: 'SUB001', inspectorId: 'EMP001', inspectionDate: pastDate(3), status: 'Scheduled', createdAt: pastDate(5), updatedAt: pastDate(5) },
+    { id: 'INSP002', relatedEntityType: 'LandParcel', relatedEntityId: 'LP002', inspectorId: 'EMP003', inspectionDate: pastDate(10), status: 'Completed', outcome: 'Passed', reportUrl: '/reports/insp002.pdf', createdAt: pastDate(12), updatedAt: pastDate(10) },
+];
+
+export const mockOffices: Office[] = [];
+export const mockHOSanctions: HOSanction[] = [
+    { id: 'SAN001', sanctionType: 'High Value Subsidy', relatedEntityId: 'SUB002', amount: 22000, status: 'Approved', submittedById: 'EMP002', reviewedById: 'EMP005', createdAt: pastDate(11), updatedAt: pastDate(10) },
+    { id: 'SAN002', sanctionType: 'Bulk Procurement Payment', relatedEntityId: 'PB002', amount: 37800, status: 'Pending Approval', submittedById: 'EMP004', createdAt: pastDate(7), updatedAt: pastDate(7) },
+];
+
+export const mockPlantationLogs: PlantationLog[] = [
+    { id: 'PLOG001', farmerId: '0701001-24-0001', landParcelId: 'LP001', activityType: 'Fertilizing', activityDate: pastDate(15), materialsUsed: 'Urea', quantity: 50, unit: 'kg', cost: 1500, laborCount: 2, performedById: 'EMP001', createdAt: pastDate(15), updatedAt: pastDate(15) },
+];
+export const mockHarvestLogs: HarvestLog[] = [
+    { id: 'HARV001', farmerId: '0701001-24-0001', landParcelId: 'LP001', harvestDate: pastDate(5), quantityTonnes: 1.25, qualityGrade: 'A', harvestedById: 'EMP001', createdAt: pastDate(5), updatedAt: pastDate(5) },
+];
+export const mockMicroIrrigationInstallations: MicroIrrigationInstallation[] = [
+    { id: 'MI001', farmerId: '1005001-24-0001', landParcelId: 'LP004', subsidyApplicationId: 'SUB002', installationType: 'Drip', vendorName: 'Jain Irrigation', installationDate: pastDate(8), totalCost: 75000, subsidyAmount: 22000, status: 'Completed', inspectedById: 'EMP001', inspectionDate: pastDate(6), createdAt: pastDate(9), updatedAt: pastDate(6) },
+];
+export const mockNurseryInventory: NurseryInventoryItem[] = [
+    { id: 'NINV001', name: 'Oil Palm Seedling (Tenera)', type: 'Seedling', quantity: 5000, unit: 'units', supplier: 'Govt. Nursery', purchaseDate: pastDate(45), costPerUnit: 150, createdAt: pastDate(45), updatedAt: pastDate(5) },
+    { id: 'NINV002', name: 'NPK Fertilizer (19-19-19)', type: 'Fertilizer', quantity: 200, unit: 'bags (50kg)', supplier: 'Local Agro Agency', purchaseDate: pastDate(10), costPerUnit: 1200, createdAt: pastDate(10), updatedAt: pastDate(2) },
+];
+export const mockFactoryInventory: FactoryInventoryItem[] = [
+    { id: 'FINV001', factoryId: 'FACT01', name: 'Raw FFB', type: 'Raw FFB', quantity: 250, unit: 'Tonnes', qualityGrade: 'B', storageLocation: 'Yard A', receivedDate: pastDate(2), createdAt: pastDate(2), updatedAt: pastDate(1) },
+    { id: 'FINV002', factoryId: 'FACT01', name: 'Crude Palm Oil', type: 'Crude Palm Oil', quantity: 50, unit: 'Tonnes', storageLocation: 'Tank 2', receivedDate: pastDate(1), createdAt: pastDate(1), updatedAt: pastDate(1) },
+];
+export const mockProcurementCenterInventory: ProcurementCenterInventory[] = [
+    { id: 'PCINV001', procurementCenterId: 'PC001', quantityTonnes: 120, averageQualityGrade: 'B', lastUpdated: pastDate(1), status: 'Awaiting Transport', createdAt: pastDate(1), updatedAt: pastDate(1) },
+    { id: 'PCINV002', procurementCenterId: 'PC002', quantityTonnes: 85, averageQualityGrade: 'A', lastUpdated: pastDate(2), status: 'In Transit', createdAt: pastDate(2), updatedAt: pastDate(2) },
+];
+
+export const mockFarmVisitRequests: FarmVisitRequest[] = [
+    { id: 'FVR001', farmerId: '3502001-24-0001', landParcelId: 'LP005', requestType: 'Pest/Disease Issue', urgency: 'Urgent', description: 'Seeing yellowing on leaves and some fruit rot.', requestDate: pastDate(2), status: 'Pending', createdAt: pastDate(2), updatedAt: pastDate(2) },
+    { id: 'FVR002', farmerId: '0701001-24-0001', landParcelId: 'LP001', requestType: 'Harvesting Advice', urgency: 'Normal', description: 'Not sure if the current batch is ready for harvest.', requestDate: pastDate(8), status: 'Completed', assignedAgentId: 'EMP001', visitDate: pastDate(6), agentNotes: 'Advised farmer to wait one more week for optimal ripeness.', createdAt: pastDate(8), updatedAt: pastDate(6) },
+];
+
+export const mockEmployeeActivity: EmployeeActivity[] = [
+    { id: 'ACT001', employeeId: 'EMP001', action: 'Completed Task', details: 'Field Visit to S. Kumar', timestamp: pastDate(1), icon: 'task' },
+    { id: 'ACT002', employeeId: 'EMP008', action: 'Verified Document', details: 'Aadhaar for SUB001', timestamp: pastDate(2), icon: 'subsidy' },
+    { id: 'ACT003', employeeId: 'EMP004', action: 'Processed Payment', details: '₹17,850 for PB003', timestamp: pastDate(3), icon: 'payment' },
+    { id: 'ACT004', employeeId: 'EMP002', action: 'Updated Employee Record', details: 'Changed status for Priya Patel', timestamp: pastDate(4), icon: 'employee' },
 ];
