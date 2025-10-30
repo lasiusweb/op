@@ -263,8 +263,9 @@ const App: React.FC = () => {
             onAddNewFarmer={() => handleSetCurrentPage('addFarmer')} 
             allFarmers={farmers} 
             setAllFarmers={setFarmers} 
-            initialConfirmationMessage={confirmationMessage}
-            setInitialConfirmationMessage={setConfirmationMessage}
+            // FIX: Pass confirmationMessage and setConfirmationMessage to the Farmers component to fix a type error. The props have been added to the Farmers component's interface.
+            confirmationMessage={confirmationMessage}
+            setConfirmationMessage={setConfirmationMessage}
         />;
       case 'addFarmer':
         return <AddFarmer onAddFarmer={handleAddNewFarmer} onCancel={() => handleSetCurrentPage('farmers')} allFarmers={farmers} />;

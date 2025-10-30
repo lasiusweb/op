@@ -77,6 +77,8 @@ interface FarmersProps {
     allFarmers: Farmer[];
     setAllFarmers: React.Dispatch<React.SetStateAction<Farmer[]>>;
     loading: boolean;
+    confirmationMessage: string | null;
+    setConfirmationMessage: (message: string | null) => void;
 }
 
 const farmerTemplateHeaders = [
@@ -86,7 +88,7 @@ const farmerTemplateHeaders = [
 ];
 
 
-export const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, setAllFarmers, loading }) => {
+export const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, setAllFarmers, loading, confirmationMessage, setConfirmationMessage }) => {
     const [expandedRow, setExpandedRow] = useState<string | null>(null);
     const [editingFarmerId, setEditingFarmerId] = useState<string | null>(null);
     const [editableFarmerData, setEditableFarmerData] = useState<Farmer | null>(null);
@@ -322,6 +324,13 @@ export const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, se
             </button>
         </th>
     );
+
+    useEffect(() => {
+        if (confirmationMessage) {
+            setSaveConfirmation(confirmationMessage);
+            setConfirmationMessage(null);
+        }
+    }, [confirmationMessage, setConfirmationMessage]);
 
     useEffect(() => {
         if (saveConfirmation) {

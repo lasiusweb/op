@@ -145,7 +145,7 @@ const ProcurementCenterMaster: React.FC = () => {
     const handleSaveCenter = (centerData: Partial<ProcurementCenter>) => {
         const now = new Date().toISOString();
         if (centerData.id) { // Edit
-            // Fix: The `status` property was being inferred as a generic `string` from the form, causing a type mismatch. It's now explicitly cast to the correct `'Active' | 'Inactive'` type.
+            // FIX: The `status` property was being inferred as a generic `string` from the form, causing a type mismatch. It's now explicitly cast to the correct `'Active' | 'Inactive'` type.
             setCenters(centers.map(c => c.id === centerData.id ? { ...c, ...centerData, status: centerData.status as ProcurementCenter['status'], updatedAt: now } : c));
         } else { // Add
             const newCenter: ProcurementCenter = {
