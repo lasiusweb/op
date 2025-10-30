@@ -142,8 +142,8 @@ const FactoryMaster: React.FC = () => {
     const handleSaveFactory = (factoryData: Partial<Factory>) => {
         const now = new Date().toISOString();
         if (factoryData.id) { // Edit
-            // FIX: The `status` property was being inferred as a generic `string` from the form, causing a type mismatch. It's now explicitly cast to the correct `'Active' | 'Inactive'` type.
-            setFactories(factories.map(c => c.id === factoryData.id ? { ...c, ...factoryData, status: factoryData.status as 'Active' | 'Inactive', updatedAt: now } : c));
+            // FIX: The `status` property from the form data is a generic string. Explicitly casting it to the required 'Active' | 'Inactive' type to ensure type safety.
+            setFactories(factories.map(c => c.id === factoryData.id ? { ...c, ...factoryData, updatedAt: now, status: factoryData.status as Factory['status'] } : c));
         } else { // Add
             const newFactory: Factory = {
                 id: `FACT${Date.now()}`,

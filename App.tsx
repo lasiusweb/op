@@ -1,11 +1,7 @@
-
-
-
 import React, { useState, useEffect, useCallback } from 'react';
 import Sidebar from './components/layout/Sidebar';
 import Header from './components/layout/Header';
 import Dashboard from './pages/Dashboard';
-// FIX: Changed to a named import for Farmers component and fixed path for Employees
 import { Farmers } from './pages/Farmers';
 import Employees from './pages/Users';
 import Tasks from './pages/Tasks';
@@ -26,10 +22,6 @@ import CultivationLog from './pages/CultivationLog';
 import HarvestLog from './pages/HarvestLog';
 import MicroIrrigationTracker from './pages/MicroIrrigationTracker';
 import FieldAgentTasks from './pages/FieldAgentTasks';
-import NurseryInventory from './pages/NurseryInventory';
-import ProcurementCenterInventory from './pages/ProcurementCenterInventory';
-import FactoryInventory from './pages/FactoryInventory';
-import StockReconciliation from './pages/StockReconciliation';
 import OilExtraction from './pages/OilExtraction';
 import Sustainability from './pages/Sustainability';
 import Billing from './pages/Billing';
@@ -40,7 +32,6 @@ import NonSubsidyPaymentLog from './pages/NonSubsidyPaymentLog';
 import FarmerAssistanceLedger from './pages/FarmerAssistanceLedger';
 import EnvironmentalMonitoring from './pages/EnvironmentalMonitoring';
 import KnowledgeBase from './pages/KnowledgeBase';
-import VendorManagement from './pages/VendorManagement';
 import BankingIntegration from './pages/BankingIntegration';
 import IotSensorData from './pages/IotSensorData';
 import FarmerPortal from './pages/FarmerPortal';
@@ -70,9 +61,27 @@ import UpcomingRetirements from './pages/UpcomingRetirements';
 import ProfileChangeRequests from './pages/ProfileChangeRequests';
 import LandingPage from './pages/LandingPage';
 
+// New Inventory Management Pages
+import InventoryAdjustments from './pages/InventoryAdjustments';
+import Packages from './pages/Packages';
+import Shipments from './pages/Shipments';
+import SalesOrders from './pages/SalesOrders';
+import Invoices from './pages/Invoices';
+import DeliveryChallans from './pages/DeliveryChallans';
+import PaymentsReceived from './pages/PaymentsReceived';
+import SalesReturns from './pages/SalesReturns';
+import CreditNotes from './pages/CreditNotes';
+import Vendors from './pages/Vendors';
+import Expenses from './pages/Expenses';
+import PurchaseOrders from './pages/PurchaseOrders';
+import PurchaseReceives from './pages/PurchaseReceives';
+import Bills from './pages/Bills';
+import PaymentsMade from './pages/PaymentsMade';
+import VendorCredits from './pages/VendorCredits';
+import EWayBills from './pages/EWayBills';
+
 
 import type { Employee, Farmer, LandParcel, NurseryInventoryItem, CultivationLog as CultivationLogType, FarmVisitRequest, EmployeeActivity, Task, ProfileChangeRequest, FarmerProfileChangeRequest } from './types';
-// FIX: Corrected imports for mock data. The previous import was a single line that was failing because the exports were missing. Now that the exports are added in mockData.ts, these imports should work.
 import { mockEmployees, mockTasks, mockFarmersData, mockLandParcels, mockNurseryInventory, mockSubsidyApplications, mockProcurementBatches, mockCultivationLogs, mockFarmVisitRequests, mockEmployeeActivity, mockProfileChangeRequests, mockPayments, mockDocuments, mockCropInsurancePolicies, mockFarmerProfileChangeRequests } from './data/mockData';
 
 const App: React.FC = () => {
@@ -157,7 +166,6 @@ const App: React.FC = () => {
       locationMaster: 'All Location Master',
       procurementCenterMaster: 'Procurement Center Master',
       factoryMaster: 'Factory Master',
-      vendorManagement: 'Partner & Vendor Management',
       subsidyApplications: 'Subsidy Applications',
       documentVerification: 'Document Verification',
       inspections: 'Inspection Log',
@@ -166,10 +174,6 @@ const App: React.FC = () => {
       cultivationLog: 'Cultivation Log',
       harvestLog: 'Harvest Log',
       microIrrigationTracker: 'Micro-Irrigation Tracker',
-      nurseryInventory: 'Nursery Inventory',
-      procurementCenterInventory: 'Procurement Center Inventory',
-      factoryInventory: 'Factory Inventory',
-      stockReconciliation: 'Stock Reconciliation',
       oilExtraction: 'Oil Extraction Log',
       sustainability: 'Sustainability & Carbon Footprint',
       billing: 'Billing & Financials',
@@ -202,6 +206,24 @@ const App: React.FC = () => {
       visitTemplateReport: "Visit Template Report",
       averageMeetingMonthly: "Average Meeting Monthly",
       hourlyVisitReport: "Hourly Visit Report",
+      // New Inventory Titles
+      inventoryAdjustments: "Inventory Adjustments",
+      packages: "Packages",
+      shipments: "Shipments",
+      salesOrders: "Sales Orders",
+      invoices: "Invoices",
+      deliveryChallans: "Delivery Challans",
+      paymentsReceived: "Payments Received",
+      salesReturns: "Sales Returns",
+      creditNotes: "Credit Notes",
+      vendors: "Vendors",
+      expenses: "Expenses",
+      purchaseOrders: "Purchase Orders",
+      purchaseReceives: "Purchase Receives",
+      bills: "Bills",
+      paymentsMade: "Payments Made",
+      vendorCredits: "Vendor Credits",
+      eWayBills: "e-Way Bills",
   }
 
   const handleViewProfile = (employeeId: string) => {
@@ -269,7 +291,6 @@ const App: React.FC = () => {
             onAddNewFarmer={() => handleSetCurrentPage('addFarmer')} 
             allFarmers={farmers} 
             setAllFarmers={setFarmers} 
-            // FIX: Pass confirmationMessage and setConfirmationMessage to the Farmers component to fix a type error. The props have been added to the Farmers component's interface.
             confirmationMessage={confirmationMessage}
             setConfirmationMessage={setConfirmationMessage}
         />;
@@ -301,12 +322,6 @@ const App: React.FC = () => {
           return <Tasks />;
       case 'fieldAgentTasks':
           return <FieldAgentTasks />;
-      case 'nurseryInventory':
-          return <NurseryInventory allItems={nurseryInventory} setAllItems={setNurseryInventory} />;
-      case 'procurementCenterInventory':
-          return <ProcurementCenterInventory />;
-      case 'factoryInventory':
-          return <FactoryInventory />;
        case 'districtMaster':
           return <DistrictMaster />;
        case 'mandalMaster':
@@ -321,8 +336,6 @@ const App: React.FC = () => {
             return <ProcurementCenterMaster />;
         case 'factoryMaster':
             return <FactoryMaster />;
-        case 'vendorManagement':
-            return <VendorManagement />;
         case 'procurementBatches':
             return <ProcurementBatchMaster />;
         case 'subsidyApplications':
@@ -339,8 +352,6 @@ const App: React.FC = () => {
             return <HarvestLog />;
         case 'microIrrigationTracker':
             return <MicroIrrigationTracker />;
-        case 'stockReconciliation':
-            return <StockReconciliation />;
         case 'oilExtraction':
             return <OilExtraction />;
         case 'sustainability':
@@ -408,6 +419,24 @@ const App: React.FC = () => {
         case 'visitTemplateReport': return <VisitTemplateReport />;
         case 'averageMeetingMonthly': return <AverageMeetingMonthly />;
         case 'hourlyVisitReport': return <HourlyVisitReport />;
+      // New Inventory Page Cases
+      case 'inventoryAdjustments': return <InventoryAdjustments />;
+      case 'packages': return <Packages />;
+      case 'shipments': return <Shipments />;
+      case 'salesOrders': return <SalesOrders />;
+      case 'invoices': return <Invoices />;
+      case 'deliveryChallans': return <DeliveryChallans />;
+      case 'paymentsReceived': return <PaymentsReceived />;
+      case 'salesReturns': return <SalesReturns />;
+      case 'creditNotes': return <CreditNotes />;
+      case 'vendors': return <Vendors />;
+      case 'expenses': return <Expenses />;
+      case 'purchaseOrders': return <PurchaseOrders />;
+      case 'purchaseReceives': return <PurchaseReceives />;
+      case 'bills': return <Bills />;
+      case 'paymentsMade': return <PaymentsMade />;
+      case 'vendorCredits': return <VendorCredits />;
+      case 'eWayBills': return <EWayBills />;
       case 'profile': {
           const viewingEmployee = employees.find(u => u.id === viewingEmployeeId);
           if (!viewingEmployee) {

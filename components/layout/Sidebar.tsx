@@ -20,7 +20,6 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage, isSideba
 
   const coreManagementPagesInfo = [
     { name: 'Farmer Management', page: 'farmers', icon: <PeopleIcon className="h-5 w-5 mr-3"/> },
-    { name: 'Partner & Vendor Mgmt', page: 'vendorManagement', icon: <BriefcaseIcon className="h-5 w-5 mr-3"/> },
   ];
 
   const employeeHubPagesInfo = [
@@ -82,11 +81,24 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage, isSideba
       { name: 'Banking Integration', page: 'bankingIntegration', icon: <LinkIcon className="h-5 w-5 mr-3" /> },
   ];
   
-  const inventoryPagesInfo = [
-      { name: 'Nursery Inventory', page: 'nurseryInventory', icon: <WrenchScrewdriverIcon className="h-5 w-5 mr-3"/> },
-      { name: 'Procurement Centers', page: 'procurementCenterInventory', icon: <HomeModernIcon className="h-5 w-5 mr-3"/> },
-      { name: 'Factory Inventory', page: 'factoryInventory', icon: <BuildingLibraryIcon className="h-5 w-5 mr-3"/> },
-      { name: 'Stock Reconciliation', page: 'stockReconciliation', icon: <ClipboardDocumentCheckIcon className="h-5 w-5 mr-3"/> },
+  const inventoryManagementPagesInfo = [
+    { name: 'Inventory Adjustments', page: 'inventoryAdjustments' },
+    { name: 'Packages', page: 'packages' },
+    { name: 'Shipments', page: 'shipments' },
+    { name: 'Sales Orders', page: 'salesOrders' },
+    { name: 'Invoices', page: 'invoices' },
+    { name: 'Delivery Challans', page: 'deliveryChallans' },
+    { name: 'Payments Received', page: 'paymentsReceived' },
+    { name: 'Sales Returns', page: 'salesReturns' },
+    { name: 'Credit Notes', page: 'creditNotes' },
+    { name: 'Vendors', page: 'vendors' },
+    { name: 'Expenses', page: 'expenses' },
+    { name: 'Purchase Orders', page: 'purchaseOrders' },
+    { name: 'Purchase Receives', page: 'purchaseReceives' },
+    { name: 'Bills', page: 'bills' },
+    { name: 'Payments Made', page: 'paymentsMade' },
+    { name: 'Vendor Credits', page: 'vendorCredits' },
+    { name: 'e-Way Bills', page: 'eWayBills' },
   ];
   
   const masterPagesInfo = [
@@ -114,7 +126,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage, isSideba
   const [isVisitManagementOpen, setIsVisitManagementOpen] = useState(visitManagementPagesInfo.some(p => p.page === currentPage));
   const [isOpsOpen, setIsOpsOpen] = useState(farmAndProcurementOpsPagesInfo.some(p => p.page === currentPage));
   const [isFinancialsOpen, setIsFinancialsOpen] = useState(financialsPagesInfo.some(p => p.page === currentPage));
-  const [isInventoryOpen, setIsInventoryOpen] = useState(inventoryPagesInfo.some(p => p.page === currentPage));
+  const [isInventoryOpen, setIsInventoryOpen] = useState(inventoryManagementPagesInfo.some(p => p.page === currentPage));
   const [isMastersOpen, setIsMastersOpen] = useState(masterPagesInfo.some(p => p.page === currentPage));
   const [isSystemResourcesOpen, setIsSystemResourcesOpen] = useState(systemAndResourcesPagesInfo.some(p => p.page === currentPage));
 
@@ -184,7 +196,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage, isSideba
             {renderCollapsibleMenu("Visit Management", <VisitIcon className="h-5 w-5 mr-3" />, isVisitManagementOpen, setIsVisitManagementOpen, visitManagementPagesInfo)}
             {renderCollapsibleMenu("Farm & Procurement Ops", <WrenchScrewdriverIcon className="h-5 w-5 mr-3" />, isOpsOpen, setIsOpsOpen, farmAndProcurementOpsPagesInfo)}
             {renderCollapsibleMenu("Financials", <CreditCardIcon className="h-5 w-5 mr-3" />, isFinancialsOpen, setIsFinancialsOpen, financialsPagesInfo)}
-            {renderCollapsibleMenu("Inventory Management", <RectangleStackIcon className="h-5 w-5 mr-3" />, isInventoryOpen, setIsInventoryOpen, inventoryPagesInfo)}
+            {renderCollapsibleMenu("Inventory Management", <RectangleStackIcon className="h-5 w-5 mr-3" />, isInventoryOpen, setIsInventoryOpen, inventoryManagementPagesInfo)}
             {renderCollapsibleMenu("Masters", <GlobeAltIcon className="h-5 w-5 mr-3" />, isMastersOpen, setIsMastersOpen, masterPagesInfo)}
             {renderCollapsibleMenu("System & Resources", <BookOpenIcon className="h-5 w-5 mr-3" />, isSystemResourcesOpen, setIsSystemResourcesOpen, systemAndResourcesPagesInfo)}
         </ul>
