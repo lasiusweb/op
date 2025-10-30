@@ -1,5 +1,6 @@
 
 
+
 import React, { useState, useEffect, useCallback } from 'react';
 import Sidebar from './components/layout/Sidebar';
 import Header from './components/layout/Header';
@@ -67,6 +68,7 @@ import EmployeeHierarchy from './pages/EmployeeHierarchy';
 import EmployeeLifecycle from './pages/EmployeeLifecycle';
 import UpcomingRetirements from './pages/UpcomingRetirements';
 import ProfileChangeRequests from './pages/ProfileChangeRequests';
+import LandingPage from './pages/LandingPage';
 
 
 import type { Employee, Farmer, LandParcel, NurseryInventoryItem, CultivationLog as CultivationLogType, FarmVisitRequest, EmployeeActivity, Task, ProfileChangeRequest, FarmerProfileChangeRequest } from './types';
@@ -74,6 +76,7 @@ import type { Employee, Farmer, LandParcel, NurseryInventoryItem, CultivationLog
 import { mockEmployees, mockTasks, mockFarmersData, mockLandParcels, mockNurseryInventory, mockSubsidyApplications, mockProcurementBatches, mockCultivationLogs, mockFarmVisitRequests, mockEmployeeActivity, mockProfileChangeRequests, mockPayments, mockDocuments, mockCropInsurancePolicies, mockFarmerProfileChangeRequests } from './data/mockData';
 
 const App: React.FC = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 1024);
   const [employees, setEmployees] = useState<Employee[]>(mockEmployees);
@@ -91,6 +94,9 @@ const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [visitFilterAgentId, setVisitFilterAgentId] = useState<string | null>(null);
   const [confirmationMessage, setConfirmationMessage] = useState<string | null>(null);
+
+  const handleLogin = () => setIsLoggedIn(true);
+  const handleLogout = () => setIsLoggedIn(false);
 
 
   useEffect(() => {
@@ -422,6 +428,10 @@ const App: React.FC = () => {
     }
   };
 
+  if (!isLoggedIn) {
+      return <LandingPage onLogin={handleLogin} />;
+  }
+
   return (
     <div className="flex h-screen bg-gray-900 text-gray-200 font-sans">
        {/* Overlay for mobile */}
@@ -437,6 +447,7 @@ const App: React.FC = () => {
         setCurrentPage={handleSetCurrentPage}
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
+        onLogout={handleLogout}
        />
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header 

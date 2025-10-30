@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { CubeIcon, PeopleIcon, UserGroupIcon, ClipboardListIcon, GlobeAltIcon, ChevronDownIcon, ChevronUpIcon, DocumentTextIcon, ClipboardDocumentCheckIcon, MagnifyingGlassIcon, BanknotesIcon, DocumentChartBarIcon, ReceiptPercentIcon, WrenchScrewdriverIcon, MapPinIcon, HomeModernIcon, BuildingLibraryIcon, BeakerIcon, CreditCardIcon, ShieldCheckIcon, CloudIcon, BookOpenIcon, LinkIcon, SignalIcon, RectangleGroupIcon, UmbrellaIcon, FolderIcon, Squares2X2Icon, RectangleStackIcon, XMarkIcon, BriefcaseIcon, ClipboardDocumentListIcon as VisitIcon } from '../Icons';
+import { CubeIcon, PeopleIcon, UserGroupIcon, ClipboardListIcon, GlobeAltIcon, ChevronDownIcon, ChevronUpIcon, DocumentTextIcon, ClipboardDocumentCheckIcon, MagnifyingGlassIcon, BanknotesIcon, DocumentChartBarIcon, ReceiptPercentIcon, WrenchScrewdriverIcon, MapPinIcon, HomeModernIcon, BuildingLibraryIcon, BeakerIcon, CreditCardIcon, ShieldCheckIcon, CloudIcon, BookOpenIcon, LinkIcon, SignalIcon, RectangleGroupIcon, UmbrellaIcon, FolderIcon, Squares2X2Icon, RectangleStackIcon, XMarkIcon, BriefcaseIcon, ClipboardDocumentListIcon as VisitIcon, ArrowLeftOnRectangleIcon } from '../Icons';
 
 interface SidebarProps {
   currentPage: string;
   setCurrentPage: (page: string) => void;
   isSidebarOpen: boolean;
   setIsSidebarOpen: (isOpen: boolean) => void;
+  onLogout: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage, isSidebarOpen, setIsSidebarOpen }) => {
+const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage, isSidebarOpen, setIsSidebarOpen, onLogout }) => {
   const dashboardsAndReportsPagesInfo = [
     { name: 'Executive Dashboard', page: 'dashboard', icon: <CubeIcon className="h-5 w-5 mr-3"/> },
     { name: 'Analytics', page: 'analyticsDashboard', icon: <DocumentChartBarIcon className="h-5 w-5 mr-3"/> },
@@ -188,8 +189,17 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage, isSideba
             {renderCollapsibleMenu("System & Resources", <BookOpenIcon className="h-5 w-5 mr-3" />, isSystemResourcesOpen, setIsSystemResourcesOpen, systemAndResourcesPagesInfo)}
         </ul>
       </nav>
-      <div className="mt-auto text-center text-gray-500 text-xs">
-        <p>Version 1.3.0</p>
+      <div className="mt-auto pt-4 border-t border-gray-700/50">
+        <button
+          onClick={onLogout}
+          className="w-full flex items-center px-3 py-2.5 my-1 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-colors duration-200"
+        >
+          <ArrowLeftOnRectangleIcon className="h-5 w-5 mr-3" />
+          <span className="font-semibold">Logout</span>
+        </button>
+        <div className="mt-4 text-center text-gray-500 text-xs">
+            <p>Version 1.3.0</p>
+        </div>
       </div>
     </aside>
   );

@@ -109,7 +109,7 @@ const MandalMaster: React.FC = () => {
         const now = new Date().toISOString();
         if (mandalData.id) { // Edit
             // FIX: The `status` property was being inferred as a generic `string` from the form, causing a type mismatch. It's now explicitly cast to the correct `'Active' | 'Inactive'` type.
-            setMandals(mandals.map(m => m.id === mandalData.id ? { ...m, ...mandalData, status: mandalData.status as Mandal['status'], updatedAt: now } : m));
+            setMandals(mandals.map(m => m.id === mandalData.id ? { ...m, ...mandalData, status: mandalData.status as 'Active' | 'Inactive', updatedAt: now } : m));
         } else { // Add
             const newMandal: Mandal = {
                 id: `MAND${Date.now()}`,
