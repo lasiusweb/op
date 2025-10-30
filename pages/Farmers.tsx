@@ -610,8 +610,8 @@ export const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, se
                 </button>
             </div>
       </div>
-      {(isLoadingSuggestions || suggestions) && (
-        <div className="mb-6 p-4 bg-gray-900/50 rounded-lg border border-cyan-500/20">
+      
+      <div className="mb-6 p-4 bg-gray-900/50 rounded-lg border border-cyan-500/20">
             <h3 className="text-lg font-medium text-gray-300 mb-2 flex items-center gap-2">
                 <LightBulbIcon className="h-5 w-5" />
                 Actionable Suggestions
@@ -635,7 +635,91 @@ export const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, se
                 <div className="text-gray-300 text-sm whitespace-pre-wrap prose prose-invert prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: suggestions.replace(/\*/g, '•') }} />
             )}
         </div>
-      )}
+
+      <BulkActionsBar />
+
+        {loading ? <TableSkeleton /> : (
+            <div className="overflow-x-auto rounded-lg border border-gray-700/50">
+                <table className="w-full text-sm text-left text-gray-400">
+                    <thead className="text-xs text-gray-300 uppercase bg-gray-800">
+                        <tr>
+                            <th scope="col" className="p-4"><input type="checkbox" ref={checkboxRef} checked={isAllSelected} onChange={handleSelectAll} className="w-4 h-4 text-teal-600 bg-gray-700 border-gray-600 rounded focus:ring-teal-500" /></th>
+                            <SortableHeader label="Farmer Name" sortKey="fullName" />
+                            <SortableHeader label="Location" sortKey="location" />
+                            <SortableHeader label="Assigned Agent" sortKey="assignedAgent" />
+                            <th scope="col" className="px-6 py-3 text-center">Data Quality</th>
+                            <SortableHeader label="Land Parcels" sortKey="landParcelCount" />
+                            <SortableHeader label="Status" sortKey="status" />
+                            <th scope="col" className="px-6 py-3"><span className="sr-only">Actions</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {sortedAndFilteredFarmers.map((farmer) => (
+                            <React.Fragment key={farmer.id}>
+                                <tr className={`border-b border-gray-700 ${selectedFarmerIds.includes(farmer.id) ? 'bg-teal-900/30' : 'hover:bg-gray-700/50'}`}>
+                                    <td className="w-4 p-4"><input type="checkbox" checked={selectedFarmerIds.includes(farmer.id)} onChange={() => handleSelectOne(farmer.id)} className="w-4 h-4 text-teal-600 bg-gray-700 border-gray-600 rounded focus:ring-teal-500" /></td>
+                                    <td className="px-6 py-4 font-medium text-white whitespace-nowrap">{farmer.fullName}</td>
+                                    <td className="px-6 py-4">{farmer.village}, {farmer.district}</td>
+                                    <td className="px-6 py-4">{employeeMap.get(farmer.assignedAgentId) || <span className="text-yellow-400">Unassigned</span>}</td>
+                                    <td className="px-6 py-4 text-center">
+                                        <div className="flex justify-center items-center gap-2">
+                                            <span title={farmer.accountVerified ? "Bank Account Verified" : "Bank Account Not Verified"}>{farmer.accountVerified ? '✅' : '🏦'}</span>
+                                            <span title={farmer.photoUploaded ? "Photo Uploaded" : "Photo Missing"}>{farmer.photoUploaded ? '👤' : '📸'}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4">{landParcelCounts[farmer.id] || 0}</td>
+                                    <td className="px-6 py-4"><span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${farmer.status === 'Active' ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'}`}>{farmer.status}</span></td>
+                                    <td className="px-6 py-4 flex items-center gap-4">
+                                        <button onClick={() => handleToggleRow(farmer.id)} className="font-medium text-teal-400 hover:text-teal-300">{expandedRow === farmer.id ? <ChevronUpIcon /> : <ChevronDownIcon />}</button>
+                                        <button onClick={() => handleEditClick(farmer)} className="font-medium text-blue-400 hover:text-blue-300"><PencilIcon /></button>
+                                        <button onClick={() => handleDeleteClick(farmer)} className="font-medium text-red-500 hover:text-red-400"><TrashIcon /></button>
+                                    </td>
+                                </tr>
+                                {expandedRow === farmer.id && (
+                                    <tr className="bg-gray-900/50">
+                                        <td colSpan={8} className="p-4">
+                                            {editingFarmerId === farmer.id ? (
+                                                <div className="p-4 bg-gray-800/50 rounded-lg"> {/* Edit form */}
+                                                    <h3 className="font-bold text-white mb-4">Editing {farmer.fullName}</h3>
+                                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                                         <EditableInput label="Full Name" name="fullName" value={editableFarmerData?.fullName} onChange={handleInputChange} />
+                                                         <EditableInput label="Mobile" name="mobile" value={editableFarmerData?.mobile} onChange={handleInputChange} />
+                                                         <EditableInput label="Assigned Agent" name="assignedAgentId" value={editableFarmerData?.assignedAgentId} onChange={handleInputChange} type="select" options={fieldAgents.map(a => ({ value: a.id, label: a.fullName }))} />
+                                                         <EditableInput label="Status" name="status" value={editableFarmerData?.status} onChange={handleInputChange} type="select" options={[{value: 'Active', label: 'Active'}, {value: 'Inactive', label: 'Inactive'}]} />
+                                                    </div>
+                                                    <div className="flex justify-end gap-4 mt-4">
+                                                        <button onClick={handleCancelClick} className="bg-gray-600 text-white py-1 px-3 rounded text-sm">Cancel</button>
+                                                        <button onClick={handleSaveClick} className="bg-teal-600 text-white py-1 px-3 rounded text-sm">Save</button>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div className="p-4 bg-gray-800/50 rounded-lg"> {/* Detail view */}
+                                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                                        <DetailItem label="Farmer ID" value={farmer.id} />
+                                                        <DetailItem label="Mobile" value={farmer.mobile} />
+                                                        <DetailItem label="Aadhaar" value={farmer.aadhaar} />
+                                                        <DetailItem label="Date of Birth" value={farmer.dob} />
+                                                    </div>
+                                                    <div className="mt-4 pt-4 border-t border-gray-700">
+                                                        <h4 className="text-sm font-semibold text-teal-400 mb-2">AI Profile Summary</h4>
+                                                        <button onClick={() => handleGenerateSummary(farmer)} disabled={loadingSummaries[farmer.id]} className="flex items-center gap-2 text-sm bg-cyan-600/20 text-cyan-300 hover:bg-cyan-600/40 px-3 py-1 rounded-md mb-2 disabled:opacity-50">
+                                                            <SparklesIcon className="h-4 w-4" />
+                                                            {loadingSummaries[farmer.id] ? "Generating..." : "Generate AI Summary"}
+                                                        </button>
+                                                        {loadingSummaries[farmer.id] && <p className="text-xs text-gray-400">Analyzing farmer data...</p>}
+                                                        {summaries[farmer.id] && <p className="text-sm text-gray-300">{summaries[farmer.id]}</p>}
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </td>
+                                    </tr>
+                                )}
+                            </React.Fragment>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        )}
     </DashboardCard>
     </>
   );
