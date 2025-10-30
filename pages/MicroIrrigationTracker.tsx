@@ -134,7 +134,7 @@ const MicroIrrigationTracker: React.FC = () => {
     };
 
     const filteredInstallations = useMemo(() => {
-        return installations.filter(i => filterStatus === 'All' || i.status === filterStatus);
+        return installations.filter(i => filterStatus === 'All' || i.status === i.status);
     }, [installations, filterStatus]);
     
     const handleExportPDF = () => {
@@ -168,11 +168,12 @@ const MicroIrrigationTracker: React.FC = () => {
         exportToExcel([{ title: 'Micro-Irrigation Installations', data: getDataForExport() }], 'micro_irrigation_installations');
     };
 
-    const exportOptions = {
-        csv: handleExportCSV,
-        excel: handleExportExcel,
-        pdf: handleExportPDF,
-    };
+    // FIX: Changed exportOptions from an object to an array of objects to match the DashboardCard's expected prop type.
+    const exportOptions = [
+        { label: 'Export as CSV', action: handleExportCSV },
+        { label: 'Export as Excel', action: handleExportExcel },
+        { label: 'Export as PDF', action: handleExportPDF },
+    ];
 
 
     return (

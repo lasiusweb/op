@@ -85,11 +85,12 @@ const InspectionLog: React.FC = () => {
         exportToExcel([{ title: 'Inspection Log', data: getDataForExport() }], 'inspection_log');
     };
 
-    const exportOptions = {
-        csv: handleExportCSV,
-        excel: handleExportExcel,
-        pdf: handleExportPDF,
-    };
+    // FIX: Changed exportOptions from an object to an array of objects to match the DashboardCard's expected prop type.
+    const exportOptions = [
+        { label: 'Export as CSV', action: handleExportCSV },
+        { label: 'Export as Excel', action: handleExportExcel },
+        { label: 'Export as PDF', action: handleExportPDF },
+    ];
 
     return (
         <DashboardCard title="Inspection Log" icon={<MagnifyingGlassIcon />} exportOptions={exportOptions} contentRef={contentRef}>

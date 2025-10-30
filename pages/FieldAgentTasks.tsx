@@ -64,11 +64,12 @@ const FieldAgentTasks: React.FC = () => {
         exportToExcel([{ title: 'Field Agent Tasks', data: getDataForExport() }], 'field_agent_tasks');
     };
 
-    const exportOptions = {
-        csv: handleExportCSV,
-        excel: handleExportExcel,
-        pdf: handleExportPDF,
-    };
+    // FIX: Changed exportOptions from an object to an array of objects to match the DashboardCard's expected prop type.
+    const exportOptions = [
+        { label: 'Export as CSV', action: handleExportCSV },
+        { label: 'Export as Excel', action: handleExportExcel },
+        { label: 'Export as PDF', action: handleExportPDF },
+    ];
 
     const ListView = () => (
         <div className="overflow-x-auto rounded-lg border border-gray-700/50">

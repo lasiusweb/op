@@ -129,11 +129,12 @@ const ProcurementCenterInventory: React.FC = () => {
         exportToExcel([{ title: 'Procurement Center Inventory', data: getDataForExport() }], 'pc_inventory');
     };
 
-    const exportOptions = {
-        csv: handleExportCSV,
-        excel: handleExportExcel,
-        pdf: handleExportPDF,
-    };
+    // FIX: Changed exportOptions from an object to an array of objects to match the DashboardCard's expected prop type.
+    const exportOptions = [
+        { label: 'Export as CSV', action: handleExportCSV },
+        { label: 'Export as Excel', action: handleExportExcel },
+        { label: 'Export as PDF', action: handleExportPDF },
+    ];
 
     return (
         <DashboardCard title="Procurement Center Inventory" icon={<HomeModernIcon />} exportOptions={exportOptions} contentRef={contentRef}>

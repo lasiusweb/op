@@ -171,7 +171,6 @@ const MandalMaster: React.FC = () => {
         exportToExcel([{ title: 'Mandals', data: getDataForExport() }], 'mandal_master');
     };
 
-    // FIX: exportOptions was an object, but DashboardCard expects an array of ExportAction objects.
     const exportOptions = [
         { label: 'Export as CSV', action: handleExportCSV },
         { label: 'Export as Excel', action: handleExportExcel },
