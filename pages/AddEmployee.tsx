@@ -16,6 +16,24 @@ const roles: EmployeeRole[] = ['Field Agent', 'Mandal Coordinator', 'Reviewer', 
 
 type FormErrors = { [key in keyof Partial<Employee>]?: string } & { [key: string]: string };
 
+const labelMap: { [key: string]: string } = {
+    role: "Designation",
+    region: "Branch",
+    department: "Department",
+    firstName: "First Name",
+    lastName: "Last Name",
+    mobile: "Mobile Number",
+    dob: "Date of Birth",
+    email: "Email ID",
+    joiningDate: "Date of Joining",
+};
+
+const fieldToStepMap: { [key: string]: number } = {
+    role: 1, region: 1, department: 1,
+    firstName: 2, lastName: 2, mobile: 2, dob: 2, email: 2,
+    joiningDate: 3, probationPeriodDays: 3,
+};
+
 const AddEmployee: React.FC<AddEmployeeProps> = ({ onAddEmployee, onCancel, allEmployees }) => {
     const [currentStep, setCurrentStep] = useState(1);
     const [formData, setFormData] = useState<Partial<Employee>>({
@@ -25,6 +43,7 @@ const AddEmployee: React.FC<AddEmployeeProps> = ({ onAddEmployee, onCancel, allE
     });
     const [employeeId, setEmployeeId] = useState('');
     const [errors, setErrors] = useState<FormErrors>({});
+    const [submissionErrors, setSubmissionErrors] = useState<FormErrors>({});
 
     const TOTAL_STEPS = 5;
 
@@ -33,25 +52,32 @@ const AddEmployee: React.FC<AddEmployeeProps> = ({ onAddEmployee, onCancel, allE
         setEmployeeId(`EMP${String(nextIdNumber).padStart(3, '0')}`);
     }, [allEmployees]);
     
-    const validateStep = (step: number) => {
+    const validateStep = (step: number, data: Partial<Employee>, returnOnly = false): FormErrors | boolean => {
         const newErrors: FormErrors = {};
         switch (step) {
             case 1:
-                if (!formData.role) newErrors.role = "Designation is required.";
-                if (!formData.region) newErrors.region = "Branch is required.";
-                if (!formData.department) newErrors.department = "Department is required.";
+                if (!data.role) newErrors.role = "Designation is required.";
+                if (!data.region) newErrors.region = "Branch is required.";
+                if (!data.department) newErrors.department = "Department is required.";
                 break;
             case 2:
-                if (!formData.firstName) newErrors.firstName = "First name is required.";
-                if (!formData.lastName) newErrors.lastName = "Last name is required.";
-                if (!formData.mobile) newErrors.mobile = "Mobile number is required.";
-                else if (!/^[6-9]\d{9}$/.test(formData.mobile)) newErrors.mobile = "Must be a valid 10-digit Indian mobile number.";
-                if (!formData.dob) newErrors.dob = "Date of birth is required.";
-                else if (new Date(formData.dob) > new Date()) newErrors.dob = "Date of birth cannot be in the future.";
+                if (!data.firstName) newErrors.firstName = "First name is required.";
+                if (!data.lastName) newErrors.lastName = "Last name is required.";
+                if (data.mobile) {
+                    if (!/^[6-9]\d{9}$/.test(data.mobile)) newErrors.mobile = "Must be a valid 10-digit Indian mobile number.";
+                    else if (allEmployees.some(e => e.mobile === data.mobile)) newErrors.mobile = "This mobile number is already in use.";
+                } else {
+                    newErrors.mobile = "Mobile number is required.";
+                }
+                if (data.email && allEmployees.some(e => e.email === data.email)) {
+                    newErrors.email = "This email address is already in use.";
+                }
+                if (!data.dob) newErrors.dob = "Date of birth is required.";
+                else if (new Date(data.dob) > new Date()) newErrors.dob = "Date of birth cannot be in the future.";
                 break;
             case 3:
-                if (!formData.joiningDate) newErrors.joiningDate = "Date of joining is required.";
-                if (formData.probationPeriodDays !== undefined && formData.probationPeriodDays < 0) newErrors.probationPeriodDays = "Probation period cannot be negative.";
+                if (!data.joiningDate) newErrors.joiningDate = "Date of joining is required.";
+                if (data.probationPeriodDays !== undefined && data.probationPeriodDays < 0) newErrors.probationPeriodDays = "Probation period cannot be negative.";
                 break;
             case 4:
                 // No required fields in this step
@@ -59,33 +85,51 @@ const AddEmployee: React.FC<AddEmployeeProps> = ({ onAddEmployee, onCancel, allE
             default:
                 break;
         }
+
+        if (returnOnly) return newErrors;
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
     const handleNext = () => {
-        if (validateStep(currentStep)) {
+        setSubmissionErrors({});
+        if (validateStep(currentStep, formData)) {
             setCurrentStep(prev => Math.min(prev + 1, TOTAL_STEPS));
         }
     };
 
-    const handlePrevious = () => setCurrentStep(prev => Math.max(prev - 1, 1));
+    const handlePrevious = () => {
+        setSubmissionErrors({});
+        setCurrentStep(prev => Math.max(prev - 1, 1));
+    };
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
-        if (errors[name]) setErrors(prev => ({ ...prev, [name]: undefined }));
+        if (errors[name]) setErrors(prev => {
+            const newErrors = {...prev};
+            delete newErrors[name];
+            return newErrors;
+        });
+        if (submissionErrors[name]) setSubmissionErrors(prev => {
+            const newErrors = {...prev};
+            delete newErrors[name];
+            return newErrors;
+        });
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        // Run all validations before submitting
-        const step1Valid = validateStep(1);
-        const step2Valid = validateStep(2);
-        const step3Valid = validateStep(3);
+        const step1Errors = validateStep(1, formData, true) as FormErrors;
+        const step2Errors = validateStep(2, formData, true) as FormErrors;
+        const step3Errors = validateStep(3, formData, true) as FormErrors;
+        const allErrors = { ...step1Errors, ...step2Errors, ...step3Errors };
 
-        if (!step1Valid) { setCurrentStep(1); return; }
-        if (!step2Valid) { setCurrentStep(2); return; }
-        if (!step3Valid) { setCurrentStep(3); return; }
+        if (Object.keys(allErrors).length > 0) {
+            setSubmissionErrors(allErrors);
+            return;
+        }
 
         const now = new Date().toISOString();
         const newEmployee: Employee = {
@@ -98,6 +142,17 @@ const AddEmployee: React.FC<AddEmployeeProps> = ({ onAddEmployee, onCancel, allE
         } as Employee;
         onAddEmployee(newEmployee);
     };
+
+    const handleErrorClick = (fieldName: string) => {
+        const step = fieldToStepMap[fieldName];
+        if (step) {
+            setCurrentStep(step);
+            setTimeout(() => {
+                 document.getElementById(fieldName)?.focus();
+            }, 100);
+        }
+    };
+
 
     const FormInput = ({ name, label, required = false, type = 'text', children, error }: any) => (
         <div>
@@ -157,7 +212,7 @@ const AddEmployee: React.FC<AddEmployeeProps> = ({ onAddEmployee, onCancel, allE
                     <FormInput name="aliasName" label="Alias Name" />
                     <div className="grid grid-cols-3 gap-2"><div className="col-span-1"><FormInput name="countryCode" label="Code" /></div><div className="col-span-2"><FormInput name="mobile" label="Mobile No." required error={errors.mobile} /></div></div>
                     <FormInput name="dob" label="Date of Birth" required type="date" error={errors.dob} />
-                    <FormInput name="email" label="Email ID" type="email" />
+                    <FormInput name="email" label="Email ID" type="email" error={errors.email} />
                     <FormInput name="gender" label="Gender"><select><option>Male</option><option>Female</option><option>Other</option></select></FormInput>
                 </fieldset>}
 
@@ -180,6 +235,27 @@ const AddEmployee: React.FC<AddEmployeeProps> = ({ onAddEmployee, onCancel, allE
                 </fieldset>}
                 
                 {currentStep === 5 && <div><h3 className="text-xl font-bold text-white mb-4">Review Details</h3>
+                    {Object.keys(submissionErrors).length > 0 && (
+                        <div className="bg-red-900/30 border border-red-500/50 text-red-300 px-4 py-3 rounded-lg text-sm mb-6">
+                            <p className="font-bold mb-2 flex items-center gap-2"><
+                                span><
+                                    svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                    </svg>
+                                </span>
+                                Please fix the following errors before submitting:
+                            </p>
+                            <ul className="list-disc list-inside space-y-1">
+                                {Object.entries(submissionErrors).map(([field, message]) => (
+                                    <li key={field}>
+                                        <button type="button" onClick={() => handleErrorClick(field)} className="underline hover:text-red-200 font-semibold">
+                                            {labelMap[field] || field}:
+                                        </button> {message}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
                     <div className="bg-gray-900/50 p-6 rounded-lg space-y-6">
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6"><ReviewDetail label="Employee ID" value={employeeId} /><ReviewDetail label="Full Name" value={`${formData.firstName} ${formData.lastName}`} /><ReviewDetail label="Designation" value={formData.role} /><ReviewDetail label="Department" value={formData.department} /></div>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6"><ReviewDetail label="Mobile" value={`${formData.countryCode} ${formData.mobile}`} /><ReviewDetail label="Email" value={formData.email} /><ReviewDetail label="Gender" value={formData.gender} /><ReviewDetail label="Date of Birth" value={formData.dob} /></div>
@@ -188,9 +264,11 @@ const AddEmployee: React.FC<AddEmployeeProps> = ({ onAddEmployee, onCancel, allE
                 </div>}
 
                 <div className="flex justify-between gap-4 pt-4 border-t border-gray-700/50">
-                    <button type="button" onClick={currentStep === 1 ? onCancel : handlePrevious} className="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-6 rounded-md">{currentStep === 1 ? 'Cancel' : 'Previous'}</button>
-                    {currentStep < TOTAL_STEPS ? <button type="button" onClick={handleNext} className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-md">Next</button>
-                    : <button type="submit" className="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-6 rounded-md">Submit Registration</button>}
+                    <button type="button" onClick={currentStep === 1 ? onCancel : handlePrevious} className="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-6 rounded-md transition-colors">
+                        {currentStep === 1 ? 'Cancel' : 'Previous'}
+                    </button>
+                    {currentStep < TOTAL_STEPS ? <button type="button" onClick={handleNext} className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-md transition-colors">Next</button>
+                    : <button type="submit" className="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-6 rounded-md transition-colors">Submit Registration</button>}
                 </div>
             </form>
         </DashboardCard>

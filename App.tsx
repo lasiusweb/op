@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect, useCallback } from 'react';
 import Sidebar from './components/layout/Sidebar';
 import Header from './components/layout/Header';
@@ -89,6 +90,8 @@ const App: React.FC = () => {
   const [viewingEmployeeId, setViewingEmployeeId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [visitFilterAgentId, setVisitFilterAgentId] = useState<string | null>(null);
+  const [confirmationMessage, setConfirmationMessage] = useState<string | null>(null);
+
 
   useEffect(() => {
     const handleResize = () => {
@@ -205,20 +208,15 @@ const App: React.FC = () => {
     handleSetCurrentPage('manageVisits');
   };
 
-  const handleUpdateEmployee = (updatedEmployee: Employee) => {
-    const updatedEmployees = employees.map(u => u.id === updatedEmployee.id ? updatedEmployee : u);
-    setEmployees(updatedEmployees);
-    if (currentEmployee.id === updatedEmployee.id) {
-        setCurrentEmployee(updatedEmployee);
-    }
-    handleSetCurrentPage('employees');
-  };
-
   const handleProfileChangeRequestUpdate = (updatedRequest: ProfileChangeRequest, changes: Partial<Employee>) => {
     setProfileChangeRequests(prev => prev.map(req => req.id === updatedRequest.id ? updatedRequest : req));
     if(updatedRequest.status === 'Approved') {
         setEmployees(prev => prev.map(emp => emp.id === updatedRequest.employeeId ? { ...emp, ...changes } : emp));
     }
+  };
+  
+  const handleAddProfileChangeRequest = (newRequest: ProfileChangeRequest) => {
+      setProfileChangeRequests(prev => [newRequest, ...prev]);
   };
 
   const handleUpdateTask = (updatedTask: Task) => {
@@ -228,11 +226,13 @@ const App: React.FC = () => {
   const handleAddNewFarmer = (newFarmer: Farmer, newLandParcel: LandParcel) => {
     setFarmers(prev => [newFarmer, ...prev]);
     setLandParcels(prev => [newLandParcel, ...prev]);
+    setConfirmationMessage(`Farmer ${newFarmer.fullName} added successfully!`);
     handleSetCurrentPage('farmers');
   };
 
   const handleAddNewEmployee = (newEmployee: Employee) => {
     setEmployees(prev => [newEmployee, ...prev]);
+    setConfirmationMessage(`Employee ${newEmployee.fullName} added successfully!`);
     handleSetCurrentPage('employees');
   };
 
@@ -258,7 +258,14 @@ const App: React.FC = () => {
       case 'dashboard':
         return <Dashboard loading={loading} />;
       case 'farmers':
-        return <Farmers loading={loading} onAddNewFarmer={() => handleSetCurrentPage('addFarmer')} allFarmers={farmers} setAllFarmers={setFarmers} />;
+        return <Farmers 
+            loading={loading} 
+            onAddNewFarmer={() => handleSetCurrentPage('addFarmer')} 
+            allFarmers={farmers} 
+            setAllFarmers={setFarmers} 
+            initialConfirmationMessage={confirmationMessage}
+            setInitialConfirmationMessage={setConfirmationMessage}
+        />;
       case 'addFarmer':
         return <AddFarmer onAddFarmer={handleAddNewFarmer} onCancel={() => handleSetCurrentPage('farmers')} allFarmers={farmers} />;
       case 'employees':
@@ -270,6 +277,8 @@ const App: React.FC = () => {
                     allVisitRequests={farmVisitRequests}
                     onViewVisits={handleViewEmployeeVisits}
                     onAddNewEmployee={() => handleSetCurrentPage('addEmployee')}
+                    confirmationMessage={confirmationMessage}
+                    setConfirmationMessage={setConfirmationMessage}
                  />;
       case 'addEmployee':
           return <AddEmployee onAddEmployee={handleAddNewEmployee} onCancel={() => handleSetCurrentPage('employees')} allEmployees={employees} />;
@@ -403,8 +412,8 @@ const App: React.FC = () => {
               allEmployees={employees}
               allTasks={tasks}
               allActivity={employeeActivity}
-              onUpdateEmployee={handleUpdateEmployee}
               onUpdateTask={handleUpdateTask}
+              onAddProfileChangeRequest={handleAddProfileChangeRequest}
            />;
       }
       default:

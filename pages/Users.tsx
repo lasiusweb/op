@@ -14,6 +14,8 @@ interface EmployeesProps {
   onViewProfile: (employeeId: string) => void;
   onViewVisits: (employeeId: string) => void;
   onAddNewEmployee: () => void;
+  confirmationMessage: string | null;
+  setConfirmationMessage: (message: string | null) => void;
 }
 
 const employeeTemplateHeaders = [
@@ -48,15 +50,27 @@ const ConfirmationModal: React.FC<{
 };
 
 
-const Employees: React.FC<EmployeesProps> = ({ currentEmployee, allEmployees, setAllEmployees, onViewProfile, allVisitRequests, onViewVisits, onAddNewEmployee }) => {
+const Employees: React.FC<EmployeesProps> = ({ currentEmployee, allEmployees, setAllEmployees, onViewProfile, allVisitRequests, onViewVisits, onAddNewEmployee, confirmationMessage, setConfirmationMessage }) => {
   const isAdmin = currentEmployee.role === 'Admin';
   const contentRef = useRef<HTMLDivElement>(null);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [selectedEmployeeIds, setSelectedEmployeeIds] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [showDeactivateConfirm, setShowDeactivateConfirm] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
   const selectAllCheckboxRef = useRef<HTMLInputElement>(null);
   
+  useEffect(() => {
+    if (confirmationMessage) {
+        setShowConfirmation(true);
+        const timer = setTimeout(() => {
+            setShowConfirmation(false);
+            setConfirmationMessage(null);
+        }, 3000);
+        return () => clearTimeout(timer);
+    }
+  }, [confirmationMessage, setConfirmationMessage]);
+
   const visitCounts = useMemo(() => {
     const counts: { [employeeId: string]: number } = {};
     for (const employee of allEmployees) {
@@ -253,6 +267,11 @@ const Employees: React.FC<EmployeesProps> = ({ currentEmployee, allEmployees, se
 
   return (
     <>
+    {showConfirmation && (
+        <div className="fixed top-24 right-8 bg-green-600 text-white py-2 px-4 rounded-lg shadow-lg z-50 animate-fade-in-out">
+            {confirmationMessage}
+        </div>
+    )}
     {showDeactivateConfirm && <ConfirmationModal onConfirm={handleConfirmDeactivate} onCancel={() => setShowDeactivateConfirm(false)} count={selectedEmployeeIds.length} actionText="deactivate" />}
     <BulkImportModal
         isOpen={isImportModalOpen}
@@ -308,7 +327,9 @@ const Employees: React.FC<EmployeesProps> = ({ currentEmployee, allEmployees, se
             </tr>
           </thead>
           <tbody>
-            {filteredEmployees.map((employee) => (
+            {filteredEmployees.map((employee) => {
+              const canViewProfile = isAdmin || employee.id === currentEmployee.id;
+              return (
               <tr key={employee.id} className={`border-b border-gray-700 bg-gray-800/50 ${selectedEmployeeIds.includes(employee.id) ? 'bg-teal-900/30' : 'hover:bg-gray-700/50'}`}>
                 <td className="w-4 p-4">
                     <div className="flex items-center">
@@ -318,7 +339,12 @@ const Employees: React.FC<EmployeesProps> = ({ currentEmployee, allEmployees, se
                 </td>
                 <td className="px-6 py-4 font-medium text-white whitespace-nowrap">{employee.id}</td>
                 <td className="px-6 py-4 text-white">
-                    <button onClick={() => onViewProfile(employee.id)} className="hover:underline text-teal-400 hover:text-teal-300 font-semibold">
+                    <button
+                        onClick={() => canViewProfile && onViewProfile(employee.id)}
+                        className={`font-semibold ${canViewProfile ? 'hover:underline text-teal-400 hover:text-teal-300 cursor-pointer' : 'text-gray-400 cursor-not-allowed'}`}
+                        disabled={!canViewProfile}
+                        title={!canViewProfile ? "You can only view your own profile." : `View ${employee.fullName}'s profile`}
+                    >
                       {employee.fullName}
                     </button>
                 </td>
@@ -353,7 +379,7 @@ const Employees: React.FC<EmployeesProps> = ({ currentEmployee, allEmployees, se
                   </td>
                 )}
               </tr>
-            ))}
+            )})}
           </tbody>
         </table>
       </div>
