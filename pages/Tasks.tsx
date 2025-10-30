@@ -256,11 +256,12 @@ const Tasks: React.FC = () => {
         exportToExcel([{ title: 'Tasks', data: getDataForExport() }], 'tasks_list');
     };
 
-    const exportOptions = {
-        csv: handleExportCSV,
-        excel: handleExportExcel,
-        pdf: handleExportPDF,
-    };
+    // FIX: exportOptions was an object, but DashboardCard expects an array of ExportAction objects.
+    const exportOptions = [
+        { label: 'Export as CSV', action: handleExportCSV },
+        { label: 'Export as Excel', action: handleExportExcel },
+        { label: 'Export as PDF', action: handleExportPDF },
+    ];
     
     const SortableHeader: React.FC<{ label: string; sortKey: SortableTaskKeys }> = ({ label, sortKey }) => (
         <th scope="col" className="px-6 py-3">
@@ -410,7 +411,7 @@ const Tasks: React.FC = () => {
                     disabled={isLoadingAnalysis}
                     className="w-full flex items-center justify-center px-4 py-2 mb-4 text-sm font-semibold text-white bg-cyan-600 rounded-md hover:bg-cyan-700 disabled:bg-gray-500 disabled:cursor-not-allowed transition-colors"
                 >
-                    <SparklesIcon className="w-5 h-5 mr-2" />
+                    <SparklesIcon className="w-5 w-5 mr-2" />
                     {isLoadingAnalysis ? 'Analyzing Tasks...' : 'Generate Analysis'}
                 </button>
                 {isLoadingAnalysis && (

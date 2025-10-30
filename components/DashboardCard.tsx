@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { ArrowDownTrayIcon } from './Icons';
 
-interface ExportOptions {
-    csv?: () => void;
-    excel?: () => void;
-    pdf?: () => void;
+interface ExportAction {
+    label: string;
+    action: () => void;
+    isSeparator?: boolean;
 }
 
 interface DashboardCardProps {
@@ -13,7 +12,7 @@ interface DashboardCardProps {
   icon?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
-  exportOptions?: ExportOptions;
+  exportOptions?: ExportAction[];
   contentRef?: React.RefObject<HTMLDivElement>;
 }
 
@@ -34,7 +33,7 @@ const DashboardCard: React.FC<DashboardCardProps> = ({ title, icon, children, cl
       };
   }, []);
 
-  const hasExportOptions = exportOptions && (exportOptions.csv || exportOptions.excel || exportOptions.pdf);
+  const hasExportOptions = exportOptions && exportOptions.length > 0;
 
   return (
     <div className={`bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl shadow-lg p-4 sm:p-6 h-full flex flex-col ${className}`}>
@@ -54,38 +53,23 @@ const DashboardCard: React.FC<DashboardCardProps> = ({ title, icon, children, cl
                     <ArrowDownTrayIcon className="h-5 w-5" />
                 </button>
                 {isExportMenuOpen && (
-                    <div className="absolute right-0 mt-2 w-40 bg-gray-700 border border-gray-600 rounded-md shadow-lg z-20">
+                    <div className="absolute right-0 mt-2 w-56 bg-gray-700 border border-gray-600 rounded-md shadow-lg z-20">
                         <ul className="py-1">
-                            {exportOptions.csv && (
-                                <li>
-                                    <button
-                                        onClick={() => { exportOptions.csv!(); setIsExportMenuOpen(false); }}
-                                        className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-600 hover:text-white"
-                                    >
-                                        Export as CSV
-                                    </button>
-                                </li>
-                            )}
-                            {exportOptions.excel && (
-                                <li>
-                                    <button
-                                        onClick={() => { exportOptions.excel!(); setIsExportMenuOpen(false); }}
-                                        className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-600 hover:text-white"
-                                    >
-                                        Export as Excel
-                                    </button>
-                                </li>
-                            )}
-                            {exportOptions.pdf && (
-                                <li>
-                                    <button
-                                        onClick={() => { exportOptions.pdf!(); setIsExportMenuOpen(false); }}
-                                        className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-600 hover:text-white"
-                                    >
-                                        Export as PDF
-                                    </button>
-                                </li>
-                            )}
+                            {exportOptions.map((option, index) => {
+                                if (option.isSeparator) {
+                                    return <li key={index} className="my-1 h-px bg-gray-600"></li>;
+                                }
+                                return (
+                                    <li key={index}>
+                                        <button
+                                            onClick={() => { option.action(); setIsExportMenuOpen(false); }}
+                                            className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-600 hover:text-white"
+                                        >
+                                            {option.label}
+                                        </button>
+                                    </li>
+                                );
+                            })}
                         </ul>
                     </div>
                 )}

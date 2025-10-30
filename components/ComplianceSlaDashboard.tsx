@@ -1,4 +1,5 @@
 
+
 import React, { useRef } from 'react';
 import DashboardCard from './DashboardCard';
 import { ShieldCheckIcon } from './Icons';
@@ -34,11 +35,11 @@ const ComplianceSlaDashboard: React.FC<ComplianceSlaDashboardProps> = ({ complia
         }
     };
 
-    const exportOptions = {
-        csv: handleExportCSV,
-        excel: handleExportExcel,
-        pdf: handleExportPDF,
-    };
+    const exportOptions = [
+        { label: 'Export as CSV', action: handleExportCSV },
+        { label: 'Export as Excel', action: handleExportExcel },
+        { label: 'Export as PDF', action: handleExportPDF },
+    ];
 
   return (
     <DashboardCard 

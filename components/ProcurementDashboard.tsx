@@ -81,11 +81,11 @@ const ProcurementDashboard: React.FC<ProcurementDashboardProps> = ({ districtDat
         }
     };
 
-    const exportOptions = {
-        csv: handleExportCSV,
-        excel: handleExportExcel,
-        pdf: handleExportPDF,
-    };
+    const exportOptions = [
+        { label: 'Export as CSV', action: handleExportCSV },
+        { label: 'Export as Excel', action: handleExportExcel },
+        { label: 'Export as PDF', action: handleExportPDF },
+    ];
 
   return (
     <DashboardCard 

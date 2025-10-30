@@ -1,4 +1,5 @@
 
+
 import React, { useState, useCallback, useRef } from 'react';
 import DashboardCard from './DashboardCard';
 import { SparklesIcon } from './Icons';
@@ -67,11 +68,11 @@ const StrategicAdvisor: React.FC<StrategicAdvisorProps> = ({ dashboardData }) =>
     }
   };
 
-  const exportOptions = {
-    csv: handleExportCSV,
-    excel: handleExportExcel,
-    pdf: handleExportPDF,
-  };
+  const exportOptions = [
+    { label: 'Export as Markdown (.md)', action: handleExportCSV },
+    { label: 'Export as Excel', action: handleExportExcel },
+    { label: 'Export as PDF', action: handleExportPDF },
+  ];
 
   return (
     <DashboardCard 

@@ -1,4 +1,5 @@
 
+
 import React, { useRef } from 'react';
 import DashboardCard from '../components/DashboardCard';
 import { BeakerIcon } from '../components/Icons';
@@ -17,9 +18,9 @@ const ComingSoon: React.FC<ComingSoonProps> = ({ title }) => {
         }
     };
     
-    const exportOptions = {
-        pdf: handleExportPDF,
-    };
+    const exportOptions = [
+        { label: 'Export as PDF', action: handleExportPDF },
+    ];
 
     return (
         <DashboardCard title={title} exportOptions={exportOptions} contentRef={contentRef}>

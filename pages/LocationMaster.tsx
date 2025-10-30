@@ -207,11 +207,12 @@ const LocationMaster: React.FC = () => {
         exportToExcel([{ title: 'Locations', data: getDataForExport() }], 'location_master');
     };
 
-    const exportOptions = {
-        csv: handleExportCSV,
-        excel: handleExportExcel,
-        pdf: handleExportPDF,
-    };
+    // FIX: exportOptions was an object, but DashboardCard expects an array of ExportAction objects.
+    const exportOptions = [
+        { label: 'Export as CSV', action: handleExportCSV },
+        { label: 'Export as Excel', action: handleExportExcel },
+        { label: 'Export as PDF', action: handleExportPDF },
+    ];
 
     const TableView = () => (
         <div className="overflow-x-auto rounded-lg border border-gray-700/50">

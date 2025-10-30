@@ -78,11 +78,11 @@ const FinancialDashboard: React.FC<FinancialDashboardProps> = ({ paymentData, ag
         }
     };
 
-    const exportOptions = {
-        csv: handleExportCSV,
-        excel: handleExportExcel,
-        pdf: handleExportPDF,
-    };
+    const exportOptions = [
+        { label: 'Export as CSV', action: handleExportCSV },
+        { label: 'Export as Excel', action: handleExportExcel },
+        { label: 'Export as PDF', action: handleExportPDF },
+    ];
 
   return (
     <DashboardCard 

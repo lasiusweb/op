@@ -217,11 +217,12 @@ const Employees: React.FC<EmployeesProps> = ({ currentEmployee, allEmployees, se
         setIsImportModalOpen(false);
     };
 
-  const exportOptions = {
-    csv: handleExportCSV,
-    excel: handleExportExcel,
-    pdf: handleExportPDF,
-  };
+  // FIX: exportOptions was an object, but DashboardCard expects an array of ExportAction objects.
+  const exportOptions = [
+    { label: 'Export as CSV', action: handleExportCSV },
+    { label: 'Export as Excel', action: handleExportExcel },
+    { label: 'Export as PDF', action: handleExportPDF },
+  ];
 
   const BulkActionsBar: React.FC = () => {
     const [managerId, setManagerId] = useState('');

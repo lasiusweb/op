@@ -465,12 +465,6 @@ export const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, se
         setFarmerToDelete(null);
     };
     
-    const handleExportPDF = () => {
-        if (contentRef.current) {
-            exportElementAsPDF(contentRef.current, 'farmers_list', 'Farmer Master Database');
-        }
-    };
-
     const getDataForExport = () => {
         return sortedAndFilteredFarmers.map(f => ({
             'Farmer ID': f.id,
@@ -485,21 +479,66 @@ export const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, se
             'Account Verified': f.accountVerified,
             'Photo Uploaded': f.photoUploaded,
         }));
-    }
-
-    const handleExportCSV = () => {
-        exportToCSV([{ title: 'Farmers', data: getDataForExport() }], 'farmers_list.csv');
     };
 
-    const handleExportExcel = () => {
-        exportToExcel([{ title: 'Farmers', data: getDataForExport() }], 'farmers_list');
+    const getAllDataForExport = () => {
+        return allFarmers.map(f => ({
+            'Farmer ID': f.id,
+            'Full Name': f.fullName,
+            'Father\'s Name': f.fatherName,
+            'Mobile': f.mobile,
+            'Aadhaar': f.aadhaar,
+            'Village': f.village,
+            'Mandal': f.mandal,
+            'District': f.district,
+            'Status': f.status,
+            'Gender': f.gender,
+            'Date of Birth': f.dob,
+            'Bank Name': f.bankName,
+            'Bank Account Number': f.bankAccountNumber,
+            'IFSC Code': f.ifscCode,
+            'Crop Type': f.cropType,
+            'Account Verified': f.accountVerified,
+            'Photo Uploaded': f.photoUploaded,
+            'Remarks': f.remarks,
+            'Assigned Agent': employeeMap.get(f.assignedAgentId) || 'Unassigned',
+            'Created At': f.createdAt,
+            'Updated At': f.updatedAt,
+        }));
     };
 
-    const exportOptions = {
-        csv: handleExportCSV,
-        excel: handleExportExcel,
-        pdf: handleExportPDF,
+    const handleExportPDF = () => {
+        if (contentRef.current) {
+            exportElementAsPDF(contentRef.current, 'farmers_list_view', 'Farmer Master Database (Current View)');
+        }
     };
+
+    const handleExportViewCSV = () => {
+        exportToCSV([{ title: 'Farmers (Current View)', data: getDataForExport() }], 'farmers_list_view.csv');
+    };
+
+    const handleExportViewExcel = () => {
+        exportToExcel([{ title: 'Farmers (Current View)', data: getDataForExport() }], 'farmers_list_view');
+    };
+
+    const handleExportAllCSV = () => {
+        exportToCSV([{ title: 'All Farmers (Complete Data)', data: getAllDataForExport() }], 'all_farmers_complete.csv');
+    };
+
+    const handleExportAllExcel = () => {
+        exportToExcel([{ title: 'All Farmers (Complete Data)', data: getAllDataForExport() }], 'all_farmers_complete');
+    };
+
+    // FIX: The type for exportOptions was not matching ExportAction[], fixed by satisfying the interface for the separator.
+    const exportOptions = [
+        { label: 'Export View as CSV', action: handleExportViewCSV },
+        { label: 'Export View as Excel', action: handleExportViewExcel },
+        { label: 'Export View as PDF', action: handleExportPDF },
+        { label: '---', action: () => {}, isSeparator: true },
+        { label: 'Export All Farmers (CSV)', action: handleExportAllCSV },
+        { label: 'Export All Farmers (Excel)', action: handleExportAllExcel },
+    ];
+
 
     const BulkActionsBar = () => {
         const [targetAgentId, setTargetAgentId] = useState('');

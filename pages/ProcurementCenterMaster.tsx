@@ -227,11 +227,11 @@ const ProcurementCenterMaster: React.FC = () => {
         exportToExcel([{ title: 'Procurement Centers', data: getDataForExport() }], 'procurement_centers');
     };
 
-    const exportOptions = {
-        csv: handleExportCSV,
-        excel: handleExportExcel,
-        pdf: handleExportPDF,
-    };
+    const exportOptions = [
+        { label: 'Export as CSV', action: handleExportCSV },
+        { label: 'Export as Excel', action: handleExportExcel },
+        { label: 'Export as PDF', action: handleExportPDF },
+    ];
 
     const TableView = () => (
         <div className="overflow-x-auto rounded-lg border border-gray-700/50">
@@ -378,20 +378,4 @@ const ProcurementCenterMaster: React.FC = () => {
                             <button onClick={() => setViewMode('table')} className={`px-3 py-1 text-sm font-medium rounded-md flex items-center gap-2 transition-colors ${viewMode === 'table' ? 'bg-teal-600 text-white' : 'text-gray-400 hover:bg-gray-700'}`}>
                                <TableCellsIcon /> Table
                             </button>
-                            <button onClick={() => setViewMode('map')} className={`px-3 py-1 text-sm font-medium rounded-md flex items-center gap-2 transition-colors ${viewMode === 'map' ? 'bg-teal-600 text-white' : 'text-gray-400 hover:bg-gray-700'}`}>
-                               <MapIcon /> Map
-                            </button>
-                        </div>
-                        <button onClick={() => handleOpenModal()} className="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-md transition-colors">
-                            Add New Center
-                        </button>
-                    </div>
-                </div>
-
-                {viewMode === 'table' ? <TableView /> : <MapView />}
-            </div>
-        </DashboardCard>
-    );
-};
-
-export default ProcurementCenterMaster;
+                            <button onClick={() => setViewMode('map')} className={`px-3 py-1 text-sm font-medium rounded-md flex items-center gap-2 transition-colors ${viewMode === 'map' ? 'bg-

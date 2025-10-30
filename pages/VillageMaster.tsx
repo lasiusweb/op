@@ -180,11 +180,12 @@ const VillageMaster: React.FC = () => {
         exportToExcel([{ title: 'Villages', data: getDataForExport() }], 'village_master');
     };
 
-    const exportOptions = {
-        csv: handleExportCSV,
-        excel: handleExportExcel,
-        pdf: handleExportPDF,
-    };
+    // FIX: exportOptions was an object, but DashboardCard expects an array of ExportAction objects.
+    const exportOptions = [
+        { label: 'Export as CSV', action: handleExportCSV },
+        { label: 'Export as Excel', action: handleExportExcel },
+        { label: 'Export as PDF', action: handleExportPDF },
+    ];
 
     return (
         <DashboardCard title="Village Master" exportOptions={exportOptions} contentRef={contentRef}>
