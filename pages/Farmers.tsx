@@ -452,7 +452,7 @@ export const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, se
     
     const getDataForExport = () => {
         return sortedAndFilteredFarmers.map(f => ({
-            'Farmer ID': f.id,
+            'Generated Farmer ID': f.id,
             'Full Name': f.fullName,
             'Mobile': f.mobile,
             'Village': f.village,
@@ -468,7 +468,7 @@ export const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, se
 
     const getAllDataForExport = () => {
         return allFarmers.map(f => ({
-            'Farmer ID': f.id,
+            'Generated Farmer ID': f.id,
             'Full Name': f.fullName,
             'Father\'s Name': f.fatherName,
             'Mobile': f.mobile,
@@ -590,7 +590,7 @@ export const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, se
             <div className="flex items-center gap-4 flex-wrap">
                  <input 
                   type="text" 
-                  placeholder="Search farmer ID, name, mobile, location..." 
+                  placeholder="Search by Generated Farmer ID, name, mobile, location..." 
                   value={searchTerm}
                   onChange={e => setSearchTerm(e.target.value)}
                   className="bg-gray-800 border border-gray-700 rounded-md px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-teal-500 w-full sm:w-72"
@@ -667,7 +667,7 @@ export const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, se
                     <thead className="text-xs text-gray-300 uppercase bg-gray-800">
                         <tr>
                             <th scope="col" className="p-4"><input type="checkbox" ref={checkboxRef} checked={isAllSelected} onChange={handleSelectAll} className="w-4 h-4 text-teal-600 bg-gray-700 border-gray-600 rounded focus:ring-teal-500" /></th>
-                            <SortableHeader label="Farmer ID" sortKey="id" />
+                            <SortableHeader label="Generated Farmer ID" sortKey="id" />
                             <SortableHeader label="Farmer Name" sortKey="fullName" />
                             <SortableHeader label="Location" sortKey="location" />
                             <SortableHeader label="Assigned Agent" sortKey="assignedAgent" />
@@ -720,7 +720,7 @@ export const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, se
                                             ) : (
                                                 <div className="p-4 bg-gray-800/50 rounded-lg"> {/* Detail view */}
                                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                                        <DetailItem label="Farmer ID" value={farmer.id} />
+                                                        <DetailItem label="Generated Farmer ID" value={farmer.id} />
                                                         <DetailItem label="Mobile" value={farmer.mobile} />
                                                         <DetailItem label="Aadhaar" value={farmer.aadhaar} />
                                                         <DetailItem label="Date of Birth" value={farmer.dob} />
