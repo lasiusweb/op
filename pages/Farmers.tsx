@@ -98,7 +98,7 @@ export const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, se
     const [searchTerm, setSearchTerm] = useState('');
     const [filterDistrict, setFilterDistrict] = useState<string>('All');
     const [filterStatus, setFilterStatus] = useState<'All' | 'Active' | 'Inactive'>('All');
-    const [sortConfig, setSortConfig] = useState<{ key: SortableFarmerKeys; direction: 'ascending' | 'descending' }>({ key: 'fullName', direction: 'ascending' });
+    const [sortConfig, setSortConfig] = useState<{ key: SortableFarmerKeys; direction: 'ascending' | 'descending' }>({ key: 'id', direction: 'ascending' });
     const [farmerToDelete, setFarmerToDelete] = useState<Farmer | null>(null);
 
     const [suggestions, setSuggestions] = useState<string>('');
@@ -129,6 +129,14 @@ export const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, se
         const districts = new Set(allFarmers.map(f => f.district));
         return ['All', ...Array.from(districts).sort()];
     }, [allFarmers]);
+    
+    const requestSort = (key: SortableFarmerKeys) => {
+        let direction: 'ascending' | 'descending' = 'ascending';
+        if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+            direction = 'descending';
+        }
+        setSortConfig({ key, direction });
+    };
 
     const sortedAndFilteredFarmers = useMemo(() => {
         let filterableItems = [...allFarmers];
@@ -209,14 +217,6 @@ export const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, se
 
         return filterableItems;
     }, [allFarmers, filterDistrict, filterStatus, searchTerm, sortConfig, landParcelCounts, employeeMap]);
-    
-    const requestSort = (key: SortableFarmerKeys) => {
-        let direction: 'ascending' | 'descending' = 'ascending';
-        if (sortConfig.key === key && sortConfig.direction === 'ascending') {
-            direction = 'descending';
-        }
-        setSortConfig({ key, direction });
-    };
     
     const visibleIds = useMemo(() => sortedAndFilteredFarmers.map(f => f.id), [sortedAndFilteredFarmers]);
     const selectedVisibleIds = useMemo(() => visibleIds.filter(id => selectedFarmerIds.includes(id)), [visibleIds, selectedFarmerIds]);
@@ -438,21 +438,6 @@ export const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, se
             [name]: processedValue,
         });
     };
-
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0] && editableFarmerData) {
-            const file = e.target.files[0];
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setEditableFarmerData({
-                    ...editableFarmerData,
-                    photoUrl: reader.result as string,
-                    photoUploaded: true,
-                });
-            };
-            reader.readAsDataURL(file);
-        }
-    };
     
     const handleDeleteClick = (farmer: Farmer) => {
         setFarmerToDelete(farmer);
@@ -529,12 +514,11 @@ export const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, se
         exportToExcel([{ title: 'All Farmers (Complete Data)', data: getAllDataForExport() }], 'all_farmers_complete');
     };
 
-    // FIX: The type for exportOptions was not matching ExportAction[], fixed by satisfying the interface for the separator.
     const exportOptions = [
         { label: 'Export View as CSV', action: handleExportViewCSV },
         { label: 'Export View as Excel', action: handleExportViewExcel },
         { label: 'Export View as PDF', action: handleExportPDF },
-        { label: '---', action: () => {}, isSeparator: true },
+        { label: '', action: () => {}, isSeparator: true },
         { label: 'Export All Farmers (CSV)', action: handleExportAllCSV },
         { label: 'Export All Farmers (Excel)', action: handleExportAllExcel },
     ];
@@ -683,6 +667,7 @@ export const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, se
                     <thead className="text-xs text-gray-300 uppercase bg-gray-800">
                         <tr>
                             <th scope="col" className="p-4"><input type="checkbox" ref={checkboxRef} checked={isAllSelected} onChange={handleSelectAll} className="w-4 h-4 text-teal-600 bg-gray-700 border-gray-600 rounded focus:ring-teal-500" /></th>
+                            <SortableHeader label="Farmer ID" sortKey="id" />
                             <SortableHeader label="Farmer Name" sortKey="fullName" />
                             <SortableHeader label="Location" sortKey="location" />
                             <SortableHeader label="Assigned Agent" sortKey="assignedAgent" />
@@ -697,6 +682,7 @@ export const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, se
                             <React.Fragment key={farmer.id}>
                                 <tr className={`border-b border-gray-700 ${selectedFarmerIds.includes(farmer.id) ? 'bg-teal-900/30' : 'hover:bg-gray-700/50'}`}>
                                     <td className="w-4 p-4"><input type="checkbox" checked={selectedFarmerIds.includes(farmer.id)} onChange={() => handleSelectOne(farmer.id)} className="w-4 h-4 text-teal-600 bg-gray-700 border-gray-600 rounded focus:ring-teal-500" /></td>
+                                    <td className="px-6 py-4 font-mono text-xs text-gray-300 whitespace-nowrap">{farmer.id}</td>
                                     <td className="px-6 py-4 font-medium text-white whitespace-nowrap">{farmer.fullName}</td>
                                     <td className="px-6 py-4">{farmer.village}, {farmer.district}</td>
                                     <td className="px-6 py-4">{employeeMap.get(farmer.assignedAgentId) || <span className="text-yellow-400">Unassigned</span>}</td>
@@ -706,7 +692,7 @@ export const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, se
                                             <span title={farmer.photoUploaded ? "Photo Uploaded" : "Photo Missing"}>{farmer.photoUploaded ? '👤' : '📸'}</span>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4">{landParcelCounts[farmer.id] || 0}</td>
+                                    <td className="px-6 py-4 text-center">{landParcelCounts[farmer.id] || 0}</td>
                                     <td className="px-6 py-4"><span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${farmer.status === 'Active' ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'}`}>{farmer.status}</span></td>
                                     <td className="px-6 py-4 flex items-center gap-4">
                                         <button onClick={() => handleToggleRow(farmer.id)} className="font-medium text-teal-400 hover:text-teal-300">{expandedRow === farmer.id ? <ChevronUpIcon /> : <ChevronDownIcon />}</button>
@@ -716,7 +702,7 @@ export const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, se
                                 </tr>
                                 {expandedRow === farmer.id && (
                                     <tr className="bg-gray-900/50">
-                                        <td colSpan={8} className="p-4">
+                                        <td colSpan={9} className="p-4">
                                             {editingFarmerId === farmer.id ? (
                                                 <div className="p-4 bg-gray-800/50 rounded-lg"> {/* Edit form */}
                                                     <h3 className="font-bold text-white mb-4">Editing {farmer.fullName}</h3>
