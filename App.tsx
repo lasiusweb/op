@@ -226,236 +226,61 @@ const App: React.FC = () => {
       eWayBills: "e-Way Bills",
   }
 
-  const handleViewProfile = (employeeId: string) => {
+  const handleViewProfile = useCallback((employeeId: string) => {
     setViewingEmployeeId(employeeId);
     handleSetCurrentPage('profile');
-  };
+  }, [handleSetCurrentPage]);
   
-  const handleViewEmployeeVisits = (employeeId: string) => {
+  const handleViewEmployeeVisits = useCallback((employeeId: string) => {
     setVisitFilterAgentId(employeeId);
     handleSetCurrentPage('manageVisits');
-  };
+  }, [handleSetCurrentPage]);
 
-  const handleProfileChangeRequestUpdate = (updatedRequest: ProfileChangeRequest, changes: Partial<Employee>) => {
+  const handleProfileChangeRequestUpdate = useCallback((updatedRequest: ProfileChangeRequest, changes: Partial<Employee>) => {
     setProfileChangeRequests(prev => prev.map(req => req.id === updatedRequest.id ? updatedRequest : req));
     if(updatedRequest.status === 'Approved') {
         setEmployees(prev => prev.map(emp => emp.id === updatedRequest.employeeId ? { ...emp, ...changes } : emp));
     }
-  };
+  }, []);
   
-  const handleAddProfileChangeRequest = (newRequest: ProfileChangeRequest) => {
+  const handleAddProfileChangeRequest = useCallback((newRequest: ProfileChangeRequest) => {
       setProfileChangeRequests(prev => [newRequest, ...prev]);
-  };
+  }, []);
 
-  const handleUpdateTask = (updatedTask: Task) => {
+  const handleUpdateTask = useCallback((updatedTask: Task) => {
     setTasks(prevTasks => prevTasks.map(t => t.id === updatedTask.id ? updatedTask : t));
-  };
+  }, []);
 
-  const handleAddNewFarmer = (newFarmer: Farmer, newLandParcel: LandParcel) => {
+  const handleAddNewFarmer = useCallback((newFarmer: Farmer, newLandParcel: LandParcel) => {
     setFarmers(prev => [newFarmer, ...prev]);
     setLandParcels(prev => [newLandParcel, ...prev]);
     setConfirmationMessage(`Farmer ${newFarmer.fullName} added successfully!`);
     handleSetCurrentPage('farmers');
-  };
+  }, [handleSetCurrentPage]);
 
-  const handleAddNewEmployee = (newEmployee: Employee) => {
+  const handleAddNewEmployee = useCallback((newEmployee: Employee) => {
     setEmployees(prev => [newEmployee, ...prev]);
     setConfirmationMessage(`Employee ${newEmployee.fullName} added successfully!`);
     handleSetCurrentPage('employees');
-  };
+  }, [handleSetCurrentPage]);
 
-  const handleAddCultivationLog = (newLog: CultivationLogType) => {
+  const handleAddCultivationLog = useCallback((newLog: CultivationLogType) => {
     setCultivationLogs(prev => [newLog, ...prev]);
-  };
+  }, []);
 
-  const handleAddFarmVisitRequest = (newRequest: FarmVisitRequest) => {
+  const handleAddFarmVisitRequest = useCallback((newRequest: FarmVisitRequest) => {
     setFarmVisitRequests(prev => [newRequest, ...prev]);
-  };
+  }, []);
   
-  const handleAddFarmerProfileChangeRequest = (newRequest: FarmerProfileChangeRequest) => {
+  const handleAddFarmerProfileChangeRequest = useCallback((newRequest: FarmerProfileChangeRequest) => {
       setFarmerProfileChangeRequests(prev => [newRequest, ...prev]);
-  };
+  }, []);
 
-  const handleUpdateFarmVisitRequest = (updatedRequest: FarmVisitRequest) => {
+  const handleUpdateFarmVisitRequest = useCallback((updatedRequest: FarmVisitRequest) => {
       setFarmVisitRequests(prev => prev.map(r => r.id === updatedRequest.id ? updatedRequest : r));
-  };
+  }, []);
 
-
-  const renderPage = () => {
-    switch (currentPage) {
-      case 'dashboard':
-        return <Dashboard loading={loading} />;
-      case 'farmers':
-        return <Farmers 
-            loading={loading} 
-            onAddNewFarmer={() => handleSetCurrentPage('addFarmer')} 
-            allFarmers={farmers} 
-            setAllFarmers={setFarmers} 
-            confirmationMessage={confirmationMessage}
-            setConfirmationMessage={setConfirmationMessage}
-        />;
-      case 'addFarmer':
-        return <AddFarmer onAddFarmer={handleAddNewFarmer} onCancel={() => handleSetCurrentPage('farmers')} allFarmers={farmers} />;
-      case 'employees':
-          return <Employees
-                    currentEmployee={currentEmployee} 
-                    allEmployees={employees} 
-                    setAllEmployees={setEmployees} 
-                    onViewProfile={handleViewProfile} 
-                    allVisitRequests={farmVisitRequests}
-                    onViewVisits={handleViewEmployeeVisits}
-                    onAddNewEmployee={() => handleSetCurrentPage('addEmployee')}
-                    confirmationMessage={confirmationMessage}
-                    setConfirmationMessage={setConfirmationMessage}
-                 />;
-      case 'addEmployee':
-          return <AddEmployee onAddEmployee={handleAddNewEmployee} onCancel={() => handleSetCurrentPage('employees')} allEmployees={employees} />;
-      case 'employeeHierarchy':
-          return <EmployeeHierarchy allEmployees={employees} onViewProfile={handleViewProfile} />;
-      case 'employeeLifecycle':
-          return <EmployeeLifecycle onViewProfile={handleViewProfile} />;
-      case 'upcomingRetirements':
-          return <UpcomingRetirements allEmployees={employees} />;
-      case 'profileChangeRequests':
-          return <ProfileChangeRequests requests={profileChangeRequests} employees={employees} onUpdateRequest={handleProfileChangeRequestUpdate} />;
-      case 'generalTasks':
-          return <Tasks />;
-      case 'fieldAgentTasks':
-          return <FieldAgentTasks />;
-       case 'districtMaster':
-          return <DistrictMaster />;
-       case 'mandalMaster':
-          return <MandalMaster />;
-       case 'villageMaster':
-          return <VillageMaster />;
-        case 'landParcelMaster':
-            return <LandParcelMaster />;
-        case 'locationMaster':
-            return <LocationMaster />;
-        case 'procurementCenterMaster':
-            return <ProcurementCenterMaster />;
-        case 'factoryMaster':
-            return <FactoryMaster />;
-        case 'procurementBatches':
-            return <ProcurementBatchMaster />;
-        case 'subsidyApplications':
-            return <SubsidyApplications />;
-        case 'documentVerification':
-            return <DocumentVerification />;
-        case 'inspections':
-            return <InspectionLog />;
-        case 'financialSanctions':
-            return <FinancialSanctions />;
-        case 'cultivationLog':
-            return <CultivationLog />;
-        case 'harvestLog':
-            return <HarvestLog />;
-        case 'microIrrigationTracker':
-            return <MicroIrrigationTracker />;
-        case 'oilExtraction':
-            return <OilExtraction />;
-        case 'sustainability':
-            return <Sustainability />;
-        case 'billing':
-            return <Billing />;
-        case 'paymentReconciliation':
-            return <PaymentReconciliation />;
-      case 'analyticsDashboard':
-        return <AnalyticsDashboard />;
-      case 'slaPerformanceManager':
-        return <SlaPerformanceManager />;
-      case 'nonSubsidyPaymentLog':
-        return <NonSubsidyPaymentLog />;
-      case 'farmerAssistanceLedger':
-        return <FarmerAssistanceLedger />;
-      case 'environmentalMonitoring':
-        return <EnvironmentalMonitoring />;
-      case 'knowledgeBase':
-        return <KnowledgeBase />;
-      case 'bankingIntegration':
-        return <BankingIntegration />;
-      case 'iotSensorData':
-        return <IotSensorData />;
-      case 'farmerPortal':
-        return <FarmerPortal 
-          allFarmers={farmers}
-          allLandParcels={landParcels}
-          allSubsidyApps={mockSubsidyApplications} 
-          allProcurementBatches={mockProcurementBatches}
-          allPayments={mockPayments}
-          allDocuments={mockDocuments}
-          allCropInsurancePolicies={mockCropInsurancePolicies}
-          cultivationLogs={cultivationLogs}
-          farmVisitRequests={farmVisitRequests}
-          onAddLog={handleAddCultivationLog}
-          onAddVisitRequest={handleAddFarmVisitRequest}
-          onAddProfileChangeRequest={handleAddFarmerProfileChangeRequest}
-          setCurrentPage={handleSetCurrentPage}
-        />;
-      case 'cropInsurance':
-        return <CropInsurance />;
-      case 'documentManager':
-        return <DocumentManager />;
-       case 'manageVisits':
-            return <ManageVisits 
-                allVisitRequests={farmVisitRequests}
-                onAddRequest={handleAddFarmVisitRequest}
-                onUpdateRequest={handleUpdateFarmVisitRequest}
-                filterAgentId={visitFilterAgentId}
-            />;
-        case 'addVisit': return <ManageVisits allVisitRequests={farmVisitRequests} onAddRequest={handleAddFarmVisitRequest} onUpdateRequest={handleUpdateFarmVisitRequest} />;
-        case 'manageVisitSlots': return <ManageVisitSlots />;
-        case 'visitReport': return <VisitReport />;
-        case 'visitCountReport': return <VisitCountReport />;
-        case 'visitMapView': return <VisitMapView />;
-        case 'visitTravelTime': return <VisitTravelTime />;
-        case 'visitSetting': return <VisitSetting />;
-        case 'visitSummaryReport': return <VisitSummaryReport />;
-        case 'monthlyVisitReport': return <MonthlyVisitReport />;
-        case 'employeeVisitSetting': return <EmployeeVisitSetting />;
-        case 'missedRouteVisitReport': return <MissedRouteVisitReport />;
-        case 'manageAssignVisitTemplate': return <ManageAssignVisitTemplate />;
-        case 'manageAssignEquipmentTemplate': return <ManageAssignEquipmentTemplate />;
-        case 'visitTemplateReport': return <VisitTemplateReport />;
-        case 'averageMeetingMonthly': return <AverageMeetingMonthly />;
-        case 'hourlyVisitReport': return <HourlyVisitReport />;
-      // New Inventory Page Cases
-      case 'inventoryAdjustments': return <InventoryAdjustments />;
-      case 'packages': return <Packages />;
-      case 'shipments': return <Shipments />;
-      case 'salesOrders': return <SalesOrders />;
-      case 'invoices': return <Invoices />;
-      case 'deliveryChallans': return <DeliveryChallans />;
-      case 'paymentsReceived': return <PaymentsReceived />;
-      case 'salesReturns': return <SalesReturns />;
-      case 'creditNotes': return <CreditNotes />;
-      case 'vendors': return <Vendors />;
-      case 'expenses': return <Expenses />;
-      case 'purchaseOrders': return <PurchaseOrders />;
-      case 'purchaseReceives': return <PurchaseReceives />;
-      case 'bills': return <Bills />;
-      case 'paymentsMade': return <PaymentsMade />;
-      case 'vendorCredits': return <VendorCredits />;
-      case 'eWayBills': return <EWayBills />;
-      case 'profile': {
-          const viewingEmployee = employees.find(u => u.id === viewingEmployeeId);
-          if (!viewingEmployee) {
-            return null;
-          }
-          return <Profile 
-              viewingEmployee={viewingEmployee} 
-              currentEmployee={currentEmployee}
-              allEmployees={employees}
-              allTasks={tasks}
-              allActivity={employeeActivity}
-              onUpdateTask={handleUpdateTask}
-              onAddProfileChangeRequest={handleAddProfileChangeRequest}
-           />;
-      }
-      default:
-        return <Dashboard loading={loading}/>;
-    }
-  };
+  const viewingEmployee = employees.find(u => u.id === viewingEmployeeId);
 
   if (!isLoggedIn) {
       return <LandingPage onLogin={handleLogin} />;
@@ -489,7 +314,129 @@ const App: React.FC = () => {
             onToggleSidebar={() => setIsSidebarOpen(true)}
         />
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-800/50 p-4 sm:p-6 lg:p-8">
-            {renderPage()}
+            <div hidden={currentPage !== 'dashboard'}><Dashboard loading={loading} /></div>
+            <div hidden={currentPage !== 'farmers'}><Farmers 
+                loading={loading} 
+                onAddNewFarmer={() => handleSetCurrentPage('addFarmer')} 
+                allFarmers={farmers} 
+                setAllFarmers={setFarmers} 
+                confirmationMessage={confirmationMessage}
+                setConfirmationMessage={setConfirmationMessage}
+            /></div>
+            <div hidden={currentPage !== 'addFarmer'}><AddFarmer onAddFarmer={handleAddNewFarmer} onCancel={() => handleSetCurrentPage('farmers')} allFarmers={farmers} /></div>
+            <div hidden={currentPage !== 'employees'}><Employees
+                        currentEmployee={currentEmployee} 
+                        allEmployees={employees} 
+                        setAllEmployees={setEmployees} 
+                        onViewProfile={handleViewProfile} 
+                        allVisitRequests={farmVisitRequests}
+                        onViewVisits={handleViewEmployeeVisits}
+                        onAddNewEmployee={() => handleSetCurrentPage('addEmployee')}
+                        confirmationMessage={confirmationMessage}
+                        setConfirmationMessage={setConfirmationMessage}
+                     /></div>
+            <div hidden={currentPage !== 'addEmployee'}><AddEmployee onAddEmployee={handleAddNewEmployee} onCancel={() => handleSetCurrentPage('employees')} allEmployees={employees} /></div>
+            <div hidden={currentPage !== 'employeeHierarchy'}><EmployeeHierarchy allEmployees={employees} onViewProfile={handleViewProfile} /></div>
+            <div hidden={currentPage !== 'employeeLifecycle'}><EmployeeLifecycle onViewProfile={handleViewProfile} /></div>
+            <div hidden={currentPage !== 'upcomingRetirements'}><UpcomingRetirements allEmployees={employees} /></div>
+            <div hidden={currentPage !== 'profileChangeRequests'}><ProfileChangeRequests requests={profileChangeRequests} employees={employees} onUpdateRequest={handleProfileChangeRequestUpdate} /></div>
+            <div hidden={currentPage !== 'generalTasks'}><Tasks /></div>
+            <div hidden={currentPage !== 'fieldAgentTasks'}><FieldAgentTasks /></div>
+            <div hidden={currentPage !== 'districtMaster'}><DistrictMaster /></div>
+            <div hidden={currentPage !== 'mandalMaster'}><MandalMaster /></div>
+            <div hidden={currentPage !== 'villageMaster'}><VillageMaster /></div>
+            <div hidden={currentPage !== 'landParcelMaster'}><LandParcelMaster /></div>
+            <div hidden={currentPage !== 'locationMaster'}><LocationMaster /></div>
+            <div hidden={currentPage !== 'procurementCenterMaster'}><ProcurementCenterMaster /></div>
+            <div hidden={currentPage !== 'factoryMaster'}><FactoryMaster /></div>
+            <div hidden={currentPage !== 'procurementBatches'}><ProcurementBatchMaster /></div>
+            <div hidden={currentPage !== 'subsidyApplications'}><SubsidyApplications /></div>
+            <div hidden={currentPage !== 'documentVerification'}><DocumentVerification /></div>
+            <div hidden={currentPage !== 'inspections'}><InspectionLog /></div>
+            <div hidden={currentPage !== 'financialSanctions'}><FinancialSanctions /></div>
+            <div hidden={currentPage !== 'cultivationLog'}><CultivationLog /></div>
+            <div hidden={currentPage !== 'harvestLog'}><HarvestLog /></div>
+            <div hidden={currentPage !== 'microIrrigationTracker'}><MicroIrrigationTracker /></div>
+            <div hidden={currentPage !== 'oilExtraction'}><OilExtraction /></div>
+            <div hidden={currentPage !== 'sustainability'}><Sustainability /></div>
+            <div hidden={currentPage !== 'billing'}><Billing /></div>
+            <div hidden={currentPage !== 'paymentReconciliation'}><PaymentReconciliation /></div>
+            <div hidden={currentPage !== 'analyticsDashboard'}><AnalyticsDashboard /></div>
+            <div hidden={currentPage !== 'slaPerformanceManager'}><SlaPerformanceManager /></div>
+            <div hidden={currentPage !== 'nonSubsidyPaymentLog'}><NonSubsidyPaymentLog /></div>
+            <div hidden={currentPage !== 'farmerAssistanceLedger'}><FarmerAssistanceLedger /></div>
+            <div hidden={currentPage !== 'environmentalMonitoring'}><EnvironmentalMonitoring /></div>
+            <div hidden={currentPage !== 'knowledgeBase'}><KnowledgeBase /></div>
+            <div hidden={currentPage !== 'bankingIntegration'}><BankingIntegration /></div>
+            <div hidden={currentPage !== 'iotSensorData'}><IotSensorData /></div>
+            <div hidden={currentPage !== 'farmerPortal'}><FarmerPortal 
+              allFarmers={farmers}
+              allLandParcels={landParcels}
+              allSubsidyApps={mockSubsidyApplications} 
+              allProcurementBatches={mockProcurementBatches}
+              allPayments={mockPayments}
+              allDocuments={mockDocuments}
+              allCropInsurancePolicies={mockCropInsurancePolicies}
+              cultivationLogs={cultivationLogs}
+              farmVisitRequests={farmVisitRequests}
+              onAddLog={handleAddCultivationLog}
+              onAddVisitRequest={handleAddFarmVisitRequest}
+              onAddProfileChangeRequest={handleAddFarmerProfileChangeRequest}
+              setCurrentPage={handleSetCurrentPage}
+            /></div>
+            <div hidden={currentPage !== 'cropInsurance'}><CropInsurance /></div>
+            <div hidden={currentPage !== 'documentManager'}><DocumentManager /></div>
+            <div hidden={currentPage !== 'manageVisits' && currentPage !== 'addVisit'}><ManageVisits 
+                allVisitRequests={farmVisitRequests}
+                onAddRequest={handleAddFarmVisitRequest}
+                onUpdateRequest={handleUpdateFarmVisitRequest}
+                filterAgentId={visitFilterAgentId}
+            /></div>
+            <div hidden={currentPage !== 'manageVisitSlots'}><ManageVisitSlots /></div>
+            <div hidden={currentPage !== 'visitReport'}><VisitReport /></div>
+            <div hidden={currentPage !== 'visitCountReport'}><VisitCountReport /></div>
+            <div hidden={currentPage !== 'visitMapView'}><VisitMapView /></div>
+            <div hidden={currentPage !== 'visitTravelTime'}><VisitTravelTime /></div>
+            <div hidden={currentPage !== 'visitSetting'}><VisitSetting /></div>
+            <div hidden={currentPage !== 'visitSummaryReport'}><VisitSummaryReport /></div>
+            <div hidden={currentPage !== 'monthlyVisitReport'}><MonthlyVisitReport /></div>
+            <div hidden={currentPage !== 'employeeVisitSetting'}><EmployeeVisitSetting /></div>
+            <div hidden={currentPage !== 'missedRouteVisitReport'}><MissedRouteVisitReport /></div>
+            <div hidden={currentPage !== 'manageAssignVisitTemplate'}><ManageAssignVisitTemplate /></div>
+            <div hidden={currentPage !== 'manageAssignEquipmentTemplate'}><ManageAssignEquipmentTemplate /></div>
+            <div hidden={currentPage !== 'visitTemplateReport'}><VisitTemplateReport /></div>
+            <div hidden={currentPage !== 'averageMeetingMonthly'}><AverageMeetingMonthly /></div>
+            <div hidden={currentPage !== 'hourlyVisitReport'}><HourlyVisitReport /></div>
+            <div hidden={currentPage !== 'inventoryAdjustments'}><InventoryAdjustments /></div>
+            <div hidden={currentPage !== 'packages'}><Packages /></div>
+            <div hidden={currentPage !== 'shipments'}><Shipments /></div>
+            <div hidden={currentPage !== 'salesOrders'}><SalesOrders /></div>
+            <div hidden={currentPage !== 'invoices'}><Invoices /></div>
+            <div hidden={currentPage !== 'deliveryChallans'}><DeliveryChallans /></div>
+            <div hidden={currentPage !== 'paymentsReceived'}><PaymentsReceived /></div>
+            <div hidden={currentPage !== 'salesReturns'}><SalesReturns /></div>
+            <div hidden={currentPage !== 'creditNotes'}><CreditNotes /></div>
+            <div hidden={currentPage !== 'vendors'}><Vendors /></div>
+            <div hidden={currentPage !== 'expenses'}><Expenses /></div>
+            <div hidden={currentPage !== 'purchaseOrders'}><PurchaseOrders /></div>
+            <div hidden={currentPage !== 'purchaseReceives'}><PurchaseReceives /></div>
+            <div hidden={currentPage !== 'bills'}><Bills /></div>
+            <div hidden={currentPage !== 'paymentsMade'}><PaymentsMade /></div>
+            <div hidden={currentPage !== 'vendorCredits'}><VendorCredits /></div>
+            <div hidden={currentPage !== 'eWayBills'}><EWayBills /></div>
+            <div hidden={currentPage !== 'profile'}>
+                {viewingEmployee && (
+                    <Profile 
+                        viewingEmployee={viewingEmployee} 
+                        currentEmployee={currentEmployee}
+                        allEmployees={employees}
+                        allTasks={tasks}
+                        allActivity={employeeActivity}
+                        onUpdateTask={handleUpdateTask}
+                        onAddProfileChangeRequest={handleAddProfileChangeRequest}
+                    />
+                )}
+            </div>
         </main>
       </div>
     </div>
