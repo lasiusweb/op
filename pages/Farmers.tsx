@@ -88,7 +88,7 @@ const farmerTemplateHeaders = [
 ];
 
 
-export const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, setAllFarmers, loading, confirmationMessage, setConfirmationMessage }) => {
+const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, setAllFarmers, loading, confirmationMessage, setConfirmationMessage }) => {
     const [expandedRow, setExpandedRow] = useState<string | null>(null);
     const [editingFarmerId, setEditingFarmerId] = useState<string | null>(null);
     const [editableFarmerData, setEditableFarmerData] = useState<Farmer | null>(null);
@@ -751,3 +751,5 @@ export const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, se
     </>
   );
 };
+
+export default Farmers;
