@@ -84,7 +84,7 @@ interface FarmersProps {
 const farmerTemplateHeaders = [
     "fullName", "fatherName", "mobile", "aadhaar", "village", "mandal", 
     "district", "gender", "dob", "bankName", "bankAccountNumber", "ifscCode", 
-    "assignedAgentId"
+    "assignedAgentId", "status", "cropType", "remarks"
 ];
 
 
@@ -279,6 +279,8 @@ export const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, se
     const handleImport = (newFarmersData: any[]) => {
         const now = new Date().toISOString();
         const processedFarmers: Farmer[] = newFarmersData.map((item, index) => {
+            const status = ['Active', 'Inactive'].includes(item.status) ? item.status : 'Active';
+            const importRemarks = item.remarks ? `Imported via bulk upload. Note: ${item.remarks}` : 'Imported via bulk upload.';
             return {
                 id: `FARM-IMP-${Date.now() + index}`,
                 fullName: item.fullName || 'Unnamed',
@@ -288,16 +290,16 @@ export const Farmers: React.FC<FarmersProps> = ({ onAddNewFarmer, allFarmers, se
                 village: item.village || '',
                 mandal: item.mandal || '',
                 district: item.district || '',
-                status: 'Active',
+                status: status as 'Active' | 'Inactive',
                 gender: item.gender || 'Male',
                 dob: item.dob || new Date().toISOString().split('T')[0],
                 bankName: item.bankName || '',
                 bankAccountNumber: item.bankAccountNumber || '',
                 ifscCode: item.ifscCode || '',
-                cropType: 'Oil Palm',
+                cropType: item.cropType || 'Oil Palm',
                 accountVerified: false,
                 photoUploaded: false,
-                remarks: 'Imported via bulk upload.',
+                remarks: importRemarks,
                 assignedAgentId: item.assignedAgentId || '',
                 createdAt: now,
                 updatedAt: now,
