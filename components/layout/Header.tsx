@@ -1,6 +1,7 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import type { Employee, Task } from '../../types';
-import { UserIcon, Bars3Icon, BellIcon } from '../Icons';
+import { UserIcon, Bars3Icon, BellIcon, ArrowLeftIcon } from '../Icons';
 
 interface HeaderProps {
     title: string;
@@ -10,6 +11,8 @@ interface HeaderProps {
     setCurrentEmployee: (employee: Employee) => void;
     onViewProfile: () => void;
     onToggleSidebar: () => void;
+    onGoBack: () => void;
+    canGoBack: boolean;
 }
 
 const getDueDateStatus = (dueDateStr: string): { text: string; className: string } => {
@@ -30,7 +33,7 @@ const getDueDateStatus = (dueDateStr: string): { text: string; className: string
     return { text: `Due in ${daysDiff} day(s)`, className: 'text-yellow-300' };
 };
 
-const Header: React.FC<HeaderProps> = ({ title, currentEmployee, allEmployees, allTasks, setCurrentEmployee, onViewProfile, onToggleSidebar }) => {
+const Header: React.FC<HeaderProps> = ({ title, currentEmployee, allEmployees, allTasks, setCurrentEmployee, onViewProfile, onToggleSidebar, onGoBack, canGoBack }) => {
     const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
     const [dueTasks, setDueTasks] = useState<Task[]>([]);
     const notificationRef = useRef<HTMLDivElement>(null);
@@ -81,6 +84,11 @@ const Header: React.FC<HeaderProps> = ({ title, currentEmployee, allEmployees, a
                 <button onClick={onToggleSidebar} className="text-gray-400 hover:text-white lg:hidden" aria-label="Open sidebar">
                     <Bars3Icon className="h-6 w-6" />
                 </button>
+                {canGoBack && (
+                    <button onClick={onGoBack} className="text-gray-400 hover:text-white transition-colors p-1 rounded-full hover:bg-gray-700/50 -ml-1" aria-label="Go back">
+                        <ArrowLeftIcon className="h-6 w-6" />
+                    </button>
+                )}
                 <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
                     {title}
                 </h1>
