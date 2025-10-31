@@ -4,7 +4,7 @@ import type { Location, Employee, Mandal, District } from '../types';
 import { mockLocations, mockEmployees, mockMandals, mockDistricts } from '../data/mockData';
 import DashboardCard from '../components/DashboardCard';
 // FIX: Revert placeholder icon and use the newly added `BuildingOfficeIcon`.
-import { PencilIcon, BuildingOfficeIcon, MapIcon, TableCellsIcon } from '../components/Icons';
+import { PencilIcon, BuildingOfficeIcon, MapIcon, TableCellsIcon, ArrowUpIcon, ArrowDownIcon, ChevronUpDownIcon } from '../components/Icons';
 import { exportToCSV, exportToExcel } from '../services/exportService';
 import { exportElementAsPDF } from '../services/pdfService';
 
@@ -67,7 +67,7 @@ const LocationModal: React.FC<{
 
     return (
         <div className="fixed inset-0 bg-black/60 z-50 flex justify-center items-center p-4">
-            <div className="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-2xl">
+            <div className="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-2xl" onClick={e => e.stopPropagation()}>
                 <h2 className="text-xl font-bold text-white mb-4">{location.id ? 'Edit Location' : 'Add New Location'}</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -112,6 +112,8 @@ const LocationModal: React.FC<{
     );
 };
 
+type SortableLocationKeys = 'name' | 'type' | 'mandal' | 'district' | 'manager';
+
 const LocationMaster: React.FC = () => {
     const [locations, setLocations] = useState<Location[]>(mockLocations);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -121,8 +123,17 @@ const LocationMaster: React.FC = () => {
     const [viewMode, setViewMode] = useState<'table' | 'map'>('table');
     const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
     const contentRef = useRef<HTMLDivElement>(null);
+    const [sortConfig, setSortConfig] = useState<{ key: SortableLocationKeys; direction: 'ascending' | 'descending' }>({ key: 'name', direction: 'ascending' });
 
     const userMap = useMemo(() => new Map(mockEmployees.map(u => [u.id, u.fullName])), []);
+
+    const requestSort = (key: SortableLocationKeys) => {
+        let direction: 'ascending' | 'descending' = 'ascending';
+        if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+            direction = 'descending';
+        }
+        setSortConfig({ key, direction });
+    };
 
     const handleOpenModal = (location?: Location) => {
         setCurrentLocation(location || { type: 'Procurement Center' });
@@ -156,10 +167,10 @@ const LocationMaster: React.FC = () => {
         handleCloseModal();
     };
 
-    const filteredLocations = useMemo(() => {
+    const sortedAndFilteredLocations = useMemo(() => {
         const searchWords = searchTerm.trim().toLowerCase().split(/\s+/).filter(Boolean);
         
-        return locations.filter(l => {
+        let sortableItems = locations.filter(l => {
             const typeMatch = filterType === 'All' || l.type === filterType;
             if (searchWords.length === 0) {
                 return typeMatch;
@@ -176,14 +187,45 @@ const LocationMaster: React.FC = () => {
 
             return typeMatch && searchMatch;
         });
-    }, [locations, searchTerm, filterType, userMap]);
+
+        sortableItems.sort((a, b) => {
+            let valA: any;
+            let valB: any;
+            const key = sortConfig.key;
+
+            if (key === 'manager') {
+                valA = a.managerId ? userMap.get(a.managerId) : '';
+                valB = b.managerId ? userMap.get(b.managerId) : '';
+            } else {
+                valA = a[key as keyof Location];
+                valB = b[key as keyof Location];
+            }
+            
+            if (valA == null && valB == null) return 0;
+            if (valA == null) return 1;
+            if (valB == null) return -1;
+            
+            const direction = sortConfig.direction === 'ascending' ? 1 : -1;
+
+            if (typeof valA === 'string' && typeof valB === 'string') {
+                return valA.localeCompare(valB, undefined, { sensitivity: 'base' }) * direction;
+            }
+
+            if (valA < valB) return -1 * direction;
+            if (valA > valB) return 1 * direction;
+            return 0;
+        });
+
+        return sortableItems;
+
+    }, [locations, searchTerm, filterType, userMap, sortConfig]);
     
     const selectedLocation = useMemo(() => {
         return locations.find(l => l.id === selectedLocationId);
     }, [locations, selectedLocationId]);
     
     const getDataForExport = () => {
-        return filteredLocations.map(location => ({
+        return sortedAndFilteredLocations.map(location => ({
             'Location ID': location.id,
             'Name': location.name,
             'Type': location.type,
@@ -213,22 +255,39 @@ const LocationMaster: React.FC = () => {
         { label: 'Export as Excel', action: handleExportExcel },
         { label: 'Export as PDF', action: handleExportPDF },
     ];
+    
+    const SortableHeader: React.FC<{ label: string; sortKey: SortableLocationKeys }> = ({ label, sortKey }) => (
+        <th scope="col" className="px-6 py-3">
+            <button
+                onClick={() => requestSort(sortKey)}
+                className="group flex items-center gap-1.5 uppercase font-semibold tracking-wider text-gray-300 hover:text-white transition-colors"
+                aria-label={`Sort by ${label}`}
+            >
+                <span>{label}</span>
+                {sortConfig.key === sortKey ? (
+                    sortConfig.direction === 'ascending' ? <ArrowUpIcon className="w-4 h-4"/> : <ArrowDownIcon className="w-4 h-4"/>
+                ) : (
+                    <ChevronUpDownIcon className="w-4 h-4 text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                )}
+            </button>
+        </th>
+    );
 
     const TableView = () => (
         <div className="overflow-x-auto rounded-lg border border-gray-700/50">
             <table className="w-full text-sm text-left text-gray-400">
                 <thead className="text-xs text-gray-300 uppercase bg-gray-800">
                     <tr>
-                        <th scope="col" className="px-6 py-3">Name</th>
-                        <th scope="col" className="px-6 py-3">Type</th>
-                        <th scope="col" className="px-6 py-3">Mandal</th>
-                        <th scope="col" className="px-6 py-3">District</th>
-                        <th scope="col" className="px-6 py-3">Manager</th>
+                        <SortableHeader label="Name" sortKey="name" />
+                        <SortableHeader label="Type" sortKey="type" />
+                        <SortableHeader label="Mandal" sortKey="mandal" />
+                        <SortableHeader label="District" sortKey="district" />
+                        <SortableHeader label="Manager" sortKey="manager" />
                         <th scope="col" className="px-6 py-3">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {filteredLocations.map((location) => (
+                    {sortedAndFilteredLocations.map((location) => (
                         <tr key={location.id} className="border-b border-gray-700 bg-gray-800/50 hover:bg-gray-700/50">
                             <td className="px-6 py-4 font-medium text-white whitespace-nowrap"><Highlight text={location.name} highlight={searchTerm} /></td>
                             <td className="px-6 py-4">{location.type}</td>
@@ -251,7 +310,7 @@ const LocationMaster: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6" style={{minHeight: '600px'}}>
             <div className="md:col-span-1 bg-gray-800/50 rounded-lg border border-gray-700/50 overflow-y-auto max-h-[70vh]">
                  <ul className="divide-y divide-gray-700/50">
-                    {filteredLocations.map(loc => (
+                    {sortedAndFilteredLocations.map(loc => (
                         <li key={loc.id}>
                             <button 
                                 onClick={() => setSelectedLocationId(loc.id)}

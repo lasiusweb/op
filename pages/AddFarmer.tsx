@@ -147,13 +147,6 @@ const AddFarmer: React.FC<AddFarmerProps> = ({ onAddFarmer, onCancel, allFarmers
         }
     }, [formData.mandalId]);
     
-    // Auto-calculate Total Plants
-    useEffect(() => {
-        const mlrd = Number(formData.mlrdPlants) || 0;
-        const fullCost = Number(formData.fullCostPlants) || 0;
-        setFormData((f: any) => ({ ...f, totalPlants: mlrd + fullCost }));
-    }, [formData.mlrdPlants, formData.fullCostPlants]);
-
     // Plant-to-area validation
     useEffect(() => {
         const area = Number(formData.areaAcres) || 0;
@@ -261,9 +254,18 @@ const AddFarmer: React.FC<AddFarmerProps> = ({ onAddFarmer, onCancel, allFarmers
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setFormData((prev: any) => ({ ...prev, [name]: value }));
+        setFormData((prev: any) => {
+            const newFormData = { ...prev, [name]: value };
 
-        // Clear the error for the field being edited
+            if (name === 'mlrdPlants' || name === 'fullCostPlants') {
+                const mlrd = Number(name === 'mlrdPlants' ? value : prev.mlrdPlants) || 0;
+                const fullCost = Number(name === 'fullCostPlants' ? value : prev.fullCostPlants) || 0;
+                newFormData.totalPlants = mlrd + fullCost;
+            }
+            
+            return newFormData;
+        });
+
         if (errors[name]) {
             setErrors(prev => {
                 const newErrors = { ...prev };
