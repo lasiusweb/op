@@ -36,10 +36,10 @@ const DistrictModal: React.FC<{
 }> = ({ district, onSave, onCancel }) => {
     const [formData, setFormData] = useState(district);
 
+    // FIX: Simplified handleChange to handle string inputs correctly for all fields.
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value, type } = e.target;
-        const isNumberField = type === 'number';
-        setFormData(prev => ({ ...prev, [name]: isNumberField ? (value ? parseInt(value, 10) : undefined) : value }));
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
     };
 
     const handleSubmit = (e: FormEvent) => {
@@ -59,7 +59,8 @@ const DistrictModal: React.FC<{
                         </div>
                         <div>
                             <label htmlFor="code" className="block text-sm font-medium text-gray-300">District Code</label>
-                            <input type="number" name="code" id="code" value={formData.code ?? ''} onChange={handleChange} required className="mt-1 block w-full bg-gray-900 border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm" />
+                            {/* FIX: Changed input type to 'text' to match District['code'] type of string. */}
+                            <input type="text" name="code" id="code" value={formData.code || ''} onChange={handleChange} required className="mt-1 block w-full bg-gray-900 border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm" />
                         </div>
                     </div>
                     <div>
@@ -87,7 +88,7 @@ const DistrictMaster: React.FC = () => {
     const contentRef = useRef<HTMLDivElement>(null);
 
     const handleOpenModal = (district?: District) => {
-        setCurrentDistrict(district || { name: '', status: 'Active', code: undefined });
+        setCurrentDistrict(district || { name: '', status: 'Active' });
         setIsModalOpen(true);
     };
 

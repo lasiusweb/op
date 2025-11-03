@@ -1,5 +1,6 @@
 
 
+
 import React, { useRef, useState, useCallback } from 'react';
 import { LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import DashboardCard from './DashboardCard';
@@ -120,7 +121,8 @@ const QualityYieldDashboard: React.FC<QualityYieldDashboardProps> = ({ efficienc
                         outerRadius={80}
                         fill="#8884d8"
                         dataKey="value"
-                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                        // FIX: Cast percent to number before multiplying
+                        label={({ name, percent }) => `${name} ${(Number(percent) * 100).toFixed(0)}%`}
                     >
                         {defectData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
