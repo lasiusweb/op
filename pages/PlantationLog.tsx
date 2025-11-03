@@ -185,7 +185,7 @@ const PlantationLog: React.FC = () => {
         exportToExcel([{ title: 'Plantation Log', data: getDataForExport() }], 'plantation_log');
     };
 
-    // FIX: Changed exportOptions from an object to an array of objects to match the DashboardCard's expected prop type.
+    // FIX: Changed `exportOptions` from an object to an array to match the type expected by DashboardCard.
     const exportOptions = [
         { label: 'Export as CSV', action: handleExportCSV },
         { label: 'Export as Excel', action: handleExportExcel },

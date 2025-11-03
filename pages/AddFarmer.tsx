@@ -167,8 +167,7 @@ const AddFarmer: React.FC<AddFarmerProps> = ({ onAddFarmer, onCancel, allFarmers
         }
     }, [formData.areaAcres, formData.totalPlants]);
 
-    // Auto-generate Farmer ID based on a robust, location-based pattern.
-    // Pattern: DD-MM-VVV-YY-SSSS (District-Mandal-Village-Year-Sequence)
+    // Auto-generate Farmer ID based on the format: [DistCode][MandalCode][VillageCode][YY][Seq]
     useEffect(() => {
         if (formData.districtId && formData.mandalId && formData.villageId) {
             const district = mockDistricts.find(d => d.id === formData.districtId);
@@ -177,20 +176,15 @@ const AddFarmer: React.FC<AddFarmerProps> = ({ onAddFarmer, onCancel, allFarmers
 
             if (district && mandal && village) {
                 const year = new Date().getFullYear().toString().slice(-2);
-                const distCode = String(district.code).padStart(2, '0');
+                const distCode = district.code; // District code is a letter, no padding needed.
                 const mandalCode = String(mandal.code).padStart(2, '0');
-                const villageCode = String(village.code).padStart(3, '0');
+                const villageCode = String(village.code).padStart(2, '0');
                 
-                // Create a structured, human-readable location code.
-                const locationCode = `${distCode}-${mandalCode}-${villageCode}`;
-                
-                // Ensure uniqueness for the current year and location by checking existing records.
-                // This creates a simple sequential ID for new farmers in the same location/year.
-                const idPrefix = `${locationCode}-${year}`;
+                const idPrefix = `${distCode}${mandalCode}${villageCode}${year}`;
                 const existingCount = allFarmers.filter(f => f.id.startsWith(idPrefix)).length;
-                const seq = String(existingCount + 1).padStart(4, '0');
+                const seq = String(existingCount + 1).padStart(3, '0');
                 
-                setFarmerId(`${idPrefix}-${seq}`);
+                setFarmerId(`${idPrefix}${seq}`);
             }
         } else {
             setFarmerId('Select location to generate ID');

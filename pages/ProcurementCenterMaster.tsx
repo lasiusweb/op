@@ -134,7 +134,7 @@ const ProcurementCenterMaster: React.FC = () => {
         const now = new Date().toISOString();
         if (centerData.id) { // Edit
             // FIX: The `status` property from the form data is a generic string. Explicitly casting it to the required 'Active' | 'Inactive' type to ensure type safety.
-            setCenters(centers.map(c => c.id === centerData.id ? { ...c, ...centerData, updatedAt: now, status: centerData.status as ProcurementCenter['status'] } : c));
+            setCenters(centers.map(c => c.id === centerData.id ? { ...c, ...centerData, updatedAt: now, status: centerData.status as 'Active' | 'Inactive' } : c));
         } else { // Add
             const newCenter: ProcurementCenter = {
                 id: `PC${Date.now()}`,

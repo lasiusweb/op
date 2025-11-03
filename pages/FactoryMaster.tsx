@@ -143,7 +143,7 @@ const FactoryMaster: React.FC = () => {
         const now = new Date().toISOString();
         if (factoryData.id) { // Edit
             // FIX: The `status` property from the form data is a generic string. Explicitly casting it to the required 'Active' | 'Inactive' type to ensure type safety.
-            setFactories(factories.map(c => c.id === factoryData.id ? { ...c, ...factoryData, updatedAt: now, status: factoryData.status as Factory['status'] } : c));
+            setFactories(factories.map(c => c.id === factoryData.id ? { ...c, ...factoryData, updatedAt: now, status: factoryData.status as 'Active' | 'Inactive' } : c));
         } else { // Add
             const newFactory: Factory = {
                 id: `FACT${Date.now()}`,
