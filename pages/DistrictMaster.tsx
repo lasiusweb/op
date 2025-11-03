@@ -37,9 +37,8 @@ const DistrictModal: React.FC<{
     const [formData, setFormData] = useState(district);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value, type } = e.target;
-        const isNumberField = type === 'number';
-        setFormData(prev => ({ ...prev, [name]: isNumberField ? (value ? parseInt(value, 10) : undefined) : value }));
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
     };
 
     const handleSubmit = (e: FormEvent) => {
@@ -59,7 +58,8 @@ const DistrictModal: React.FC<{
                         </div>
                         <div>
                             <label htmlFor="code" className="block text-sm font-medium text-gray-300">District Code</label>
-                            <input type="number" name="code" id="code" value={formData.code ?? ''} onChange={handleChange} required className="mt-1 block w-full bg-gray-900 border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm" />
+                            {/* Fix: Changed input type to "text" to match the 'code: string' type in the District interface. */}
+                            <input type="text" name="code" id="code" value={formData.code ?? ''} onChange={handleChange} required className="mt-1 block w-full bg-gray-900 border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm" />
                         </div>
                     </div>
                     <div>
@@ -99,7 +99,7 @@ const DistrictMaster: React.FC = () => {
     const handleSaveDistrict = (districtData: Partial<District>) => {
         const now = new Date().toISOString();
         if (districtData.id) { // Edit
-            // FIX: The `status` property from the form data is a generic string. Explicitly casting it to the required 'Active' | 'Inactive' type to ensure type safety.
+            // Fix: Explicitly cast the status from form data (string) to the required literal type to resolve TypeScript error.
             setDistricts(districts.map(d => d.id === districtData.id ? ({ ...d, ...districtData, updatedAt: now, status: districtData.status as 'Active' | 'Inactive' }) : d));
         } else { // Add
             const newDistrict: District = {
