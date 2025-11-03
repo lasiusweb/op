@@ -68,20 +68,95 @@ export const mockDistricts: District[] = [
 ];
 
 export const mockMandals: Mandal[] = [
-    { id: 'MAND01', name: 'Atmakur', districtId: 'DIST01', code: '01', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
-    { id: 'MAND02', name: 'Geesugonda', districtId: 'DIST01', code: '02', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
-    { id: 'MAND03', name: 'Mangapet', districtId: 'DIST02', code: '03', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
-    { id: 'MAND04', name: 'Venkatapur', districtId: 'DIST02', code: '04', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
-    { id: 'MAND05', name: 'Kamalapur', districtId: 'DIST03', code: '05', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
-    { id: 'MAND06', name: 'Sangem', districtId: 'DIST01', code: '06', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    // Hanmakonda District (DIST03)
+    { id: 'MAND-HNK-01', name: 'Bheemadavarpalle', districtId: 'DIST03', code: '1', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'MAND-HNK-02', name: 'Dharmasagar', districtId: 'DIST03', code: '2', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'MAND-HNK-03', name: 'Elkathurthi', districtId: 'DIST03', code: '3', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'MAND-HNK-04', name: 'Hanamkonda', districtId: 'DIST03', code: '4', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'MAND-HNK-05', name: 'Hasanparthy', districtId: 'DIST03', code: '5', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'MAND-HNK-06', name: 'Inavolu', districtId: 'DIST03', code: '6', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'MAND-HNK-07', name: 'Kamalapur', districtId: 'DIST03', code: '7', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'MAND-HNK-08', name: 'Khazipet', districtId: 'DIST03', code: '8', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'MAND-HNK-09', name: 'Velair', districtId: 'DIST03', code: '9', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+
+    // Mulugu District (DIST02)
+    { id: 'MAND-MLG-01', name: 'Eturnagaram', districtId: 'DIST02', code: '1', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'MAND-MLG-02', name: 'Govindaraopet', districtId: 'DIST02', code: '2', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'MAND-MLG-03', name: 'Kannaigudem', districtId: 'DIST02', code: '3', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'MAND-MLG-04', name: 'Mangapet', districtId: 'DIST02', code: '4', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'MAND-MLG-05', name: 'Mulugu', districtId: 'DIST02', code: '5', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'MAND-MLG-06', name: 'Tadvai (SS)', districtId: 'DIST02', code: '6', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'MAND-MLG-07', name: 'Venkatapur', districtId: 'DIST02', code: '7', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'MAND-MLG-08', name: 'Venkatapuram', districtId: 'DIST02', code: '8', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'MAND-MLG-09', name: 'Wazeed', districtId: 'DIST02', code: '9', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+
+    // Warangal District (DIST01)
+    { id: 'MAND-WGL-01', name: 'Khila Warangal', districtId: 'DIST01', code: '1', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'MAND-WGL-02', name: 'Warangal', districtId: 'DIST01', code: '2', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
 ];
 
 export const mockVillages: Village[] = [
-    { id: 'VILL01', name: 'Atmakur', mandalId: 'MAND01', code: '001', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
-    { id: 'VILL02', name: 'Geesugonda', mandalId: 'MAND02', code: '002', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
-    { id: 'VILL03', name: 'Mangapet', mandalId: 'MAND03', code: '003', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
-    { id: 'VILL04', name: 'Venkatapur', mandalId: 'MAND04', code: '004', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
-    { id: 'VILL05', name: 'Kamalapur', mandalId: 'MAND05', code: '005', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    // Hanmakonda -> Bheemadavarpalle (MAND-HNK-01)
+    { id: 'VILL-HNK-01-01', name: 'Ananthasagar', mandalId: 'MAND-HNK-01', code: '01', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-01-02', name: 'Aravapally', mandalId: 'MAND-HNK-01', code: '02', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-01-03', name: 'Baopet', mandalId: 'MAND-HNK-01', code: '03', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-01-04', name: 'Damera', mandalId: 'MAND-HNK-01', code: '04', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-01-05', name: 'Dandepalle', mandalId: 'MAND-HNK-01', code: '05', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-01-06', name: 'Devannapeta', mandalId: 'MAND-HNK-01', code: '06', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-01-07', name: 'Elkathurthy', mandalId: 'MAND-HNK-01', code: '07', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-01-08', name: 'Gopalpur', mandalId: 'MAND-HNK-01', code: '08', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-01-09', name: 'Hasanparthy', mandalId: 'MAND-HNK-01', code: '09', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-01-10', name: 'Jaigiri', mandalId: 'MAND-HNK-01', code: '10', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-01-11', name: 'Jeelgul', mandalId: 'MAND-HNK-01', code: '11', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-01-12', name: 'Keshwapur', mandalId: 'MAND-HNK-01', code: '12', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-01-13', name: 'Kothulnadum', mandalId: 'MAND-HNK-01', code: '13', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-01-14', name: 'Laknavaram', mandalId: 'MAND-HNK-01', code: '14', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-01-15', name: 'Madipalle', mandalId: 'MAND-HNK-01', code: '15', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-01-16', name: 'Mallaredipally', mandalId: 'MAND-HNK-01', code: '16', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-01-17', name: 'Muchela', mandalId: 'MAND-HNK-01', code: '17', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-01-18', name: 'Nagaram', mandalId: 'MAND-HNK-01', code: '18', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-01-19', name: 'Pembartthy', mandalId: 'MAND-HNK-01', code: '19', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-01-20', name: 'Penchakalpeta', mandalId: 'MAND-HNK-01', code: '20', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-01-21', name: 'Siddapur', mandalId: 'MAND-HNK-01', code: '21', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-01-22', name: 'Sudanpalle', mandalId: 'MAND-HNK-01', code: '22', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-01-23', name: 'Suraram', mandalId: 'MAND-HNK-01', code: '23', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-01-24', name: 'Thimmapur', mandalId: 'MAND-HNK-01', code: '24', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-01-25', name: 'Vangapahad', mandalId: 'MAND-HNK-01', code: '25', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-01-26', name: 'Veeranarayanapur', mandalId: 'MAND-HNK-01', code: '26', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-01-27', name: 'Yellapur', mandalId: 'MAND-HNK-01', code: '27', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+
+    // Hanmakonda -> Dharmasagar (MAND-HNK-02)
+    { id: 'VILL-HNK-02-01', name: 'Bheemaram', mandalId: 'MAND-HNK-02', code: '01', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-02-02', name: 'Chinthagattu', mandalId: 'MAND-HNK-02', code: '02', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-02-03', name: 'Devunoor', mandalId: 'MAND-HNK-02', code: '03', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-02-04', name: 'Dharmapur', mandalId: 'MAND-HNK-02', code: '04', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-02-05', name: 'Dharmasagar', mandalId: 'MAND-HNK-02', code: '05', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-02-06', name: 'Jhanakipur', mandalId: 'MAND-HNK-02', code: '06', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-02-07', name: 'Kyathampalle', mandalId: 'MAND-HNK-02', code: '07', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-02-08', name: 'Mallakpalli', mandalId: 'MAND-HNK-02', code: '08', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-02-09', name: 'Mulkanoor', mandalId: 'MAND-HNK-02', code: '09', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-02-10', name: 'Musthafapur', mandalId: 'MAND-HNK-02', code: '10', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-02-11', name: 'Narayanagiri', mandalId: 'MAND-HNK-02', code: '11', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-02-12', name: 'Peddapendayal', mandalId: 'MAND-HNK-02', code: '12', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-02-13', name: 'Ratnagiri', mandalId: 'MAND-HNK-02', code: '13', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-02-14', name: 'Somadevrapalli', mandalId: 'MAND-HNK-02', code: '14', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-02-15', name: 'Thatikayala', mandalId: 'MAND-HNK-02', code: '15', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-02-16', name: 'Unikicherla', mandalId: 'MAND-HNK-02', code: '16', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-02-17', name: 'Yelukurthi Dharmasagar', mandalId: 'MAND-HNK-02', code: '17', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+
+    // Hanmakonda -> Elkathurthi (MAND-HNK-03)
+    { id: 'VILL-HNK-03-01', name: 'Arapalli', mandalId: 'MAND-HNK-03', code: '01', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-03-02', name: 'Guntrupally', mandalId: 'MAND-HNK-03', code: '02', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-03-03', name: 'Indranagar', mandalId: 'MAND-HNK-03', code: '03', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-03-04', name: 'Kothapalli', mandalId: 'MAND-HNK-03', code: '04', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-03-05', name: 'Madikonda', mandalId: 'MAND-HNK-03', code: '05', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-03-06', name: 'Rampur', mandalId: 'MAND-HNK-03', code: '06', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-03-07', name: 'Shyampet', mandalId: 'MAND-HNK-03', code: '07', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-03-08', name: 'Somidi', mandalId: 'MAND-HNK-03', code: '08', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-03-09', name: 'Tekulaguden', mandalId: 'MAND-HNK-03', code: '09', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'VILL-HNK-03-10', name: 'Tharalapalli', mandalId: 'MAND-HNK-03', code: '10', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    
+    // ... (All other villages will be added here)
 ];
 
 export const mockProcurementCenters: ProcurementCenter[] = [

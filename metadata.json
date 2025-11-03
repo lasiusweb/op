@@ -1,5 +1,5 @@
 {
-  "name": "Agri-Tech Operations Dashboard",
+  "name": "Hapsara Agri-Tech",
   "description": "A comprehensive dashboard for the Oil Palm Mission ecosystem, visualizing procurement, quality, financial, compliance, and predictive insights with AI-powered summaries.",
   "requestFramePermissions": [
     "camera"
