@@ -211,7 +211,7 @@ export interface QualityInspection {
 export interface District {
   id: string;
   name: string;
-  code: number;
+  code: string;
   status: 'Active' | 'Inactive';
   createdAt: string;
   updatedAt: string;

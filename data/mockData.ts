@@ -62,9 +62,9 @@ export const mockQualityInspections: QualityInspection[] = [
 ];
 
 export const mockDistricts: District[] = [
-    { id: 'DIST01', name: 'Warangal', code: 31, status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
-    { id: 'DIST02', name: 'Mulugu', code: 32, status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
-    { id: 'DIST03', name: 'Hanmakonda', code: 33, status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'DIST01', name: 'Warangal', code: 'W', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'DIST02', name: 'Mulugu', code: 'M', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
+    { id: 'DIST03', name: 'Hanmakonda', code: 'H', status: 'Active', createdAt: pastDate(365), updatedAt: pastDate(30) },
 ];
 
 export const mockMandals: Mandal[] = [
